@@ -51,6 +51,12 @@ wasm-bindgen-test = "0.3.13"
 [features]
 default = [
     #
+    "default-",
+    "web",
+    "csr",
+    "ssr",
+]
+"default-" = [
     "html-components",
     "either",
     "hooks",
@@ -69,14 +75,20 @@ either = [
     "frender-ssr/either",
     "frender-html/either",
 ]
-web = ["frender-csr-web"]
+web = ["dep:frender-csr-web"]
 spawn = ["frender-csr-web?/spawn"]
-ssr = ["frender-keyed-elements?/ssr"]
+ssr = [
+    #
+    "frender-keyed-elements?/ssr",
+    "frender-html/ssr",
+]
 csr = [
-    "ssr",
+    #
     "frender-keyed-elements?/csr",
     "frender-render-with?/csr",
-] # TODO: remove ssr feature
+    "frender-csr-web?/csr",
+    "frender-html/csr",
+]
 RenderWith = ["dep:frender-render-with"]
 KeyedElements = ["dep:frender-keyed-elements"]
 ToElement = []

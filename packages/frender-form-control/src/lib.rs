@@ -17,7 +17,7 @@ pub mod csr {
     pub use value::{FormControlValue, FormControlValueStateKind, HandleFormControlValue};
 }
 
-#[cfg(feature = "ssr")]
-pub mod ssr {
-    pub(crate) mod value;
-}
+mod provide;
+pub use provide::{
+    MaybeProvideFormControlValue, ProvideFormControlValue, ProvideFormControlValueWithKind,
+};

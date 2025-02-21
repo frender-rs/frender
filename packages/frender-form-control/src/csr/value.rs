@@ -17,11 +17,6 @@ use super::element::FormControlElement;
 mod either;
 mod option;
 
-#[cfg(todo)]
-pub trait FromFormControlValue<VK: ?Sized + FormControlValueKind> {
-    fn from_form_control_value(v: VK::FormControlValue<'_>) -> Self;
-}
-
 pub trait HandleFormControlValue<V: ?Sized + FormControlValueKind> {
     fn handle_form_control_value(&mut self, v: V::FormControlValue<'_>);
 }
@@ -31,36 +26,6 @@ impl<V: ?Sized + FormControlValueKind, F: for<'v> FnMut(V::FormControlValue<'v>)
 {
     fn handle_form_control_value(&mut self, v: <V as FormControlValueKind>::FormControlValue<'_>) {
         self(v)
-    }
-}
-
-#[cfg(todo)]
-impl FromFormControlValue<str> for String {
-    fn from_form_control_value(v: Cow<'_, str>) -> Self {
-        v.into_owned()
-    }
-}
-
-#[cfg(todo)]
-impl FromFormControlValue<str> for Cow<'_, str> {
-    fn from_form_control_value(v: Cow<'_, str>) -> Self {
-        v.into_owned().into()
-    }
-}
-
-#[cfg(todo)]
-frender_common::impl_many!(
-    impl<__> FromFormControlValue<str> for each_of![std::rc::Rc<str>, std::sync::Arc<str>] {
-        fn from_form_control_value(v: Cow<'_, str>) -> Self {
-            v.into()
-        }
-    }
-);
-
-#[cfg(todo)]
-impl<VK: Copy> FromFormControlValue<VK> for VK {
-    fn from_form_control_value(v: VK) -> Self {
-        v
     }
 }
 

@@ -1,4 +1,3 @@
-pub use frender_html::{CsrComponent, CsrElement};
 pub use into_render_element_ext::IntoRenderElementExt;
 pub use render_element::RenderElement;
 

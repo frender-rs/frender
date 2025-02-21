@@ -1,12 +1,13 @@
 use std::borrow::Cow;
 
 use frender_html::{
-    dom::{
+    csr::experimental,
+    dom::csr::{
         behaviors::ElementWithChildren as _,
         render::{Render, RenderWithContext},
         ProvideRenderContext,
     },
-    experimental, ElementProxyAttrs, RenderHtml,
+    ElementProxyAttrs, RenderHtml,
 };
 
 use crate::element::{CursorPlaceholder, Element, Node, UnmountedElement};
@@ -194,7 +195,7 @@ macro_rules! html_elements {
         $(
             type $name = $Element;
             fn $name(&mut self) -> ElementProxyAttrs<UnmountedElement> {
-                let $tag = <frender_html::cs::$name::Marker as frender_html::dom::component::HasIntrinsicComponentTag>::INTRINSIC_COMPONENT_TAG;
+                let $tag = const { stringify!($name) };
                 $e
             }
         )*
@@ -255,7 +256,7 @@ impl RenderContext<'_> {
     }
 }
 
-impl frender_html::dom::render::RenderContext for RenderContext<'_> {
+impl frender_html::csr::render::RenderContext for RenderContext<'_> {
     type Renderer = Renderer;
 
     fn map_mut_render_context<Res>(

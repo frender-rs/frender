@@ -1,6 +1,6 @@
 use std::{borrow::Cow, cell::RefCell, rc::Rc};
 
-use frender_html::dom::ui_handle::{UiHandle, UnmountedUiHandle};
+use frender_html::csr::{UiHandle, UnmountedUiHandle};
 
 use crate::{
     element::{Node, WeakElement},
@@ -48,7 +48,7 @@ impl Text {
     }
 }
 
-impl frender_html::dom::behaviors::Node<Renderer> for Text {
+impl frender_html::dom::csr::behaviors::Node<Renderer> for Text {
     fn log_self(&self, _: &mut Renderer) {
         eprintln!("{:?}", self)
     }

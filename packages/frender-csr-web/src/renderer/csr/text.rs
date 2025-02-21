@@ -1,4 +1,4 @@
-use frender_html::dom::{csr::web::Node, render::RenderTextFrom};
+use frender_html::dom::csr::{render::RenderTextFrom, web::Node};
 
 use super::Renderer;
 

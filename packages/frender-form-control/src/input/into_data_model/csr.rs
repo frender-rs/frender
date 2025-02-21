@@ -11,3 +11,15 @@ impl<T: ?Sized> IntoCsrInputDataModel for T where
     T: IntoInputDataModel<Type: CsrInputType, Value: CsrInputValue, Checked: CsrInputChecked>
 {
 }
+
+#[cfg(test)]
+mod tests {
+    use frender_dom::Empty;
+
+    use super::IntoCsrInputDataModel;
+
+    struct Test
+    where
+        Empty: IntoCsrInputDataModel;
+    const _: Test = Test;
+}

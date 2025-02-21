@@ -103,13 +103,19 @@ pub mod main {
     pub use frender_csr_web::mount::spawn_mount_to_dom_element;
 }
 
+pub mod form_control {
+    pub use frender_html::form_control::values::{
+        EitherFormControlValue, UncontrolledWithDefaultValue,
+    };
+}
+
 pub mod prelude {
     // #[cfg(all(feature = "csr", feature = "ssr"))]
     // pub use crate::Element;
 
     pub use crate::rsx;
 
-    pub use frender_html::dom::{HandleEvent, MaybeHandleEvent};
+    pub use frender_common::{HandleEvent, MaybeHandleEvent};
 
     pub use frender_hook_element::component_fn;
 

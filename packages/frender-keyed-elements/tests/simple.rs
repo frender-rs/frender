@@ -2,7 +2,7 @@
 
 use std::str::FromStr;
 
-use frender_html::CsrElement as _;
+use frender_csr::CsrElement as _;
 use frender_keyed_elements::{Keyed, KeyedElements};
 use frender_test::{
     element::Node,

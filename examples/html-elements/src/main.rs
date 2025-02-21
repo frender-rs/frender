@@ -1,6 +1,5 @@
 use frender::{
-    html::form_control::value::UncontrolledWithDefaultValue, prelude::*, Empty,
-    ScriptInnerTextWronglyEncoded,
+    form_control::UncontrolledWithDefaultValue, prelude::*, Empty, ScriptInnerTextWronglyEncoded,
 };
 use hooks::{IntoEq, ShareValue, ToOwnedShareValue};
 

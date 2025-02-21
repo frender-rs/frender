@@ -1,10 +1,9 @@
 use std::{cell::RefCell, pin::Pin, rc::Rc, task::Poll};
 
 use frender_html::{
-    dom::{
+    dom::csr::{
         render::{RenderContext, RenderWithContext},
-        ui_handle::{UiHandle, UnmountedUiHandle},
-        StateUnmount,
+        StateUnmount, UiHandle, UnmountedUiHandle,
     },
     experimental::{UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
     CsrElement, HtmlRenderContext, RenderHtml,
@@ -372,7 +371,7 @@ impl<C: UnmountedUiHandle<R>, U: UnmountedUiHandle<R>, S, R: ?Sized> UnmountedUi
 
     fn mount(self, render_context: &mut <R>::RenderContext<'_>) -> Self::Mounted
     where
-        R: frender_html::dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         let Self {
             ui_handles,
@@ -441,7 +440,7 @@ impl<C: UiHandle<R>, UH: UiHandle<R>, S, R: ?Sized> UiHandle<R>
 
     fn reposition(&mut self, render_context: &mut <R>::RenderContext<'_>)
     where
-        R: frender_html::dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         let Self {
             ui_handles,
@@ -481,7 +480,7 @@ impl<C: UiHandle<R>, UH: UiHandle<R>, S, R: ?Sized> UiHandle<R>
 
     fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
     where
-        R: frender_html::dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         let [cpa, cpb] = &self.cursor_placeholders;
 
@@ -492,7 +491,7 @@ impl<C: UiHandle<R>, UH: UiHandle<R>, S, R: ?Sized> UiHandle<R>
 
     fn assert_cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>)
     where
-        R: frender_html::dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         self.cursor_placeholders[0].assert_cursor_is_at_self(render_context)
     }

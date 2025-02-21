@@ -10,7 +10,7 @@ use frender_ssr::html::{
     attr_value::AttrEqValue,
 };
 
-use crate::ssr::value::{MaybeProvideFormControlValue, ProvideFormControlValue as _};
+use crate::{MaybeProvideFormControlValue, ProvideFormControlValue as _};
 
 use super::{
     value_kind::InputValueKindSsr, InputDataModel, InputType, SsrInputChecked, SsrInputType,

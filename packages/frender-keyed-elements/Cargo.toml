@@ -13,6 +13,7 @@ indexmap = { version = "2.2.6", optional = true }
 
 [dev-dependencies]
 frender-test = { version = "0.1.0", path = "../frender-test" }
+frender-html-components = { version = "0.1.0", path = "../frender-html-components" }
 
 [features]
 ssr = ["dep:async-str-iter", "dep:frender-ssr"]

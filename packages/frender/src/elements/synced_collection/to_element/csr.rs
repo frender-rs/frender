@@ -1,10 +1,10 @@
 use std::{cell::RefCell, marker::PhantomData, pin::Pin, rc::Rc};
 
 use frender_html::{
-    dom::{
+    dom::csr::{
         behaviors::{NodeRenderSelf, NodeWithRenderContextAfterSelf as _},
         render::RenderContext as _,
-        ui_handle::{UiHandle, UnmountedUiHandle},
+        UiHandle, UnmountedUiHandle,
     },
     experimental::{
         self, PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedStateOfKind,

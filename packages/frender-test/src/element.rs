@@ -372,9 +372,10 @@ impl WeakElement {
 mod cursor_placeholder {
     use std::borrow::Cow;
 
-    use frender_html::dom::{
+    use frender_html::dom::csr::{
         behaviors::{self, Node as _},
-        ui_handle::{UiHandle, UnmountedUiHandle},
+        render::RenderWithContext,
+        UiHandle, UnmountedUiHandle,
     };
 
     use crate::renderer::{RenderContext, Renderer};
@@ -388,7 +389,7 @@ mod cursor_placeholder {
 
         fn mount(self, render_context: &mut RenderContext) -> Self::Mounted
         where
-            Renderer: frender_html::dom::render::RenderWithContext,
+            Renderer: RenderWithContext,
         {
             render_context.readd_node(Cow::Owned(Node::CursorPlaceholder(self.0.clone())), true);
             self.0
@@ -409,21 +410,21 @@ mod cursor_placeholder {
 
         fn reposition(&mut self, render_context: &mut RenderContext)
         where
-            Renderer: frender_html::dom::render::RenderWithContext,
+            Renderer: RenderWithContext,
         {
             render_context.readd_node(Cow::Owned(Node::CursorPlaceholder(self.clone())), true);
         }
 
         fn check_and_move_cursor(&self, render_context: &mut RenderContext)
         where
-            Renderer: frender_html::dom::render::RenderWithContext,
+            Renderer: RenderWithContext,
         {
             render_context.readd_node(Cow::Owned(Node::CursorPlaceholder(self.clone())), false);
         }
 
         fn assert_cursor_is_at_self(&self, render_context: &RenderContext)
         where
-            Renderer: frender_html::dom::render::RenderWithContext,
+            Renderer: RenderWithContext,
         {
             assert!(render_context.cursor_is_at(
                 |node| matches!(node, Node::CursorPlaceholder(cp) if cp.is_same_cursor_placeholder(self))
@@ -449,7 +450,7 @@ mod cursor_placeholder {
 
         fn check_and_move_cursor_after_self(&self, render_context: &mut RenderContext)
         where
-            Renderer: frender_html::dom::render::RenderWithContext,
+            Renderer: RenderWithContext,
         {
             assert!(self.cursor_is_at_self(render_context));
             render_context.readd_node(Cow::Owned(Node::CursorPlaceholder(self.clone())), false)
@@ -457,7 +458,7 @@ mod cursor_placeholder {
 
         fn cursor_is_at_self(&self, render_context: &RenderContext) -> bool
         where
-            Renderer: frender_html::dom::render::RenderWithContext,
+            Renderer: RenderWithContext,
         {
             render_context.cursor_is_at(
                 |node| matches!(node, Node::CursorPlaceholder(cp) if cp.is_same_cursor_placeholder(self)),
@@ -475,7 +476,7 @@ mod cursor_placeholder {
 
     impl behaviors::NodeRenderSelf<Renderer> for CursorPlaceholder {
         fn render_self(
-            render_context: &mut <Renderer as frender_html::dom::render::RenderWithContext>::RenderContext<'_>,
+            render_context: &mut <Renderer as RenderWithContext>::RenderContext<'_>,
         ) -> Self {
             let mut node = Self::new();
             node.readd_self(render_context, true);
@@ -487,9 +488,7 @@ mod cursor_placeholder {
         fn with_render_context_after_self<Res>(
             &mut self,
             renderer: &mut Renderer,
-            f: impl FnOnce(
-                &mut <Renderer as frender_html::dom::render::RenderWithContext>::RenderContext<'_>,
-            ) -> Res,
+            f: impl FnOnce(&mut <Renderer as RenderWithContext>::RenderContext<'_>) -> Res,
         ) -> Res {
             renderer.with_render_context_after_node(Node::CursorPlaceholder(self.clone()), f)
         }
@@ -501,10 +500,9 @@ mod dom {
 
     use super::{Element, Node};
 
-    use frender_html::dom::{
-        behaviors,
-        render_from::str::ValueForStr,
-        ui_handle::{ProvideMutMounted, UiHandle, UnmountedUiHandle},
+    use frender_html::dom::csr::{
+        behaviors, render::RenderWithContext, render_from::str::ValueForStr, ProvideMutMounted,
+        UiHandle, UnmountedUiHandle,
     };
 
     pub struct UnmountedElement(Element);
@@ -543,21 +541,21 @@ mod dom {
 
         fn reposition(&mut self, render_context: &mut RenderContext)
         where
-            Renderer: frender_html::dom::render::RenderWithContext,
+            Renderer: RenderWithContext,
         {
             render_context.readd_node(std::borrow::Cow::Owned(Node::Element(self.clone())), true)
         }
 
         fn check_and_move_cursor(&self, render_context: &mut RenderContext)
         where
-            Renderer: frender_html::dom::render::RenderWithContext,
+            Renderer: RenderWithContext,
         {
             render_context.readd_node(std::borrow::Cow::Owned(Node::Element(self.clone())), false)
         }
 
         fn assert_cursor_is_at_self(&self, render_context: &RenderContext)
         where
-            Renderer: frender_html::dom::render::RenderWithContext,
+            Renderer: RenderWithContext,
         {
             assert!(render_context
                 .current_node()
@@ -589,7 +587,7 @@ mod dom {
             render_context: &mut crate::renderer::RenderContext<'_>,
             force_reposition: bool,
         ) where
-            Renderer: frender_html::dom::render::RenderWithContext,
+            Renderer: RenderWithContext,
         {
             render_context.readd_node(
                 std::borrow::Cow::Owned(Node::Element(self.clone())),
@@ -601,7 +599,7 @@ mod dom {
             &self,
             render_context: &mut crate::renderer::RenderContext<'_>,
         ) where
-            Renderer: frender_html::dom::render::RenderWithContext,
+            Renderer: RenderWithContext,
         {
             assert!(self.cursor_is_at_self(render_context));
             render_context.readd_node(std::borrow::Cow::Owned(Node::Element(self.clone())), false)
@@ -669,7 +667,7 @@ mod dom {
     }
 
     mod style {
-        use frender_html::dom::{behaviors, style::csr::CssStyleDeclaration};
+        use frender_html::dom::{csr::behaviors, style::csr::CssStyleDeclaration};
 
         use crate::{element::Element, renderer::Renderer};
 
@@ -740,9 +738,12 @@ mod dom_token_list {
 }
 
 mod event_listener {
+    use frender_common::HandleEvent;
     use frender_html::{
         dom::{
-            event_types::EventType, HasEventTypeName, OnEvent, PinnedRegisterUpdate, RegisterUpdate,
+            csr::{OnEvent, PinnedRegisterUpdate, RegisterUpdate},
+            event_types::EventType,
+            HasEventTypeName,
         },
         experimental::RenderInitPinned,
     };
@@ -825,15 +826,11 @@ mod event_listener {
 
     impl<ET: HasEventTypeName + EventType> OnEvent<Renderer, ET> for Element {
         type EventListener<
-            F: frender_html::dom::HandleEvent<
-                    <ET as frender_html::dom::event_types::EventType>::Event,
-                > + 'static,
+            F: HandleEvent<<ET as frender_html::dom::event_types::EventType>::Event> + 'static,
         > = EventListener<F>;
 
         type EventListenerUnpinned<
-            F: frender_html::dom::HandleEvent<
-                    <ET as frender_html::dom::event_types::EventType>::Event,
-                > + 'static,
+            F: HandleEvent<<ET as frender_html::dom::event_types::EventType>::Event> + 'static,
         > = EventListenerUnpinned<F>;
     }
 }
@@ -842,10 +839,10 @@ mod form_control {
     use std::marker::PhantomData;
 
     use frender_html::{
-        dom::RegisterUpdate,
+        dom::csr::RegisterUpdate,
         form_control::{
-            element::FormControlElement,
-            value::{FormControlValueKind, HandleFormControlValue},
+            csr::{FormControlElement, HandleFormControlValue},
+            FormControlValueKind, KindOfChecked, KindOfValue, KindOfValueAsNumber,
         },
     };
 
@@ -853,8 +850,12 @@ mod form_control {
 
     use super::Element;
 
-    impl FormControlElement<str, Renderer> for Element {
+    impl FormControlElement<KindOfValue, Renderer> for Element {
         fn set_default_value(&mut self, renderer: &mut Renderer, value: &str) {
+            todo!()
+        }
+
+        fn remove_default_value(&mut self, renderer: &mut Renderer) {
             todo!()
         }
 
@@ -866,23 +867,27 @@ mod form_control {
             todo!()
         }
 
-        type OnValueChangeEventListenerUnpinned<F: HandleFormControlValue<str> + 'static> =
-            EventListenerUnpinned<str>;
+        type OnValueChangeEventListenerUnpinned<F: HandleFormControlValue<KindOfValue> + 'static> =
+            EventListenerUnpinned<KindOfValue>;
 
         type OnValueChangeElementUnpinned = Self;
         fn on_value_change_element_unpinned(&mut self) -> &mut Self::OnValueChangeElementUnpinned {
             self
         }
 
-        type OnValueChangeFUnpinned<F: HandleFormControlValue<str> + 'static> = F;
+        type OnValueChangeFUnpinned<F: HandleFormControlValue<KindOfValue> + 'static> = F;
     }
 
-    impl FormControlElement<f64, Renderer> for Element {
-        fn set_default_value(&mut self, renderer: &mut Renderer, value: &f64) {
+    impl FormControlElement<KindOfValueAsNumber, Renderer> for Element {
+        fn set_default_value(&mut self, renderer: &mut Renderer, value: f64) {
             todo!()
         }
 
-        fn set_value(&mut self, renderer: &mut Renderer, value: &f64) {
+        fn remove_default_value(&mut self, renderer: &mut Renderer) {
+            todo!()
+        }
+
+        fn set_value(&mut self, renderer: &mut Renderer, value: f64) {
             todo!()
         }
 
@@ -890,23 +895,28 @@ mod form_control {
             todo!()
         }
 
-        type OnValueChangeEventListenerUnpinned<F: HandleFormControlValue<f64> + 'static> =
-            EventListenerUnpinned<f64>;
+        type OnValueChangeEventListenerUnpinned<
+            F: HandleFormControlValue<KindOfValueAsNumber> + 'static,
+        > = EventListenerUnpinned<KindOfValueAsNumber>;
 
         type OnValueChangeElementUnpinned = Self;
         fn on_value_change_element_unpinned(&mut self) -> &mut Self::OnValueChangeElementUnpinned {
             self
         }
 
-        type OnValueChangeFUnpinned<F: HandleFormControlValue<f64> + 'static> = F;
+        type OnValueChangeFUnpinned<F: HandleFormControlValue<KindOfValueAsNumber> + 'static> = F;
     }
 
-    impl FormControlElement<bool, Renderer> for Element {
-        fn set_default_value(&mut self, renderer: &mut Renderer, value: &bool) {
+    impl FormControlElement<KindOfChecked, Renderer> for Element {
+        fn set_default_value(&mut self, renderer: &mut Renderer, value: bool) {
             todo!()
         }
 
-        fn set_value(&mut self, renderer: &mut Renderer, value: &bool) {
+        fn remove_default_value(&mut self, renderer: &mut Renderer) {
+            todo!()
+        }
+
+        fn set_value(&mut self, renderer: &mut Renderer, value: bool) {
             todo!()
         }
 
@@ -914,15 +924,16 @@ mod form_control {
             todo!()
         }
 
-        type OnValueChangeEventListenerUnpinned<F: HandleFormControlValue<bool> + 'static> =
-            EventListenerUnpinned<bool>;
+        type OnValueChangeEventListenerUnpinned<
+            F: HandleFormControlValue<KindOfChecked> + 'static,
+        > = EventListenerUnpinned<KindOfChecked>;
 
         type OnValueChangeElementUnpinned = Self;
         fn on_value_change_element_unpinned(&mut self) -> &mut Self::OnValueChangeElementUnpinned {
             self
         }
 
-        type OnValueChangeFUnpinned<F: HandleFormControlValue<bool> + 'static> = F;
+        type OnValueChangeFUnpinned<F: HandleFormControlValue<KindOfChecked> + 'static> = F;
     }
 
     enum Never {}

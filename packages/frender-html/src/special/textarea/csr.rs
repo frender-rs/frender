@@ -3,6 +3,7 @@ use std::marker::PhantomData;
 use frender_common::convert::{FromMut as _, IntoMut as _};
 use frender_form_control::{
     csr::{FormControlValue, FormControlValueStateKind},
+    textarea::CsrTextAreaValue,
     KindOfValue,
 };
 
@@ -67,9 +68,13 @@ impl<K: FormControlValueStateKind<KindOfValue>, ET: ?Sized + behavior_type_trait
 
 impl<Children> CsrComponent<Children> for textarea::Marker
 where
-    Children: FormControlValue<KindOfValue>,
+    Children: CsrTextAreaValue,
 {
-    type ChildrenRenderStateKind = Kind<Children::StateKind, Self>;
+    type ChildrenRenderStateKind = Kind<
+        //
+        <Children::IntoCsrTextAreaValue as FormControlValue<KindOfValue>>::StateKind,
+        Self,
+    >;
     type ChildrenPinnedRenderInit<R: RenderHtml + ?Sized> = RenderInitNothing;
 
     fn children_pinned_render_init<R: RenderHtml + ?Sized>(
@@ -136,7 +141,7 @@ where
         crate::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
         crate::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
     ) {
-        (Children::render_init(children, renderer, parent.into_mut()), ())
+        (Children::IntoCsrTextAreaValue::render_init(Children::into_csr_text_area_value(children), renderer, parent.into_mut()), ())
     }
 
     fn children_unpinned_render_init_by_reusing<R: RenderHtml + ?Sized>(
@@ -150,7 +155,7 @@ where
     ) -> crate::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
         // TODO: render_init or render_update?
         // render_init is correct but render_update might avoid unnecessary rendering
-        *children_reused_state = Children::render_init(children, renderer, parent.into_mut());
+        *children_reused_state = Children::IntoCsrTextAreaValue::render_init(Children::into_csr_text_area_value(children), renderer, parent.into_mut());
         ()
     }
 
@@ -163,6 +168,6 @@ where
         children_state: &mut crate::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
         (): &mut crate::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
     ) {
-        Children::render_update(children, renderer, parent.into(), children_state)
+        Children::IntoCsrTextAreaValue::render_update(Children::into_csr_text_area_value(children), renderer, parent.into(), children_state)
     }
 }

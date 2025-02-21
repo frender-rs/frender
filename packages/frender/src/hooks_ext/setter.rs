@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-use frender_html::dom::{HandleEvent, MaybeHandleEvent};
+use frender_common::{HandleEvent, MaybeHandleEvent};
 use hooks::ShareValue;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

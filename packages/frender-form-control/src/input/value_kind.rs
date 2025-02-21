@@ -12,7 +12,7 @@ use crate::{
 };
 
 #[cfg(feature = "ssr")]
-use crate::ssr::value::ProvideFormControlValue;
+use crate::ProvideFormControlValue;
 
 #[cfg(feature = "csr")]
 use super::InputElement;

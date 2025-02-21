@@ -1,13 +1,15 @@
 use std::{future::Future, pin::pin};
 
-use frender_html::{
-    dom::ProvideRenderContext,
-    experimental::{PinnedRenderStateKind, PinnedRenderStateKindPollRender, RenderInitPinned as _},
-    CsrElement as Element, RenderHtml, StateUnmount,
+use frender_csr::{
+    experimental::{
+        PinnedRenderStateKind, PinnedRenderStateKindPollRender, ProvideRenderContext,
+        RenderInitPinned as _,
+    },
+    CsrElement, RenderHtml, StateUnmount,
 };
 
 pub trait IntoRenderElementExt: ProvideRenderContext {
-    fn into_render_element<E: Element>(self, element: E) -> crate::RenderElement<Self, E>
+    fn into_render_element<E: CsrElement>(self, element: E) -> crate::RenderElement<Self, E>
     where
         Self: Sized,
         Self::Renderer: RenderHtml,
@@ -15,7 +17,7 @@ pub trait IntoRenderElementExt: ProvideRenderContext {
         crate::RenderElement::new(self, element)
     }
 
-    fn render_element<E: Element>(&mut self, element: E) -> crate::RenderElement<&mut Self, E>
+    fn render_element<E: CsrElement>(&mut self, element: E) -> crate::RenderElement<&mut Self, E>
     where
         Self::Renderer: RenderHtml,
     {
@@ -23,7 +25,7 @@ pub trait IntoRenderElementExt: ProvideRenderContext {
     }
 
     /// The caller could then unmount the ui handle or just drop it without unmounting.
-    fn into_render_element_until_non_reactive<E: Element>(
+    fn into_render_element_until_non_reactive<E: CsrElement>(
         mut self,
         element: E,
     ) -> impl Future<
@@ -58,7 +60,7 @@ pub trait IntoRenderElementExt: ProvideRenderContext {
         }
     }
 
-    fn render_element_until_non_reactive<E: Element>(
+    fn render_element_until_non_reactive<E: CsrElement>(
         &mut self,
         element: E,
     ) -> impl Future<

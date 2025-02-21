@@ -1,5 +1,6 @@
 use std::borrow::Borrow;
 
+// TODO: remove
 /// The non generic version of [`Borrow`].
 pub trait PrimarilyBorrow: Borrow<Self::Borrowed> {
     type Borrowed: ?Sized;

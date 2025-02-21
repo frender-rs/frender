@@ -2,7 +2,8 @@ use std::{borrow::Cow, rc::Rc, sync::Arc};
 
 use frender_common::{value_kind::StaticRefOrTempOwned, TempStr};
 use frender_html::dom::{
-    render::RenderTextFrom, string_element::StringElement, ui_handle::UnmountedUiHandle,
+    csr::{render::RenderTextFrom, UnmountedUiHandle},
+    string_element::StringElement,
 };
 use frender_macro_rules::impl_many;
 

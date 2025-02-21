@@ -1,7 +1,7 @@
 use frender_dom::ssr::{HasIntrinsicComponentTagSsr, IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
 use frender_ssr::html::tag::AssertTagName;
 
-use frender_form_control::input::{InputDataModel, IntoInputDataModel, IntoSsrInputDataModel};
+use frender_form_control::input::{InputDataModel, IntoSsrInputDataModel};
 
 use crate::html::components::input;
 

@@ -1,6 +1,6 @@
 use frender_ssr::html::assert::HtmlAttributeEqValueOrEmpty;
 
-use crate::{ssr::value::ProvideFormControlValue, FormControlValueKind};
+use crate::{FormControlValueKind, ProvideFormControlValue};
 
 pub trait InputValueKindSsr: FormControlValueKind {
     type IntoInputValueAttrValue<V: ProvideFormControlValue<Self>>: HtmlAttributeEqValueOrEmpty;

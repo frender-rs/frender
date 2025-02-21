@@ -1,20 +1,23 @@
+pub use self::from::FromFormControlValue;
+
 use std::{borrow::Borrow, marker::PhantomData, pin::Pin, task::Poll};
 
-use frender_common::{IntoStaticStr, PrimarilyBorrow, ToStaticStr};
+use frender_common::{IntoStaticStr, ToStaticStr};
 use frender_html::{
-    dom::{RegisterUpdate, StateUnmount},
+    dom::csr::{RegisterUpdate, StateUnmount},
     form_control::{
-        element::FormControlElement,
-        input::{InputValue, InputValueKind},
-        value::{
-            FormControlValue, FormControlValueKind, FormControlValueStateKind,
-            FromFormControlValue, HandleFormControlValue, MaybeProvideFormControlValue,
-            ProvideFormControlValue,
+        csr::{
+            FormControlElement, FormControlValue, FormControlValueStateKind, HandleFormControlValue,
         },
+        FormControlValueKind, MaybeProvideFormControlValue, ProvideFormControlValue,
     },
 };
 use hooks::{Hook as _, HookPollNextUpdate, HookUnmount, ShareValue, Signal};
 
+mod from;
+
+mod input_checked;
+mod input_value;
 mod textarea;
 
 pub struct State<SH, NRS> {
@@ -96,8 +99,10 @@ where
     }
 }
 
+#[cfg(remove)]
 pub struct SignalIntoControlledValueToStaticStr<S>(pub S);
 
+#[cfg(remove)]
 impl<S> IntoStaticStr for SignalIntoControlledValueToStaticStr<S>
 where
     S: ShareValue,
@@ -110,6 +115,7 @@ where
     }
 }
 
+#[cfg(remove)]
 impl<S> ToStaticStr for SignalIntoControlledValueToStaticStr<S>
 where
     S: ShareValue,
@@ -123,18 +129,19 @@ where
 impl<S, Val, VK> ProvideFormControlValue<VK> for SignalIntoControlledValue<S>
 where
     S: ShareValue<Value = Val>,
-    Val: Borrow<VK>,
+    Val: ProvideFormControlValue<VK>,
     VK: ?Sized + FormControlValueKind,
 {
-    fn provide_form_control_value<R>(&self, receive: impl FnOnce(&VK) -> R) -> R {
-        self.0.map(|value| receive(value.borrow()))
+    fn provide_form_control_value<R>(&self, receive: impl FnOnce(VK::Value<'_>) -> R) -> R {
+        self.0
+            .map(|value| value.provide_form_control_value(receive))
     }
 }
 
 impl<S, Val, VK> MaybeProvideFormControlValue<VK> for SignalIntoControlledValue<S>
 where
     S: ShareValue<Value = Val>,
-    Val: Borrow<VK>,
+    Val: ProvideFormControlValue<VK>,
     VK: ?Sized + FormControlValueKind,
 {
     type ProvideFormControlValue = Self;
@@ -142,19 +149,6 @@ where
     fn maybe_into_provide_form_control_value(this: Self) -> Option<Self::ProvideFormControlValue> {
         Some(this)
     }
-}
-
-impl<S, Val, VK> InputValue for SignalIntoControlledValue<S>
-where
-    // S: Clone + 'static + Hook + for<'hook> HookValue<'hook, Value = &'hook S> + Unpin,
-    S: Signal<Value = Val> + 'static,
-    S::SignalHook: Unpin,
-    Val: FromFormControlValue<VK> + Borrow<VK>,
-    Val: PrimarilyBorrow<Borrowed = VK>,
-    VK: ?Sized + FormControlValueKind,
-    VK: InputValueKind,
-{
-    type ValueKind = VK;
 }
 
 pub struct UpdateFormControlElement<VK: ?Sized + FormControlValueKind>(PhantomData<VK>);
@@ -172,10 +166,10 @@ pub struct Kind<S>(Never, PhantomData<S>);
 
 impl<S, Val, VK> FormControlValueStateKind<VK> for Kind<S>
 where
-    VK: ?Sized + FormControlValueKind,
+    VK: FormControlValueKind,
     S: Signal<Value = Val> + 'static,
     S::SignalHook: Unpin,
-    Val: FromFormControlValue<VK> + Borrow<VK>,
+    Val: FromFormControlValue<VK> + ProvideFormControlValue<VK>,
 {
     type UnpinnedState<E: FormControlElement<VK, R> + ?Sized, R: ?Sized> =
         State<S::SignalHook, E::OnValueChangeEventListenerUnpinned<SignalIntoControlledValue<S>>>;
@@ -198,12 +192,7 @@ where
             Poll::Ready(true) => {
                 {
                     let signal = Pin::new(&mut *signal_hook).use_hook();
-                    signal.map(|value| {
-                        let value = value.borrow();
-
-                        element.set_default_value(renderer, value);
-                        element.set_value(renderer, value);
-                    });
+                    signal.map(set_default_value_and_value(renderer, element));
                 }
 
                 // Then, we re-check if signal_hook still emits new value
@@ -230,14 +219,43 @@ where
             Poll::Pending => Poll::Pending,
         }
     }
+
+    fn render_remove<E: FormControlElement<VK, R> + ?Sized, R: ?Sized>(
+        renderer: &mut R,
+        element: &mut E,
+        _: &Self::UnpinnedState<E, R>,
+    ) {
+        element.remove_default_value(renderer);
+        element.remove_value(renderer);
+    }
+}
+
+fn set_default_value_and_value<
+    'a,
+    V: ProvideFormControlValue<FK>,
+    FK: FormControlValueKind,
+    E: FormControlElement<FK, R> + ?Sized,
+    R: ?Sized,
+>(
+    renderer: &'a mut R,
+    element: &'a mut E,
+) -> impl 'a + FnMut(&V) {
+    |value| {
+        value.provide_form_control_value(|value| {
+            element.set_default_value(renderer, value);
+        });
+        value.provide_form_control_value(|value| {
+            element.set_value(renderer, value);
+        })
+    }
 }
 
 impl<S, Val, VK> FormControlValue<VK> for SignalIntoControlledValue<S>
 where
-    VK: ?Sized + FormControlValueKind,
+    VK: FormControlValueKind,
     S: Signal<Value = Val> + 'static,
     S::SignalHook: Unpin,
-    Val: FromFormControlValue<VK> + Borrow<VK>,
+    Val: FromFormControlValue<VK> + ProvideFormControlValue<VK>,
 {
     type StateKind = Kind<S>;
 
@@ -246,11 +264,7 @@ where
         renderer: &mut R,
         element: &mut E,
     ) -> <Self::StateKind as FormControlValueStateKind<VK>>::UnpinnedState<E, R> {
-        this.0.map(|value| {
-            let value = value.borrow();
-            element.set_default_value(renderer, value);
-            element.set_value(renderer, value);
-        });
+        this.0.map(set_default_value_and_value(renderer, element));
 
         let signal_hook = this.0.to_signal_hook();
         State::new(
@@ -283,11 +297,7 @@ where
             return;
         }
 
-        this.0.map(|value| {
-            let value = value.borrow();
-            element.set_default_value(renderer, value);
-            element.set_value(renderer, value);
-        });
+        this.0.map(set_default_value_and_value(renderer, element));
 
         *signal_hook = this.0.to_signal_hook();
 

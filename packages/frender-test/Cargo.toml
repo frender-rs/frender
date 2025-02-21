@@ -8,6 +8,7 @@ frender-common = { version = "0.1.0", path = "../frender-common" }
 frender-html = { version = "0.1.0", path = "../frender-html", features = [
     "ElementProxyAttrs",
     "experimental",
+    "csr",
 ] }
 frender-macro-rules = { version = "0.1.0", path = "../frender-macro-rules" }
 indexmap = { version = "2.2.6" }

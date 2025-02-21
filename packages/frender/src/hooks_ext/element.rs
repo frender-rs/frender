@@ -7,7 +7,7 @@ pub use self::with_to_element::WithToElement;
 use std::{marker::PhantomData, pin::Pin, task::Poll};
 
 use frender_html::{
-    dom::StateUnmount,
+    dom::csr::StateUnmount,
     experimental::{
         self, PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedStateOfKind,
         PinnedUiHandleOfKind, RenderInitPinned, UnpinnedRenderStateKind,
@@ -591,7 +591,7 @@ where
     F: IntoAsMutCsrElementWithValue<SH::SignalShareValue>,
 {
     type Output = CursorPlaceholdersSurrounded<
-        <Ctx::Renderer as frender_html::dom::render::Render>::CursorPlaceholder,
+        <Ctx::Renderer as frender_html::dom::csr::render::Render>::CursorPlaceholder,
         <KindOfMutElement<F::MutPart, SH::SignalShareValue> as PinnedRenderStateKind>::PinnedUiHandle<
             Ctx::Renderer,
         >,
@@ -625,7 +625,7 @@ where
                 render_context,
                 |render_context| {
                     signal_hook.map(|value| {
-                        use frender_html::dom::render::RenderContext as _;
+                        use frender_html::csr::render::RenderContext as _;
                         let element = F::owned_part_into_csr_element(mut_part, value, owned_part);
                         let (state_init, render_init) =
                             element.pinned_render_init(render_context.renderer_mut());

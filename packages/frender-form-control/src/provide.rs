@@ -1,5 +1,3 @@
-use std::borrow::Borrow;
-
 use crate::{
     value::{FormControlValueKind, KindOfChecked, KindOfValue, KindOfValueAsNumber},
     values::{EitherFormControlValue, UncontrolledWithDefaultValue},
@@ -17,6 +15,12 @@ pub trait ProvideFormControlValue<VK: ?Sized + FormControlValueKind>:
     fn provide_form_control_value<R>(&self, receive: impl FnOnce(VK::Value<'_>) -> R) -> R;
 }
 
+pub trait ProvideFormControlValueWithKind:
+    ProvideFormControlValue<Self::ProvideFormControlValueKind>
+{
+    type ProvideFormControlValueKind: ?Sized + FormControlValueKind;
+}
+
 macro_rules! impl_maybe_provide_with_some {
     () => {
         type ProvideFormControlValue = Self;
@@ -29,6 +33,7 @@ macro_rules! impl_maybe_provide_with_some {
     };
 }
 
+// region: never
 pub enum NeverProvideFormControlValue {}
 
 impl<VK: ?Sized + FormControlValueKind> MaybeProvideFormControlValue<VK>
@@ -47,7 +52,8 @@ impl<VK: ?Sized + FormControlValueKind> ProvideFormControlValue<VK>
         match *self {}
     }
 }
-
+// endregion
+// region: bool f64
 macro_rules! provide_self {
     ($(($ty:ty, $FK:ty)),* $(,)?) => {
         $(
@@ -60,14 +66,36 @@ macro_rules! provide_self {
                     receive(*self)
                 }
             }
+
+            impl ProvideFormControlValueWithKind for $ty {
+                type ProvideFormControlValueKind = $FK;
+            }
         )*
     };
 }
 
-provide_self!((f64, KindOfValueAsNumber), (bool, KindOfChecked));
+provide_self!(
+    //
+    (f64, KindOfValueAsNumber),
+    (bool, KindOfChecked),
+);
+// endregion
+// region: str
+impl<T: KnownAsRefStr> MaybeProvideFormControlValue<KindOfValue> for T {
+    impl_maybe_provide_with_some! {}
+}
+impl<T: KnownAsRefStr> ProvideFormControlValue<KindOfValue> for T {
+    fn provide_form_control_value<R>(&self, receive: impl FnOnce(&str) -> R) -> R {
+        receive(self.as_ref())
+    }
+}
+impl<T: KnownAsRefStr> ProvideFormControlValueWithKind for T {
+    type ProvideFormControlValueKind = KindOfValue;
+}
 
+trait KnownAsRefStr: AsRef<str> {}
 frender_common::impl_many!(
-    impl<__> MaybeProvideFormControlValue<KindOfValue>
+    impl<__> KnownAsRefStr
         for each_of![
             //
             &str,
@@ -77,27 +105,10 @@ frender_common::impl_many!(
             std::sync::Arc<str>
         ]
     {
-        impl_maybe_provide_with_some! {}
     }
 );
 
-frender_common::impl_many!(
-    impl<__> ProvideFormControlValue<KindOfValue>
-        for each_of![
-            //
-            &str,
-            String,
-            std::borrow::Cow<'_, str>,
-            std::rc::Rc<str>,
-            std::sync::Arc<str>,
-        ]
-    {
-        fn provide_form_control_value<R>(&self, receive: impl FnOnce(&str) -> R) -> R {
-            receive(self)
-        }
-    }
-);
-
+// endregion
 // nothing
 impl<VK: ?Sized + FormControlValueKind> MaybeProvideFormControlValue<VK> for frender_dom::Empty {
     type ProvideFormControlValue = NeverProvideFormControlValue;
@@ -118,6 +129,7 @@ impl<T: MaybeProvideFormControlValue<VK>, VK: ?Sized + FormControlValueKind>
     }
 }
 
+// region: either
 impl<
         VK: ?Sized + FormControlValueKind,
         A: ProvideFormControlValue<VK>,
@@ -198,3 +210,4 @@ impl<V: MaybeProvideFormControlValue<VK>, VK: ?Sized + FormControlValueKind>
         V::maybe_into_provide_form_control_value(this.0)
     }
 }
+// endregion

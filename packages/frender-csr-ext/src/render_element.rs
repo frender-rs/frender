@@ -1,9 +1,10 @@
 use std::{future::Future, pin::Pin, task::Poll};
 
-use frender_html::{
-    dom::{ui_handle::UiHandle as _, ProvideRenderContext},
-    experimental::{PinnedRenderStateKind, PinnedRenderStateKindPollRender as _},
-    CsrElement, RenderHtml, StateUnmount as _,
+use frender_csr::{
+    experimental::{
+        PinnedRenderStateKind, PinnedRenderStateKindPollRender as _, ProvideRenderContext,
+    },
+    CsrElement, RenderHtml, StateUnmount as _, UiHandle as _,
 };
 
 pin_project_lite::pin_project!(
@@ -152,12 +153,12 @@ where
         let (mut state, ui_handle) = this.p.provide_render_context(|render_context| {
             this.element_or_state.as_mut().as_pin_mut_state_or_insert(
                 |element| {
-                    use frender_html::dom::render::RenderContext as _;
+                    use frender_csr::render::RenderContext as _;
                     let (state, init) = element.pinned_render_init(render_context.renderer_mut());
                     (state, (init, render_context))
                 },
                 |(init, render_context), state| {
-                    use frender_html::experimental::RenderInitPinned as _;
+                    use frender_csr::experimental::RenderInitPinned as _;
 
                     init.render_init_pinned(render_context, state)
                 },

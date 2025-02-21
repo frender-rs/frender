@@ -959,7 +959,7 @@ dependencies = [
 name = "frender-csr-ext"
 version = "0.1.0"
 dependencies = [
- "frender-html",
+ "frender-csr",
  "pin-project-lite",
 ]
 
@@ -1111,6 +1111,7 @@ version = "0.1.0"
 dependencies = [
  "async-str-iter",
  "frender-csr",
+ "frender-html-components",
  "frender-ssr",
  "frender-test",
  "indexmap 2.2.6",

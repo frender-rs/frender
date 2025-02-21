@@ -1,6 +1,6 @@
 #![cfg(feature = "csr")]
 
-use frender_html::cs;
+use frender_html_components as cs;
 use frender_keyed_elements::{Keyed, KeyedElements};
 use frender_test::{element::Node, renderer::Root};
 
@@ -26,10 +26,9 @@ fn dom_nodes_div_i32(root: &Root) -> Vec<i32> {
         .collect::<Vec<_>>()
 }
 
-#[cfg(feature = "csr")]
 #[test]
 fn prepend() {
-    use frender_html::CsrElement;
+    use frender_csr::CsrElement;
     use frender_test::renderer::unpinned_render_init;
 
     let (ref mut renderer, ref root, (ref mut state, ref mut ui_handle)) = unpinned_render_init(

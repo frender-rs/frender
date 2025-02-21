@@ -4,3 +4,5 @@ pub use crate::element::{
 };
 
 pub use frender_common::reactive_value::RenderInitPinned;
+
+pub use frender_dom::csr::ProvideRenderContext;
