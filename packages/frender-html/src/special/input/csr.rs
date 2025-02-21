@@ -18,9 +18,9 @@ use crate::{
         behavior_type::BehaviorType,
         component::{CsrComponent, RenderStateKindPollRenderWithParent},
         element::{self, PinnedRenderStateKind, UnpinnedRenderStateKind},
+        kinds::RenderInitNothing,
     },
     html::{components::input, RenderHtml},
-    kinds::RenderInitNothing,
 };
 
 enum Never {}

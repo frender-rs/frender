@@ -8,9 +8,9 @@ use frender_dom::{
 
 use crate::{
     csr::element::HtmlRenderContext,
+    csr::kinds::{KindOfNoState, RenderInitNothing},
     html::RenderHtml,
     into_property::IntoProperty,
-    kinds::{KindOfNoState, RenderInitNothing},
 };
 
 pub trait BehaviorType {

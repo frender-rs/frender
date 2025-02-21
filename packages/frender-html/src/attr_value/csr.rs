@@ -10,9 +10,9 @@ use frender_dom::csr::behaviors::Element as _;
 
 use crate::{
     csr::behavior_type::{BehaviorType, UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior},
+    csr::property_common::RemoveAttrOfBehaviorType,
     has_const_attr_name::HasConstAttrName,
     html::{behavior_type_traits, behaviors, RenderHtml},
-    property_common::RemoveAttrOfBehaviorType,
 };
 
 use super::{HasAttrValueKind, Property};

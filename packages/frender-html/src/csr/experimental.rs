@@ -9,3 +9,7 @@ pub use crate::{
 pub use frender_common::reactive_value::RenderInitPinned;
 
 pub use frender_dom::csr::ProvideRenderContext;
+
+pub mod kinds {
+    pub use crate::csr::kinds::KindUnpinned;
+}

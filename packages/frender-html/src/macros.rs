@@ -1093,9 +1093,9 @@ macro_rules! impl_attr_value_for_prop_marker {
         ref_value_kind($($ref_value_kind:tt)?)
         value_kind($($value_kind:tt)*)
     ) => {
-        impl crate::property_common::UseSpecRemoveAttrOfBehaviorType for $prop_marker {}
-        impl<BT: behavior_type_traits::$trait_name> crate::property_common::HasSpecRemoveAttrOfBehaviorType<BT> for $prop_marker {
-            type SpecRemoveAttrOfBehaviorType = crate::property_common::SpecRemoveAttrOfElementTypeWithAttrName<Self>;
+        impl crate::csr::property_common::UseSpecRemoveAttrOfBehaviorType for $prop_marker {}
+        impl<BT: behavior_type_traits::$trait_name> crate::csr::property_common::HasSpecRemoveAttrOfBehaviorType<BT> for $prop_marker {
+            type SpecRemoveAttrOfBehaviorType = crate::csr::property_common::SpecRemoveAttrOfElementTypeWithAttrName<Self>;
         }
 
         impl crate::attr_value::csr::UseSpecUpdateAttrValueOfBehaviorType for $prop_marker {}
@@ -1143,8 +1143,8 @@ macro_rules! impl_attr_value_for_prop_marker {
         ref_value_kind($($ref_value_kind:tt)?)
         value_kind($($value_kind:tt)*)
     ) => {
-        impl crate::property_common::UseSpecRemoveAttrOfBehaviorType for $prop_marker {}
-        impl<BT: behavior_type_traits::$trait_name> crate::property_common::HasSpecRemoveAttrOfBehaviorType<BT> for $prop_marker {
+        impl crate::csr::property_common::UseSpecRemoveAttrOfBehaviorType for $prop_marker {}
+        impl<BT: behavior_type_traits::$trait_name> crate::csr::property_common::HasSpecRemoveAttrOfBehaviorType<BT> for $prop_marker {
             type SpecRemoveAttrOfBehaviorType = crate::attr_value::csr::SpecRemoveAttrWithDomApi<Self>;
         }
         impl crate::attr_value::csr::UseSpecUpdateAttrValueOfBehaviorType for $prop_marker {}
@@ -1181,7 +1181,7 @@ macro_rules! impl_attr_value_for_prop_marker {
         ref_value_kind($($ref_value_kind:tt)?)
         value_kind($value_kind:ty)
     ) => {
-        impl<BT: behavior_type_traits::$trait_name> crate::property_common::RemoveAttrOfBehaviorType<BT> for $prop_marker {
+        impl<BT: behavior_type_traits::$trait_name> crate::csr::property_common::RemoveAttrOfBehaviorType<BT> for $prop_marker {
             fn remove_attr_of_behavior_type<R: ?Sized + RenderHtml>(
                 //
                 b: &mut BT::OfBehaviorType<R>,

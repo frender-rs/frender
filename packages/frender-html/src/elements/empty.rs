@@ -2,8 +2,8 @@ use frender_dom::Empty;
 
 use crate::{
     csr::element::{self, CsrElement, HtmlRenderContext},
+    csr::kinds::{KindOfNoState, RenderInitNothing},
     html::RenderHtml,
-    kinds::{KindOfNoState, RenderInitNothing},
 };
 
 impl CsrElement for Empty {

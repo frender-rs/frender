@@ -4,13 +4,13 @@ use frender_dom::{
     HasIntrinsicComponentTag as _,
 };
 
-use crate::kinds::RenderInitNothing;
+use crate::csr::kinds::RenderInitNothing;
 use crate::{
     csr::{component::CsrComponent, element},
     html::{markers as tags, RenderHtml},
 };
 
-type Kind = crate::csr::component::StateKindWithAnyParent<crate::kinds::KindOfNoState>;
+type Kind = crate::csr::component::StateKindWithAnyParent<crate::csr::kinds::KindOfNoState>;
 
 frender_common::impl_many!(
     impl<__> CsrComponent<Empty>

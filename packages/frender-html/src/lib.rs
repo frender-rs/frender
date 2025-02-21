@@ -16,17 +16,11 @@ pub use html::components as cs;
 mod has_const_attr_name;
 mod into_property;
 
-#[cfg(feature = "csr")]
-pub mod stateless_render;
-
 #[cfg(feature = "ElementProxyAttrs")]
 pub mod element_proxy_attrs;
 
 #[cfg(feature = "ElementProxyAttrs")]
 pub use element_proxy_attrs::ElementProxyAttrs;
-
-#[cfg(feature = "csr")]
-pub mod kinds;
 
 // TODO: move to frender-dom or separate crates
 #[cfg(feature = "csr")]
@@ -55,8 +49,6 @@ mod special;
 mod attr_value;
 mod dom_tokens;
 mod event_listener;
-#[cfg(feature = "csr")]
-mod property_common;
 mod style;
 
 mod impl_bounds;
@@ -75,10 +67,16 @@ pub mod csr {
     pub(crate) mod element;
     pub use element::{CsrElement, RenderStateKind};
 
+    pub(crate) mod stateless_render;
+
+    pub(crate) mod property_common;
+
+    pub(crate) mod kinds;
+
     #[cfg(feature = "experimental")]
     pub mod experimental;
 
-    pub use super::kinds;
+    // pub use super::kinds;
 
     pub use frender_common::csr::StateUnmount;
 

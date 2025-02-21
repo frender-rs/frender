@@ -1,8 +1,7 @@
 use std::pin::Pin;
 
 use frender_csr::{
-    experimental::{self, HtmlRenderContext, RenderHtml},
-    kinds::KindUnpinned,
+    experimental::{self, kinds::KindUnpinned, HtmlRenderContext, RenderHtml},
     CsrElement,
 };
 
