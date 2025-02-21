@@ -740,12 +740,12 @@ mod dom_token_list {
 mod event_listener {
     use frender_common::HandleEvent;
     use frender_html::{
+        csr::experimental::RenderInitPinned,
         dom::{
             csr::{OnEvent, PinnedRegisterUpdate, RegisterUpdate},
             event_types::EventType,
             HasEventTypeName,
         },
-        experimental::RenderInitPinned,
     };
 
     use crate::renderer::Renderer;

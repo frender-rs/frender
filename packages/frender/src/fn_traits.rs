@@ -1,5 +1,5 @@
 use frender_html::{
-    experimental::{PinnedRenderStateKind, UnpinnedRenderStateKind},
+    csr::experimental::{PinnedRenderStateKind, UnpinnedRenderStateKind},
     CsrElement, RenderStateKind,
 };
 use frender_ssr::{html::assert::HtmlChildren, SsrElement};

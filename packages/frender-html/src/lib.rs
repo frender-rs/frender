@@ -81,11 +81,6 @@ use impl_bounds::impl_bounds;
 
 pub mod intrinsic;
 
-// TODO: move under mod csr
-#[cfg(feature = "csr")]
-#[cfg(feature = "experimental")]
-pub mod experimental;
-
 #[cfg(feature = "csr")]
 mod utils;
 
@@ -96,7 +91,7 @@ pub mod csr {
     pub use crate::element::{CsrElement, HtmlRenderContext};
 
     #[cfg(feature = "experimental")]
-    pub use super::experimental;
+    pub mod experimental;
 
     pub use super::kinds;
 

@@ -1,4 +1,4 @@
-use frender_html::{experimental, RenderStateKind};
+use frender_html::{csr::experimental, RenderStateKind};
 
 use crate::fn_traits::{FnOnce1, FnOnce2};
 use crate::memo::csr::{CompoundState, Kind};
