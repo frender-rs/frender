@@ -1,16 +1,13 @@
 #[cfg(feature = "csr")]
-pub mod array;
-#[cfg(feature = "csr")] // TODO: ssr
-pub mod either;
+mod array;
 #[cfg(feature = "csr")]
-pub mod option;
+mod either;
+#[cfg(feature = "csr")]
+mod option;
 #[cfg(feature = "csr")] // TODO: ssr
 pub mod reactive_value;
 #[cfg(feature = "csr")]
-pub mod tuple;
-
-#[cfg(feature = "csr")]
-pub use crate::intrinsic::csr as intrinsic;
+mod tuple;
 
 #[cfg(feature = "csr")]
 mod empty;

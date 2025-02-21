@@ -1,13 +1,13 @@
 use frender_common::Empty;
 
 #[cfg(feature = "csr")]
-pub use csr_attr_state::AttributeState;
+pub(crate) use csr_attr_state::AttributeState;
 
 #[cfg(feature = "csr")]
 mod csr_attr_state;
 
 #[cfg(feature = "csr")]
-pub mod csr;
+mod csr;
 
 #[cfg(feature = "ssr")]
 mod ssr;

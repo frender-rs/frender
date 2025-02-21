@@ -26,7 +26,7 @@ pub use element_proxy_attrs::ElementProxyAttrs;
 #[cfg(feature = "csr")]
 pub mod ui_handles;
 
-pub mod elements;
+mod elements;
 
 mod macros;
 #[cfg(feature = "web")]
@@ -54,7 +54,8 @@ mod style;
 mod impl_bounds;
 use impl_bounds::impl_bounds;
 
-pub mod intrinsic;
+mod intrinsic;
+pub use intrinsic::Intrinsic;
 
 #[cfg(feature = "csr")]
 mod utils;
