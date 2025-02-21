@@ -1,6 +1,6 @@
 use frender_common::{
     impl_many,
-    reactive_value::{non_reactive::Uncached, UncachedNonReactiveValueWithKind},
+    reactive_value::{non_reactive::Uncached, ReactiveValueWithKind, UncachedNonReactiveValueWithKind},
     strings::{CsrStr, NonReactiveStr},
     IntoStaticStrCache, TempStr,
 };
@@ -10,21 +10,18 @@ use crate::{csr::CsrElement, html::RenderHtml};
 
 use super::{ReactiveValueIntoElement, ValueKindStatelessRender};
 
-macro_rules! proxy_reactive_value_into_element {
-    () => {
-        proxy_reactive_value_into_element! {Self}
-    };
-    ($SelfTy:ty) => {
-        type RenderStateKind = <ReactiveValueIntoElement<$SelfTy> as CsrElement>::RenderStateKind;
-        type PinnedRenderInit<R: ?Sized + RenderHtml> = <ReactiveValueIntoElement<$SelfTy> as CsrElement>::PinnedRenderInit<R>;
+trait KnownReactiveValue: ReactiveValueWithKind<ReactiveValueKind: ValueKindStatelessRender> {}
 
-        crate::proxy_csr_element!(|this| ReactiveValueIntoElement(this));
-    };
+impl<T: KnownReactiveValue> CsrElement for T {
+    type RenderStateKind = <ReactiveValueIntoElement<Self> as CsrElement>::RenderStateKind;
+    type PinnedRenderInit<R: ?Sized + RenderHtml> = <ReactiveValueIntoElement<Self> as CsrElement>::PinnedRenderInit<R>;
+
+    crate::proxy_csr_element!(|this| ReactiveValueIntoElement(this));
 }
 
 // region: static text
 impl_many!(
-    impl<__> CsrElement
+    impl<__> KnownReactiveValue
         for each_of![
             // static strings
             &'static str,
@@ -51,26 +48,21 @@ impl_many!(
             char
         ]
     {
-        proxy_reactive_value_into_element! {}
     }
 );
 // endregion
 // region: TempStr
 /// <code>where TempStr\<S>: [CsrStr](CsrStr)</code>
-impl<S: IntoStaticStrCache> CsrElement for TempStr<S> {
-    proxy_reactive_value_into_element! {}
-}
+impl<S: IntoStaticStrCache> KnownReactiveValue for TempStr<S> {}
 // endregion
 // region: NonReactiveStr
-impl<S: CsrStr> CsrElement for NonReactiveStr<S> {
-    proxy_reactive_value_into_element! {}
-}
+impl<S: CsrStr> KnownReactiveValue for NonReactiveStr<S> {}
 // endregion
 // region: Uncached
-impl<T: UncachedNonReactiveValueWithKind> CsrElement for Uncached<T>
+impl<T: UncachedNonReactiveValueWithKind> KnownReactiveValue for Uncached<T>
+//
 where
     T::UncachedNonReactiveValueKind: ValueKindStatelessRender,
 {
-    proxy_reactive_value_into_element! {}
 }
 // endregion
