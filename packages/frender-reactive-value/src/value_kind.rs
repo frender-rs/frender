@@ -24,7 +24,7 @@ use crate::temp_str::TempStr;
 ///
 ///   `str: for<'a> ReactiveValueKind<Value<'a> = TempStr<&'a str>>`
 ///
-pub trait ValueKind: 'static {
+pub trait ValueKind: 'static + Sized {
     type Value<'a>;
 }
 
@@ -43,9 +43,11 @@ impl<T: ?Sized + 'static> ValueKind for KindOfRef<T> {
     type Value<'a> = &'a T;
 }
 
-impl ValueKind for str {
-    type Value<'a> = TempStr<&'a str>;
-}
+// pub struct KindOfTempStr(Never);
+
+// impl ValueKind for KindOfTempStr {
+//     type Value<'a> = TempStr<&'a str>;
+// }
 
 #[derive(Debug)]
 pub enum StaticRefOrTempOwned<'a, T: ?Sized + 'static + ToOwned> {

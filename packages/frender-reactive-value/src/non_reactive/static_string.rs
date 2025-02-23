@@ -1,22 +1,26 @@
-use crate::{temp_str::TempStr, ProvideValueOfKind};
+use crate::{temp_str::TempStr, value_kind::KindOfRef, ProvideValueOfKind};
 
-use super::{CachedNonReactiveValue, CachedNonReactiveValueRenderInit};
+use super::{
+    cache_provide_value::CacheAsRef, CachedNonReactiveValue, CachedNonReactiveValueRenderInit,
+};
 
 pub struct RenderInit;
 
-impl<Cache: AsRef<str>> CachedNonReactiveValueRenderInit<str, Cache> for RenderInit {
+impl<Cache: AsRef<str>> CachedNonReactiveValueRenderInit<KindOfRef<str>, CacheAsRef<Cache>>
+    for RenderInit
+{
     fn cached_non_reactive_value_render_init<Out>(
         self,
-        renderer: impl FnOnce(<str as crate::value_kind::ValueKind>::Value<'_>) -> Out,
-        cache: &mut Cache,
+        renderer: impl FnOnce(&str) -> Out,
+        cache: &mut CacheAsRef<Cache>,
     ) -> Out {
-        renderer(TempStr(cache.as_ref()))
+        renderer(cache.0.as_ref())
     }
 }
 
-impl<S: 'static + AsRef<str> + PartialEq> CachedNonReactiveValue<str> for S {
+impl<S: 'static + AsRef<str> + PartialEq> CachedNonReactiveValue<KindOfRef<str>> for S {
     type CacheCanProvideValue = super::cache_provide_value::CacheCanProvideValue;
-    type Cache = S;
+    type Cache = CacheAsRef<S>;
     type RenderInit = RenderInit;
 
     type CachedIntoProvideValue = ProvideAsRef<S>;
@@ -26,34 +30,31 @@ impl<S: 'static + AsRef<str> + PartialEq> CachedNonReactiveValue<str> for S {
     }
 
     fn match_cache(&self, cache: &Self::Cache) -> bool {
-        S::eq(self, cache)
+        S::eq(self, &cache.0)
     }
 
     fn not_match_cache(&self, cache: &Self::Cache) -> bool {
-        S::ne(self, cache)
+        S::ne(self, &cache.0)
     }
 
     fn into_cache_and_render_init(self) -> (Self::Cache, Self::RenderInit) {
-        (self, RenderInit)
+        (CacheAsRef(self), RenderInit)
     }
 
     fn update_into_cache_and_render<Out>(
         self,
-        renderer: impl FnOnce(<str as crate::value_kind::ValueKind>::Value<'_>) -> Out,
+        renderer: impl FnOnce(&str) -> Out,
         cache: &mut Self::Cache,
     ) -> Out {
-        *cache = self;
-        renderer(TempStr(cache.as_ref()))
+        cache.0 = self;
+        renderer(cache.0.as_ref())
     }
 }
 
 pub struct ProvideAsRef<S: AsRef<str>>(pub S);
 
-impl<S: AsRef<str>> ProvideValueOfKind<str> for ProvideAsRef<S> {
-    fn provide_value_of_kind<Out>(
-        self,
-        f: impl FnOnce(<str as crate::value_kind::ValueKind>::Value<'_>) -> Out,
-    ) -> Out {
-        f(TempStr(self.0.as_ref()))
+impl<S: AsRef<str>> ProvideValueOfKind<KindOfRef<str>> for ProvideAsRef<S> {
+    fn provide_value_of_kind<Out>(self, f: impl FnOnce(&str) -> Out) -> Out {
+        f(self.0.as_ref())
     }
 }

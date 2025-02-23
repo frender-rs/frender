@@ -2,7 +2,7 @@ use frender_common::impl_many;
 
 use crate::{
     temp_str::{IntoStaticStrCache, TempStr},
-    value_kind::{KindOfOwned, ValueKind},
+    value_kind::{KindOfOwned, KindOfRef, ValueKind},
 };
 
 use super::{
@@ -68,11 +68,11 @@ impl_many!(
 );
 
 impl UncachedNonReactiveValueWithKind for TempStr<&str> {
-    type UncachedNonReactiveValueKind = str;
+    type UncachedNonReactiveValueKind = KindOfRef<str>;
 }
 
 impl<S: IntoStaticStrCache> ReactiveValueWithKind for TempStr<S> {
-    type ReactiveValueKind = str;
+    type ReactiveValueKind = KindOfRef<str>;
 }
 
 mod alloc {
@@ -85,9 +85,9 @@ mod alloc {
     impl UncachedNonReactiveValueWithKind for String {
         type UncachedNonReactiveValueKind = KindOfOwned<String>;
     }
-    /// The default kind uses String as cache and TempStr<&str> as value.
+    /// The default kind uses String as cache and &str as value.
     impl ReactiveValueWithKind for String {
-        type ReactiveValueKind = str;
+        type ReactiveValueKind = KindOfRef<str>;
     }
 
     impl<T: ?Sized + 'static + ToOwned> UncachedNonReactiveValueWithKind for Cow<'static, T> {

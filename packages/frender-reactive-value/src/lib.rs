@@ -7,6 +7,8 @@ use frender_common::csr::{self, StateUnmount};
 
 use crate::value_kind::ValueKind;
 
+mod value;
+
 pub mod value_kind;
 
 // mod strings; // TODO:

@@ -1,13 +1,17 @@
-use crate::temp_str::{IntoStaticStrCache, TempStr};
+use crate::{
+    temp_str::{IntoStaticStrCache, TempStr},
+    value_kind::KindOfRef,
+};
 
 use super::{
+    cache_provide_value::CacheAsRef,
     static_string::{ProvideAsRef, RenderInit},
     CachedNonReactiveValue, UncachedNonReactiveValue,
 };
 
-impl<S: IntoStaticStrCache> CachedNonReactiveValue<str> for TempStr<S> {
+impl<S: IntoStaticStrCache> CachedNonReactiveValue<KindOfRef<str>> for TempStr<S> {
     type CacheCanProvideValue = super::CacheCanProvideValue;
-    type Cache = S::StaticStrCache;
+    type Cache = CacheAsRef<S::StaticStrCache>;
     type RenderInit = RenderInit;
 
     type CachedIntoProvideValue = ProvideAsRef<S::StaticStrCache>;
@@ -17,39 +21,31 @@ impl<S: IntoStaticStrCache> CachedNonReactiveValue<str> for TempStr<S> {
     }
 
     fn match_cache(&self, cache: &Self::Cache) -> bool {
-        S::StaticStrCache::eq(cache, &self.0)
+        S::StaticStrCache::eq(&cache.0, &self.0)
     }
 
     fn not_match_cache(&self, cache: &Self::Cache) -> bool {
-        S::StaticStrCache::ne(cache, &self.0)
+        S::StaticStrCache::ne(&cache.0, &self.0)
     }
 
     fn into_cache_and_render_init(self) -> (Self::Cache, Self::RenderInit) {
-        (self.0.into_static_str_cache(), RenderInit)
+        (CacheAsRef(self.0.into_static_str_cache()), RenderInit)
     }
 
     fn update_into_cache_and_render<Out>(
         self,
-        renderer: impl FnOnce(<str as crate::value_kind::ValueKind>::Value<'_>) -> Out,
+        renderer: impl FnOnce(&str) -> Out,
         cache: &mut Self::Cache,
     ) -> Out {
-        self.0.update_into_static_str_cache(cache);
-        renderer(TempStr(cache.as_ref()))
+        self.0.update_into_static_str_cache(&mut cache.0);
+        renderer(cache.0.as_ref())
     }
 }
 
-impl<'a> UncachedNonReactiveValue<str> for TempStr<&'a str> {
+impl<'a> UncachedNonReactiveValue<KindOfRef<str>> for TempStr<&'a str> {
     type UncachedIntoProvideValue = ProvideAsRef<&'a str>;
 
     fn uncached_into_provide_value(self) -> Self::UncachedIntoProvideValue {
         ProvideAsRef(self.0)
-    }
-}
-
-impl UncachedNonReactiveValue<str> for &str {
-    type UncachedIntoProvideValue = ProvideAsRef<Self>;
-
-    fn uncached_into_provide_value(self) -> Self::UncachedIntoProvideValue {
-        ProvideAsRef(self)
     }
 }

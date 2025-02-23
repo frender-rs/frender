@@ -2,10 +2,7 @@ use std::borrow::{Borrow, Cow};
 
 pub(super) use self::sealed::{CacheCanNotProvideValue, CacheCanProvideValueMarker};
 
-use crate::{
-    temp_str::TempStr,
-    value_kind::{KindOfOwned, KindOfRef, KindOfStaticRefOrTempOwned, ValueKind},
-};
+use crate::value_kind::{KindOfOwned, KindOfRef, KindOfStaticRefOrTempOwned, ValueKind};
 
 pub struct CacheCanProvideValue;
 
@@ -81,13 +78,15 @@ impl<T: Borrow<U>, U: ?Sized + 'static> CacheProvideValue<KindOfRef<U>> for T {
     }
 }
 
-impl<T: ?Sized + AsRef<str>> CacheProvideValue<str> for T {
+pub struct CacheAsRef<T: ?Sized>(pub(crate) T);
+
+impl<T: ?Sized + AsRef<str>> CacheProvideValue<KindOfRef<str>> for CacheAsRef<T> {
     fn cache_provide_value_with_marker<Out>(
         &self,
-        receive: impl FnOnce(<str as ValueKind>::Value<'_>) -> Out,
+        receive: impl FnOnce(&str) -> Out,
         _: CacheCanProvideValue,
     ) -> Out {
-        receive(TempStr(self.as_ref()))
+        receive(self.0.as_ref())
     }
 }
 
