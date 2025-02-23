@@ -1152,6 +1152,13 @@ name = "frender-pin-utils"
 version = "0.1.0"
 
 [[package]]
+name = "frender-reactive-value"
+version = "0.1.0"
+dependencies = [
+ "frender-common",
+]
+
+[[package]]
 name = "frender-render-with"
 version = "0.1.0"
 dependencies = [
@@ -1169,6 +1176,7 @@ dependencies = [
  "async-str-iter",
  "either",
  "frender-common",
+ "frender-reactive-value",
  "frender-ssr-html",
  "pin-project-lite",
 ]

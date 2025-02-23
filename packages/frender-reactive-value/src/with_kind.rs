@@ -1,9 +1,8 @@
-use frender_macro_rules::impl_many;
+use frender_common::impl_many;
 
 use crate::{
-    strings::{CsrStr, NonReactiveStr},
+    temp_str::{IntoStaticStrCache, TempStr},
     value_kind::{KindOfOwned, ValueKind},
-    IntoStaticStrCache, TempStr, ToAsRefStr,
 };
 
 use super::{
@@ -68,16 +67,11 @@ impl_many!(
     }
 );
 
-impl<S: ToAsRefStr> UncachedNonReactiveValueWithKind for TempStr<S> {
+impl UncachedNonReactiveValueWithKind for TempStr<&str> {
     type UncachedNonReactiveValueKind = str;
 }
 
-/// [`where TempStr<S>: CsrStr`](crate::strings::CsrStr)
 impl<S: IntoStaticStrCache> ReactiveValueWithKind for TempStr<S> {
-    type ReactiveValueKind = str;
-}
-
-impl<S: CsrStr> ReactiveValueWithKind for NonReactiveStr<S> {
     type ReactiveValueKind = str;
 }
 

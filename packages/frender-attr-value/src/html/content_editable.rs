@@ -86,7 +86,7 @@ mod bool {
 
 mod string {
     mod ssr {
-        use crate::{html::ContentEditable, ssr::SsrAttrValue, values::str::KnownSsrStr};
+        use crate::{html::ContentEditable, ssr::SsrAttrValue};
 
         impl<V: KnownSsrStr> SsrAttrValue<ContentEditable> for V {
             type HtmlAttributeValue = <Self as SsrAttrValue<str>>::HtmlAttributeValue;
@@ -102,7 +102,6 @@ mod string {
         use crate::{
             csr::{CsrAttrValue, UpdateAttrValue},
             html::ContentEditable,
-            values::str::KnownCsrStr,
         };
 
         struct UpdateStr<U: UpdateAttrValue<Kind = ContentEditable>>(U);

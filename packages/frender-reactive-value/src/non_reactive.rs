@@ -49,6 +49,7 @@
 //!
 //! [`S: CsrStr`]: crate::strings::CsrStr
 //! [`type Cache = S::StaticStrCache`]: crate::strings::CsrStr::StaticStrCache
+pub use self::cache_provide_value::{CacheCanProvideValue, CacheProvideValue};
 
 use std::{marker::PhantomData, pin::Pin, task::Poll};
 
@@ -58,18 +59,20 @@ use super::{
     ProvideValueOfKind, ReactiveValueRenderInitPinned, ReactiveValueState, RenderInitPinned,
 };
 
+mod cache_provide_value;
+
 mod cached;
 
-pub mod clone_as_cache_if_cache_miss;
-pub mod clone_as_value_if_cache_miss;
-pub mod copied;
-pub mod cow_static;
-pub mod csr_str;
-pub mod owned;
-pub mod r#ref;
-pub mod refed;
-pub mod temp_str;
-pub mod uncached;
+mod clone_as_cache_if_cache_miss;
+mod clone_as_value_if_cache_miss;
+mod copied;
+mod cow_static;
+mod owned;
+mod r#ref;
+mod refed;
+mod static_string;
+mod temp_str;
+mod uncached;
 
 pub trait UncachedNonReactiveValue<VK: ?Sized + ValueKind> {
     type UncachedIntoProvideValue: ProvideValueOfKind<VK>;
@@ -77,7 +80,8 @@ pub trait UncachedNonReactiveValue<VK: ?Sized + ValueKind> {
 }
 
 pub trait CachedNonReactiveValue<VK: ?Sized + ValueKind> {
-    type Cache;
+    type CacheCanProvideValue: cache_provide_value::CacheCanProvideValueMarker;
+    type Cache: CacheProvideValue<VK, Self::CacheCanProvideValue>;
     type RenderInit: CachedNonReactiveValueRenderInit<VK, Self::Cache>;
 
     type CachedIntoProvideValue: ProvideValueOfKind<VK>;

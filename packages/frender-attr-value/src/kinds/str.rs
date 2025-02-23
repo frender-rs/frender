@@ -8,10 +8,10 @@ mod kind {
 
 mod ssr {
     use async_str_iter::{any_str::IterAnyStr, IntoAsyncStrIterator};
-    use frender_common::IntoStaticStr;
+
     use frender_ssr_html::attr_value::AttrEqValue;
 
-    use crate::{ssr::SsrAttrValue, values::str::KnownSsrStr};
+    use crate::ssr::SsrAttrValue;
 
     impl<S: KnownSsrStr> SsrAttrValue<str> for S {
         type HtmlAttributeValue = AttrEqValue<IterAnyStr<S::StaticStr>>;
@@ -26,9 +26,8 @@ mod ssr {
 }
 
 mod csr {
-    use frender_common::{IntoStaticStrCache, ToAsRefStr};
 
-    use crate::{csr::CsrAttrValue, impl_csr_attr_value_with_cache, values::str::KnownCsrStr};
+    use crate::{csr::CsrAttrValue, impl_csr_attr_value_with_cache};
 
     impl<S: KnownCsrStr> CsrAttrValue<str> for S {
         type State = S::StaticStrCache;

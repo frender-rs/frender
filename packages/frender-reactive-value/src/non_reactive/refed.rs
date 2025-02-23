@@ -6,7 +6,7 @@ use crate::value_kind::KindOfRef;
 
 pub type Kind<T> = KindOfRef<T>;
 
-use crate::reactive_value::ProvideValueOfKind;
+use crate::ProvideValueOfKind;
 
 use super::{CachedNonReactiveValue, CachedNonReactiveValueRenderInit};
 
@@ -31,6 +31,7 @@ impl<T> CachedNonReactiveValueRenderInit<Kind<T>, T> for RenderInit {
 }
 
 impl<T: 'static + PartialEq> CachedNonReactiveValue<Kind<T>> for T {
+    type CacheCanProvideValue = super::CacheCanProvideValue;
     type Cache = T;
     type RenderInit = RenderInit;
 

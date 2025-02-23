@@ -9,6 +9,7 @@ pub use super::owned::{Kind, Provide, RenderInit};
 use super::CachedNonReactiveValue;
 
 impl<T: 'static + PartialEq + Copy> CachedNonReactiveValue<Kind<T>> for T {
+    type CacheCanProvideValue = super::CacheCanProvideValue;
     type Cache = T;
     type RenderInit = RenderInit<T>;
 

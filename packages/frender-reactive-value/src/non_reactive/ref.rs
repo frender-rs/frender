@@ -1,4 +1,4 @@
-use crate::{reactive_value::ProvideValueOfKind, value_kind::KindOfRef};
+use crate::{value_kind::KindOfRef, ProvideValueOfKind};
 
 use super::UncachedNonReactiveValue;
 

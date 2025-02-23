@@ -4,7 +4,7 @@ use std::{
     ops::Deref,
 };
 
-use crate::TempStr;
+use crate::temp_str::TempStr;
 
 /// Notable kinds and values:
 ///
@@ -20,7 +20,7 @@ use crate::TempStr;
 ///
 /// - Ref: [`KindOfRef<T>`] as Kind, `&T` as Value.
 ///
-/// - `str` as kind, [`TempStr<&str>`](crate::TempStr) as value.
+/// - `str` as kind, [`TempStr<&str>`] as value.
 ///
 ///   `str: for<'a> ReactiveValueKind<Value<'a> = TempStr<&'a str>>`
 ///

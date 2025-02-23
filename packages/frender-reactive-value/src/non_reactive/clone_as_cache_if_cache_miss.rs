@@ -19,6 +19,7 @@ impl<T: ?Sized, Cache> CachedNonReactiveValueRenderInit<Kind<T>, Cache> for Rend
 impl<'a, T: 'static + ?Sized + ToOwned + PartialEq> CachedNonReactiveValue<Kind<T>>
     for CloneIfCacheMiss<&'a T>
 {
+    type CacheCanProvideValue = super::CacheCanProvideValue;
     type Cache = T::Owned;
     type RenderInit = RenderInit<'a, T>;
 

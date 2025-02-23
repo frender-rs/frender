@@ -1,4 +1,4 @@
-use frender_common::reactive_value::{
+use frender_reactive_value::{
     non_reactive::Uncached, ReactiveValueIntoElement, ReactiveValueWithKind,
 };
 

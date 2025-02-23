@@ -1,7 +1,4 @@
-use crate::{
-    reactive_value::{ReactiveValue, ReusableRendererOfKind},
-    value_kind::ValueKind,
-};
+use crate::{value_kind::ValueKind, ReactiveValue, ReusableRendererOfKind};
 
 use super::{CachedNonReactiveValue, State};
 

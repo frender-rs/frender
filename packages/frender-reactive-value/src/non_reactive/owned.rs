@@ -1,6 +1,6 @@
 use crate::{
-    reactive_value::ProvideValueOfKind,
     value_kind::{KindOfOwned, ValueKind},
+    ProvideValueOfKind,
 };
 
 use super::{CachedNonReactiveValueRenderInit, UncachedNonReactiveValue};

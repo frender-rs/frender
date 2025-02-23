@@ -19,11 +19,9 @@ pub mod refed {
     use std::borrow::Cow;
 
     use crate::{
-        reactive_value::{
-            non_reactive::{CachedNonReactiveValue, CachedNonReactiveValueRenderInit},
-            ProvideValueOfKind,
-        },
+        non_reactive::{CachedNonReactiveValue, CachedNonReactiveValueRenderInit},
         value_kind::StaticRefOrTempOwned,
+        ProvideValueOfKind,
     };
 
     use super::Kind;
@@ -56,6 +54,7 @@ pub mod refed {
     impl<T: ?Sized + 'static + ToOwned + PartialEq> CachedNonReactiveValue<Kind<T>>
         for Cow<'static, T>
     {
+        type CacheCanProvideValue = super::super::CacheCanProvideValue;
         type Cache = Self;
 
         type RenderInit = RenderInit;
@@ -94,11 +93,9 @@ pub mod r#ref {
     use std::borrow::Cow;
 
     use crate::{
-        reactive_value::{
-            non_reactive::{CachedNonReactiveValue, CloneIfCacheMiss, UncachedNonReactiveValue},
-            ProvideValueOfKind,
-        },
+        non_reactive::{CachedNonReactiveValue, CloneIfCacheMiss, UncachedNonReactiveValue},
         value_kind::StaticRefOrTempOwned,
+        ProvideValueOfKind,
     };
 
     use super::Kind;
@@ -125,6 +122,7 @@ pub mod r#ref {
     impl<'a, T: ?Sized + 'static + ToOwned + PartialEq> CachedNonReactiveValue<Kind<T>>
         for CloneIfCacheMiss<&'a Cow<'static, T>>
     {
+        type CacheCanProvideValue = super::super::CacheCanProvideValue;
         type Cache = Cow<'static, T>;
 
         type RenderInit = RenderInit<'a, T>;
@@ -161,13 +159,11 @@ pub mod static_or_temp {
     use std::borrow::Cow;
 
     use crate::{
-        reactive_value::{
-            non_reactive::{
-                CachedNonReactiveValue, CachedNonReactiveValueRenderInit, UncachedNonReactiveValue,
-            },
-            ProvideValueOfKind,
+        non_reactive::{
+            CachedNonReactiveValue, CachedNonReactiveValueRenderInit, UncachedNonReactiveValue,
         },
         value_kind::StaticRefOrTempOwned,
+        ProvideValueOfKind,
     };
 
     use super::Kind;
@@ -210,6 +206,7 @@ pub mod static_or_temp {
     impl<'a, T: ?Sized + 'static + ToOwned + PartialEq> CachedNonReactiveValue<Kind<T>>
         for StaticRefOrTempOwned<'a, T>
     {
+        type CacheCanProvideValue = super::super::CacheCanProvideValue;
         type Cache = Cow<'static, T>;
 
         type RenderInit = RenderInit<'a, T>;

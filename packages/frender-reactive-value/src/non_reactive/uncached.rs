@@ -1,4 +1,4 @@
-use crate::{reactive_value::ProvideValueOfKind, value_kind::ValueKind};
+use crate::{value_kind::ValueKind, ProvideValueOfKind};
 
 use super::{
     CachedNonReactiveValue, CachedNonReactiveValueRenderInit, Uncached, UncachedNonReactiveValue,
@@ -23,6 +23,7 @@ pub struct NoCache;
 impl<T: UncachedNonReactiveValue<VK>, VK: ?Sized + ValueKind> CachedNonReactiveValue<VK>
     for Uncached<T>
 {
+    type CacheCanProvideValue = super::cache_provide_value::CacheCanNotProvideValue;
     type Cache = NoCache;
     type RenderInit = RenderInit<T::UncachedIntoProvideValue>;
 

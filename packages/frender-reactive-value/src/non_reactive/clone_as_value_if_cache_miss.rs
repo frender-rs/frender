@@ -11,6 +11,8 @@ use crate::value_kind::ValueKind;
 use super::{CachedNonReactiveValue, CloneIfCacheMiss};
 
 impl<T: 'static + Clone + PartialEq> CachedNonReactiveValue<Kind<T>> for CloneIfCacheMiss<T> {
+    // CacheProvideValue should not clone
+    type CacheCanProvideValue = super::cache_provide_value::CacheCanNotProvideValue;
     type Cache = T;
     type RenderInit = RenderInit<T>;
 

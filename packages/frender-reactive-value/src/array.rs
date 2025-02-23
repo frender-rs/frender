@@ -1,4 +1,4 @@
-use frender_pin_utils::pin_project_iter_mut_array;
+use frender_common::utils::pin_project_iter_mut_array;
 
 use super::RenderInitPinned;
 

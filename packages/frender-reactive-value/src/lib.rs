@@ -3,11 +3,18 @@ pub use self::with_kind::{ReactiveValueWithKind, UncachedNonReactiveValueWithKin
 
 use std::{pin::Pin, task::Poll};
 
-use crate::csr::StateUnmount;
+use frender_common::csr::{self, StateUnmount};
+
 use crate::value_kind::ValueKind;
+
+pub mod value_kind;
+
+// mod strings; // TODO:
 
 mod array;
 mod with_kind;
+
+pub mod temp_str;
 
 mod into_element;
 
@@ -135,12 +142,9 @@ macro_rules! impl_reactive_value_unpinned_init_with_pinned {
                 <$ReactiveValueKind as $crate::value_kind::ValueKind>::Value<'_>,
             ) -> Out,
         ) -> (Self::UnpinnedState, Out) {
-            $crate::reactive_value::unpinned_render_init_with_pinned::<
-                Self,
-                $ReactiveValueKind,
-                Out,
-                _,
-            >(self, renderer)
+            $crate::unpinned_render_init_with_pinned::<Self, $ReactiveValueKind, Out, _>(
+                self, renderer,
+            )
         }
     };
 }
@@ -196,16 +200,13 @@ macro_rules! impl_reactive_value_pinned_reuse_and_update_with_unpinned {
     ) => {
         fn pinned_render_init_by_reusing<Out>(
             self,
-            renderer: impl $crate::reactive_value::ReusableRendererOfKind<
-                $ReactiveValueKind,
-                Output = Out,
-            >,
+            renderer: impl $crate::ReusableRendererOfKind<$ReactiveValueKind, Output = Out>,
             reused_state: ::core::pin::Pin<&mut Self::PinnedState>,
         ) -> Out {
             #[rustfmt::skip]
-            return <Self as $crate::reactive_value::ReactiveValue::<
-                $ReactiveValueKind,
-            >>::unpinned_render_init_by_reusing(
+                    return <Self as $crate::ReactiveValue::<
+                        $ReactiveValueKind,
+                    >>::unpinned_render_init_by_reusing(
                 self,
                 renderer,
                 ::core::pin::Pin::get_mut(reused_state),
@@ -220,9 +221,9 @@ macro_rules! impl_reactive_value_pinned_reuse_and_update_with_unpinned {
             state: ::core::pin::Pin<&mut Self::UnpinnedState>,
         ) -> Option<Out> {
             #[rustfmt::skip]
-            return <Self as $crate::reactive_value::ReactiveValue::<
-                $ReactiveValueKind,
-            >>::unpinned_render_update(
+                    return <Self as $crate::ReactiveValue::<
+                        $ReactiveValueKind,
+                    >>::unpinned_render_update(
                 self,
                 renderer,
                 ::core::pin::Pin::get_mut(state),
