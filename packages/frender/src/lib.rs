@@ -18,7 +18,7 @@ pub use elements::synced_collection::{SyncedCollection, SyncedVec};
 mod absent;
 pub use absent::Absent;
 
-pub use frender_common::{EventListenerOptions, HandleEventWithOptions};
+pub use frender_common::{either::EitherElement, EventListenerOptions, HandleEventWithOptions};
 pub use frender_hook_element::new_fn_hook_element;
 pub use frender_html as html;
 pub use frender_html::dom;
