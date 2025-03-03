@@ -11,3 +11,4 @@ frender-ssr = { version = "0.1.0", path = "../frender-ssr", optional = true }
 default = ["csr", "ssr"]
 csr = ["dep:frender-csr"]
 ssr = ["dep:frender-ssr"]
+either = ["frender-ssr?/either", "frender-csr?/either"]
