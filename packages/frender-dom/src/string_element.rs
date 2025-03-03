@@ -74,17 +74,8 @@ const _: () = {
             imp::ResultJsString(&self.repr)
         }
 
-        pub(crate) fn as_js_string_or_into(&self) -> Cow<JsString> {
-            self.as_js_string()
-                .map_or_else(|s| Cow::Owned(From::from(&**s)), Cow::Borrowed)
-        }
-
         pub fn into_js_string(self) -> Result<JsString, std::rc::Rc<str>> {
             imp::ResultJsString(self.repr)
-        }
-
-        pub(crate) fn into_js_string_or_into(self) -> JsString {
-            self.into_js_string().unwrap_or_else(|s| From::from(&*s))
         }
     }
 };

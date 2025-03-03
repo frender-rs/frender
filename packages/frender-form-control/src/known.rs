@@ -7,8 +7,7 @@ use std::borrow::Borrow;
 
 use frender_reactive_value::{
     impl_known_IntoBorrowStr_v_0_1_0, impl_known_IsStr_v_0_1_0, impl_known_StaticBorrowStr_v_0_1_0,
-    impl_known_StaticOrIntoStaticStr_v_0_1_0, into_borrow_str::IntoBorrowStr,
-    static_or_into_static_str::StaticOrIntoStaticStr,
+    into_borrow_str::IntoBorrowStr,
 };
 
 #[cfg(feature = "ssr")]
@@ -42,13 +41,6 @@ impl_known_StaticBorrowStr_v_0_1_0!(KnownStaticStr);
 impl_known_IsStr_v_0_1_0!(
     trait BorrowStr = KnownStaticStr;
     trait __ = KnownStr;
-);
-
-pub(crate) trait KnownStaticOrIntoStaticStr: StaticOrIntoStaticStr + KnownStr {}
-
-impl_known_StaticOrIntoStaticStr_v_0_1_0!(
-    trait StaticBorrowStr = KnownStaticStr;
-    trait __ = KnownStaticOrIntoStaticStr;
 );
 
 pub(crate) trait KnownIntoBorrowStr: IntoBorrowStr + KnownStr {}

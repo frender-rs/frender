@@ -1,7 +1,5 @@
 use frender_reactive_value::{
-    non_reactive::{CacheCanProvideValue, CachedNonReactiveValue},
-    temp_ref::TempRef,
-    value_kind::KindOfTempRef,
+    non_reactive::CachedNonReactiveValue, temp_ref::TempRef, value_kind::KindOfTempRef,
     ProvideValueOfKind,
 };
 
@@ -34,11 +32,6 @@ pub trait IntoCsrDeclarationValue {
         this: Self,
         style: impl UpdateStyleWithDeclarationValue<Output = Out>,
     ) -> Out;
-}
-
-pub trait CsrDeclarationValueStr:
-    CachedNonReactiveValue<KindOfTempRef<str>, CacheCanProvideValue = CacheCanProvideValue>
-{
 }
 
 impl<S: CachedNonReactiveValue<KindOfTempRef<str>>> IntoCsrDeclarationValue for S {

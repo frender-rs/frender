@@ -22,4 +22,9 @@ mod tests {
     where
         Empty: IntoCsrInputDataModel;
     const _: Test = Test;
+
+    #[test]
+    fn compile_only() {
+        self::Test = Test;
+    }
 }

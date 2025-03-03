@@ -52,18 +52,6 @@ impl<A, B> EitherState<A, B> {
             EitherStateProj::A { inner: _ } => unreachable!(),
         }
     }
-    fn assert_a_mut(&mut self) -> &mut A {
-        match self {
-            Self::A { inner } => inner,
-            Self::B { inner: _ } => unreachable!(),
-        }
-    }
-    fn assert_b_mut(&mut self) -> &mut B {
-        match self {
-            Self::B { inner } => inner,
-            Self::A { inner: _ } => unreachable!(),
-        }
-    }
 }
 
 impl<A: StateUnmount, B: StateUnmount> StateUnmount for EitherState<A, B> {

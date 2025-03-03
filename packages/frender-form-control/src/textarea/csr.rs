@@ -1,8 +1,5 @@
 use frender_dom::Empty;
-use frender_reactive_value::{
-    value_kind::KindOfTempRef,
-    ReactiveValue,
-};
+use frender_reactive_value::{value_kind::KindOfTempRef, ReactiveValue};
 
 use crate::{
     csr::value::FormControlValue,
@@ -134,5 +131,12 @@ mod tests {
 
         #[cfg(feature = "either")]
         type Either<L: CsrTextAreaValue, R: CsrTextAreaValue> = either::Either<L, R>;
+    }
+
+    #[test]
+    fn compile_only() {
+        self::Test = Test;
+        self::TestsImpl = TestsImpl;
+        let _: <TestsImpl as Tests>::Option<&'static str> = None::<&'static str>;
     }
 }

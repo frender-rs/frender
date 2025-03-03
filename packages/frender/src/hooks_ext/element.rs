@@ -474,22 +474,6 @@ impl<SH, T, NRS> PinnedState<SH, T, NRS> {
             update_times,
         }
     }
-
-    fn pin_insert(self: Pin<&mut Self>, state: T) -> StateProj<SH, T, NRS> {
-        let StateProj {
-            signal_hook,
-            mut other,
-            non_reactive_state,
-            update_times,
-        } = self.project().inner.project();
-        other.set(Some(state));
-        StateProj {
-            signal_hook,
-            other: other.as_pin_mut().unwrap(),
-            non_reactive_state,
-            update_times,
-        }
-    }
 }
 
 impl<SH: HookUnmount, T: StateUnmount, NRS> StateUnmount for PinnedState<SH, T, NRS> {
@@ -564,14 +548,6 @@ impl<U> Default for SignalHookToElement<U> {
 }
 
 type KindOfMutElement<E, V> = <E as AsMutCsrElementWithValue<V>>::ElementWithValueRenderStateKind;
-
-fn use_signal_hook_map<SH: SignalHook, R>(
-    sh: Pin<&mut SH>,
-    f: impl FnOnce(&SH::SignalShareValue) -> R,
-) -> R {
-    let signal = hooks::Hook::use_hook(sh);
-    signal.map(f)
-}
 
 pub struct RenderInit<F, OwnedPart> {
     _f: PhantomData<F>,

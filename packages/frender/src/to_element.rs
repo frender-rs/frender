@@ -1,8 +1,5 @@
 pub use self::with::{RefToElementWithFn, ToElementWithFn};
 
-use frender_html::csr::CsrElement;
-use frender_ssr::SsrElement;
-
 pub trait ToElement {
     type ToElement<'a>
     where
@@ -21,11 +18,16 @@ impl<E: ?Sized + ToElement> ToElement for &E {
     }
 }
 
+/* TODO: export ToCsrElement and ToSsrElement?
+use frender_html::csr::CsrElement;
+use frender_ssr::SsrElement;
+
 pub trait ToCsrElement: for<'a> ToElement<ToElement<'a>: CsrElement> {}
 impl<E: ?Sized + for<'a> ToElement<ToElement<'a>: CsrElement>> ToCsrElement for E {}
 
 pub trait ToSsrElement: for<'a> ToElement<ToElement<'a>: SsrElement> {}
 impl<E: ?Sized + for<'a> ToElement<ToElement<'a>: SsrElement>> ToSsrElement for E {}
+*/
 
 pub mod with {
     use crate::fn_traits::{Fn1, FnOnce1};
@@ -70,9 +72,7 @@ pub mod with {
 }
 
 mod imps {
-    use frender_reactive_value::{
-        non_reactive::Uncached, temp_into_static::TempIntoStatic,
-    };
+    use frender_reactive_value::{non_reactive::Uncached, temp_into_static::TempIntoStatic};
 
     use super::ToElement;
 
@@ -140,9 +140,7 @@ mod tests {
     use super::ToElement;
     use frender_element::Element;
     use frender_html::csr::CsrElement;
-    use frender_reactive_value::{
-        non_reactive::Uncached, temp_into_static::TempIntoStatic,
-    };
+    use frender_reactive_value::{non_reactive::Uncached, temp_into_static::TempIntoStatic};
     use frender_ssr::SsrElement;
 
     trait ToElementLikeUncachedTempIntoStatic<V: ?Sized + 'static>:

@@ -52,18 +52,6 @@ impl UnpinnedRenderStateKindPollRender for KindOfNoState {
     }
 }
 
-// impl<ElType: ?Sized + behavior_type_traits::Element> RenderStateWithPehKind<ElType> for KindOfNoState {
-//     type RenderStateWithPeh<R: RenderHtml + ?Sized> = ();
-//     type RenderStateWithPehUnpinned<R: RenderHtml + ?Sized> = ();
-// }
-
-pub struct KindOfNonReactive<T: Default>(KindOfNoState, PhantomData<T>);
-
-// impl<T: Default, ElType: ?Sized + behavior_type_traits::Element> RenderStateWithPehKind<ElType> for KindOfNonReactive<T> {
-//     type RenderStateWithPeh<R: RenderHtml + ?Sized> = NonReactiveRenderState<T>;
-//     type RenderStateWithPehUnpinned<R: RenderHtml + ?Sized> = NonReactiveRenderState<T>;
-// }
-
 // region: ui handle
 pub struct UiHandleWithNonReactiveState<T, C> {
     pub ui_handle: T,

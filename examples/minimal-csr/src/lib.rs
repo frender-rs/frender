@@ -1,8 +1,5 @@
 use std::pin::Pin;
 
-#[cfg(remove)]
-use ui_handle_maybe::UiHandleMaybeUnmounted;
-
 pub trait RendererWithContext {
     type RenderContext;
 }
@@ -62,64 +59,6 @@ pub trait CsrElement {
         non_reactive_state: Pin<&mut Self::NonReactiveState>,
         reactive_state: Pin<&mut Self::ReactiveState>,
     );
-}
-
-#[cfg(remove)]
-mod ui_handle_maybe {
-    use super::UiHandle;
-
-    enum Repr<UH> {
-        BeforeCreated,
-        MaybeUnmounted { ui_handle: UH, unmounted: bool },
-    }
-
-    impl<UH> Repr<UH> {
-        fn mounted_ui_handle(&self) -> Option<&UH> {
-            match self {
-                Repr::MaybeUnmounted {
-                    ui_handle,
-                    unmounted: false,
-                } => Some(ui_handle),
-                _ => None,
-            }
-        }
-    }
-
-    pub struct UiHandleMaybeUnmounted<UH> {
-        repr: Repr<UH>,
-    }
-
-    impl<UH> UiHandleMaybeUnmounted<UH> {
-        const BEFORE_CREATED: Self = UiHandleMaybeUnmounted {
-            repr: Repr::BeforeCreated,
-        };
-        fn new_mounted(ui_handle: UH) -> Self {
-            Self {
-                repr: Repr::MaybeUnmounted {
-                    ui_handle,
-                    unmounted: false,
-                },
-            }
-        }
-
-        fn unmount_if_mounted<R: ?Sized>(&mut self, renderer: &mut R)
-        where
-            UH: UiHandle<R>,
-        {
-            todo!()
-        }
-    }
-
-    impl<UH: UiHandle<R>, R: ?Sized> UiHandle<R> for UiHandleMaybeUnmounted<UH> {
-        fn check_and_move_cursor_after_self(&self, render_context: &mut R::RenderContext)
-        where
-            R: super::RendererWithContext,
-        {
-            if let Some(ui_handle) = self.repr.mounted_ui_handle() {
-                ui_handle.check_and_move_cursor_after_self(render_context);
-            }
-        }
-    }
 }
 
 pub mod option {

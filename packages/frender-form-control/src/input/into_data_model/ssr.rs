@@ -22,4 +22,9 @@ mod tests {
     where
         Empty: IntoSsrInputDataModel;
     const _: Test = Test;
+
+    #[test]
+    fn compile_only() {
+        self::Test = Test
+    }
 }
