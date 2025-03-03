@@ -1,6 +1,6 @@
 use std::{cell::RefCell, convert::Infallible, thread::LocalKey};
 
-use crate::{ContextKey, ContextKeyInner};
+use crate::ContextKeyInner;
 
 pub type LocalContextKeyProvided<T> = crate::ContextKey<LocalKeyProvided<T>>;
 

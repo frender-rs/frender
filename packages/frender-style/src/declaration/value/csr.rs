@@ -1,5 +1,5 @@
 use frender_reactive_value::{
-    non_reactive::{CacheCanProvideValue, CacheProvideValue, CachedNonReactiveValue},
+    non_reactive::{CacheCanProvideValue, CachedNonReactiveValue},
     temp_ref::TempRef,
     value_kind::KindOfTempRef,
     ProvideValueOfKind,

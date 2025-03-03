@@ -66,7 +66,6 @@ mod cached;
 mod copied;
 mod cow_static;
 mod owned;
-mod r#ref;
 mod refed;
 mod static_string;
 mod temp_into_static;

@@ -71,7 +71,7 @@ pub mod with {
 
 mod imps {
     use frender_reactive_value::{
-        non_reactive::Uncached, temp_into_static::TempIntoStatic, temp_ref::TempRef,
+        non_reactive::Uncached, temp_into_static::TempIntoStatic,
     };
 
     use super::ToElement;
@@ -141,7 +141,7 @@ mod tests {
     use frender_element::Element;
     use frender_html::csr::CsrElement;
     use frender_reactive_value::{
-        non_reactive::Uncached, temp_into_static::TempIntoStatic, temp_ref::TempRef,
+        non_reactive::Uncached, temp_into_static::TempIntoStatic,
     };
     use frender_ssr::SsrElement;
 
