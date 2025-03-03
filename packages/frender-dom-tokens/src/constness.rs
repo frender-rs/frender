@@ -310,6 +310,7 @@ macro_rules! impl_has_const_dom_tokens_for {
             const DOM_TOKENS_ARRAY: [$crate::DomToken<'static>; DOM_TOKENS_INFO.count] =
                 DOM_TOKENS_CONST_EXPR.into_dom_tokens_array();
 
+            #[allow(non_local_definitions)]
             impl $crate::constness::HasConstDomTokens for $for_ty {
                 const DOM_TOKENS_PREFIX_SPACE: $crate::constness::DomTokensPrefixSpaceStr<'static> = {
                     $crate::constness::DomTokensPrefixSpaceString::<{ DOM_TOKENS_INFO.prefix_space_len }>::from_dom_tokens(

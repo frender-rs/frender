@@ -118,8 +118,8 @@ struct ParsedDeclarationArray<'a, const N: usize>(
         N],
 );
 
-const fn parse_as_array_vec<'a, const CAP: usize>(
-    input: &'a str,
+const fn parse_as_array_vec<const CAP: usize>(
+    input: &str,
 ) -> ArrayVec<
     ccss::parse::declaration::Declaration<ccss::collections::collect_nothing::CollectNothing>,
     CAP,
