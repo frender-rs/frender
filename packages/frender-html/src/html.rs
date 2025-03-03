@@ -1,3 +1,5 @@
+#![allow(warnings)] // TODO: remove
+
 use frender_attr_value::{
     html::{AttrKindOfContentEditable, Spellcheck},
     AttrKindOfStr,

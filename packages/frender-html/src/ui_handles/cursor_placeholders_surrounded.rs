@@ -1,6 +1,6 @@
 use frender_dom::csr::{
     behaviors::{NodeRenderSelf, NodeWithRenderContextAfterSelf},
-    render::{RenderContext, RenderWithContext},
+    render::RenderWithContext,
     UiHandle, UnmountedUiHandle,
 };
 

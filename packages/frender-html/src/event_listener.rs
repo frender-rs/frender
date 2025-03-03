@@ -1,4 +1,4 @@
-use std::{marker::PhantomData, pin::Pin};
+use std::marker::PhantomData;
 
 #[cfg(feature = "csr")]
 mod csr;

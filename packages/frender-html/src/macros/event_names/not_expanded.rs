@@ -128,4 +128,4 @@ macro_rules! impl_OnEventType {
     )*};
 }
 
-pub(crate) use {continue_or_return, expand, expand_macro, expand_macro_impl, filter, impl_OnEventType, process_one};
+pub(crate) use {continue_or_return, expand_macro, expand_macro_impl, filter, process_one};

@@ -117,6 +117,7 @@ macro_rules! test {
     ) => {
         #[cfg(feature = "csr")]
         const _: () = {
+            #[allow(unused_imports)]
             use super::{behavior_type_traits::$trait_name as BehaviorTypeTrait, props::$trait_name as props};
             trait Test {
                 $(
