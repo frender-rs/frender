@@ -65,22 +65,6 @@ macro_rules! filter {
 
 // endregion
 
-macro_rules! expand {
-    (
-        $fns:tt
-        args $args:tt
-        do $commands:tt
-    ) => {
-        crate::macros::event_names::filter! {
-            $fns do {
-                wrap {}
-                append { $args do $commands }
-                wrap {} prepend { crate::macros::event_names::expand_impl! }
-            }
-        }
-    };
-}
-
 macro_rules! expand_macro_impl {
     (
         $fn_names:tt
@@ -115,17 +99,6 @@ macro_rules! expand_macro {
             }
         }
     };
-}
-
-macro_rules! impl_OnEventType {
-    (
-        {$($fn_name:ident)*}
-        $for_ty:ty
-    ) => {$(
-        impl OnEventType<super::event_types::$fn_name> for $for_ty {
-            type OnEvent<R: ?Sized + RenderHtml> = Self::OfBehaviorType<R>;
-        }
-    )*};
 }
 
 pub(crate) use {continue_or_return, expand_macro, expand_macro_impl, filter, process_one};

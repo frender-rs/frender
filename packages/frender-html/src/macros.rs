@@ -1,4 +1,4 @@
-#[cfg(not(feature = "macros_not_expanded"))]
+#[cfg(any(not(feature = "macros_not_expanded"), not(test)))]
 macro_rules! define_nothing {
     ($($t:tt)*) => {};
 }
@@ -1832,8 +1832,13 @@ pub(crate) use {
 
 pub(crate) mod event_names;
 
+#[cfg(test)]
 pub(crate) mod test;
+#[cfg(test)]
 pub(crate) use test::test;
+
+#[cfg(not(test))]
+pub(crate) use define_nothing as test;
 
 #[cfg(test)]
 mod tests;

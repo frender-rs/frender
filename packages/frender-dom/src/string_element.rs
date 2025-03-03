@@ -55,8 +55,6 @@ pub struct StringElement {
 
 #[cfg(feature = "web")]
 const _: () = {
-    use std::borrow::Cow;
-
     use web_sys::js_sys::JsString;
 
     impl StringElement {

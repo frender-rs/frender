@@ -43,10 +43,10 @@ impl UnpinnedRenderStateKind for KindOfNoState {
 impl UnpinnedRenderStateKindPollRender for KindOfNoState {
     fn unpinned_poll_render<R: RenderHtml + ?Sized>(
         //
-        renderer: &mut R,
-        state: &mut Self::UnpinnedState<R>,
-        ui_handle: &mut Self::UnpinnedUiHandle<R>,
-        cx: &mut std::task::Context<'_>,
+        _: &mut R,
+        _: &mut Self::UnpinnedState<R>,
+        _: &mut Self::UnpinnedUiHandle<R>,
+        _: &mut std::task::Context<'_>,
     ) -> Poll<()> {
         Poll::Ready(())
     }

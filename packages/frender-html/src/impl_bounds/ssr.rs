@@ -4,7 +4,7 @@ use frender_ssr::html::{
     attr::{AssertSpaceAndHtmlAttributeName, SpaceAndHtmlAttribute},
 };
 
-use crate::has_const_attr_name::{HasConstAttrName, HasConstAttrNameSsr};
+use crate::has_const_attr_name::HasConstAttrNameSsr;
 
 /// `Haevoe` means [`HtmlAttributeEqValueOrEmpty`].
 pub type SpaceAndHtmlAttributes<Haevoe> = SpaceAndHtmlAttribute<AssertSpaceAndHtmlAttributeName<&'static str>, Haevoe>;
