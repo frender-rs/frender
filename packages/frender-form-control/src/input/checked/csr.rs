@@ -1,5 +1,5 @@
-use frender_common::{reactive_value::ReactiveValue, value_kind::KindOfOwned};
 use frender_dom::Empty;
+use frender_reactive_value::{value_kind::KindOfOwned, ReactiveValue};
 
 use crate::{
     csr::value::FormControlValue,

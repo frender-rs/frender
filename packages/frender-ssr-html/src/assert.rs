@@ -52,6 +52,9 @@ mod html_attribute_eq_value_or_empty {
     impl<V: AsyncStrIterator> Sealed for crate::attr_value::AttrEqValue<V> {}
     impl<V: AsyncStrIterator> HtmlAttributeEqValueOrEmpty for crate::attr_value::AttrEqValue<V> {}
 
+    impl Sealed for crate::attr_value::AttrEqScalar {}
+    impl HtmlAttributeEqValueOrEmpty for crate::attr_value::AttrEqScalar {}
+
     impl<L: HtmlAttributeEqValueOrEmpty, R: HtmlAttributeEqValueOrEmpty> Sealed
         for async_str_iter::either::IterEither<L, R>
     {

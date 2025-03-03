@@ -1,10 +1,11 @@
 use std::{marker::PhantomData, pin::Pin};
 
-use frender_common::{convert::IdentityAs, reactive_value::RenderInitPinned};
+use frender_common::convert::IdentityAs;
 use frender_dom::{
     csr::{OnEvent, ProvideMutMounted, UiHandle},
     event_types::EventType,
 };
+use frender_reactive_value::RenderInitPinned;
 
 use crate::{
     csr::element::HtmlRenderContext,

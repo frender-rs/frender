@@ -1,7 +1,7 @@
 use frender_dom::Empty;
 
 use crate::{
-    known_str::KnownIsNonReactiveStrOrUncached,
+    known::KnownStr,
     value::{KindOfValue, KindOfValueAsNumber},
     values::UncontrolledWithDefaultValue,
 };
@@ -22,10 +22,10 @@ impl InputValue for UncontrolledWithDefaultValue<f64> {
 }
 
 // Uncontrolled input.defaultValue that is a string
-impl<T: KnownIsNonReactiveStrOrUncached> InputValue for T {
+impl<T: KnownStr> InputValue for T {
     type ValueKind = KindOfValue;
 }
-impl<T: KnownIsNonReactiveStrOrUncached> InputValue for UncontrolledWithDefaultValue<T> {
+impl<T: KnownStr> InputValue for UncontrolledWithDefaultValue<T> {
     type ValueKind = KindOfValue;
 }
 

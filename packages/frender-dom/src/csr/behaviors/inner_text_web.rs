@@ -1,4 +1,3 @@
-use frender_common::strings::AsRefStr;
 use web_sys::{
     js_sys::JsString,
     wasm_bindgen::{self, prelude::*},
@@ -33,9 +32,11 @@ fn as_set_inner_text(element: &Node<impl AsRef<web_sys::HtmlElement>>) -> &SetIn
 
 struct RenderSetInnerText<'a, N: AsRef<web_sys::HtmlElement>>(&'a Node<N>);
 
-impl<'a, N: AsRef<web_sys::HtmlElement>, V: AsRefStr> RenderFrom<V> for RenderSetInnerText<'a, N> {
+impl<'a, N: AsRef<web_sys::HtmlElement>, V: AsRef<str>> RenderFrom<V>
+    for RenderSetInnerText<'a, N>
+{
     fn render_from(self, value: V) {
-        set_inner_text_from_str(self.0, value.as_ref_str())
+        set_inner_text_from_str(self.0, value.as_ref())
     }
 }
 

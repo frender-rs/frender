@@ -9,3 +9,5 @@ impl SsrElement for Empty {
         async_str_iter::empty::Empty
     }
 }
+
+impl super::KnownCopySsrElement for Empty {}

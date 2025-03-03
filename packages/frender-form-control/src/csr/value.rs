@@ -1,10 +1,10 @@
 use std::{marker::PhantomData, pin::Pin, task::Poll};
 
-use frender_common::{
-    reactive_value::{ReactiveValue, ReactiveValueState},
-    value_kind::{KindOfOwned, ValueKind},
-};
 use frender_dom::csr::StateUnmount;
+use frender_reactive_value::{
+    value_kind::{KindOfOwned, KindOfTempRef, ValueKind},
+    ReactiveValue, ReactiveValueState,
+};
 
 use crate::{
     value::{KindOfChecked, KindOfValue, KindOfValueAsNumber},
@@ -131,13 +131,13 @@ impl<T> StateUnmount for StateOfUncontrolledWithDefaultValue<T> {
     fn state_unmount(self: std::pin::Pin<&mut Self>) {}
 }
 
-trait FormControlValueKindWithValueKind<VK: ?Sized + ValueKind>: FormControlValueKind {
+trait FormControlValueKindWithValueKind<VK: ValueKind>: FormControlValueKind {
     fn provide_value<Out>(value: VK::Value<'_>, f: impl FnOnce(Self::Value<'_>) -> Out) -> Out;
 }
 
-impl FormControlValueKindWithValueKind<str> for KindOfValue {
+impl FormControlValueKindWithValueKind<KindOfTempRef<str>> for KindOfValue {
     fn provide_value<Out>(
-        value: <str as ValueKind>::Value<'_>,
+        value: <KindOfTempRef<str> as ValueKind>::Value<'_>,
         f: impl FnOnce(Self::Value<'_>) -> Out,
     ) -> Out {
         f(value.0)
@@ -214,7 +214,7 @@ impl_for_kinds!(
     type For = (
         //
         (FK, VK),
-        (KindOfValue, str),
+        (KindOfValue, KindOfTempRef<str>),
         (KindOfChecked, KindOfOwned<bool>),
         (KindOfValueAsNumber, KindOfOwned<f64>),
     );

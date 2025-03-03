@@ -7,20 +7,24 @@ use frender_common::csr::{self, StateUnmount};
 
 use crate::value_kind::ValueKind;
 
-mod value;
-
 pub mod value_kind;
-
-// mod strings; // TODO:
 
 mod array;
 mod with_kind;
 
-pub mod temp_str;
+pub mod static_or_temp_ref;
+pub mod temp_into_static;
+pub mod temp_ref;
 
 mod into_element;
 
 pub mod non_reactive;
+
+pub mod into_borrow_str;
+pub mod static_or_into_static_str;
+
+#[cfg(feature = "ssr")]
+pub mod ssr;
 
 pub trait ReactiveValueState: StateUnmount {
     type ReactiveValueKind: ?Sized + ValueKind;
@@ -164,14 +168,11 @@ macro_rules! impl_reactive_value_unpinned_with_pinned {
 
         fn unpinned_render_init_by_reusing<Out>(
             self,
-            renderer: impl $crate::reactive_value::ReusableRendererOfKind<
-                $ReactiveValueKind,
-                Output = Out,
-            >,
+            renderer: impl $crate::ReusableRendererOfKind<$ReactiveValueKind, Output = Out>,
             reused_state: &mut Self::UnpinnedState,
         ) -> Out {
             #[rustfmt::skip]
-            return <Self as $crate::reactive_value::ReactiveValue::<
+            return <Self as $crate::ReactiveValue::<
                 $ReactiveValueKind,
             >>::pinned_render_init_by_reusing(
                 self,
@@ -183,14 +184,15 @@ macro_rules! impl_reactive_value_unpinned_with_pinned {
         fn unpinned_render_update<Out>(
             self,
             renderer: impl ::core::ops::FnOnce(
-                <$ReactiveValueKind as $crate::reactive_value::ReactiveValueKind>::Value<'_>,
+                <$ReactiveValueKind as $crate::ReactiveValueKind>::Value<'_>,
             ) -> Out,
             state: &mut Self::UnpinnedState,
         ) -> Option<Out> {
-            #[rustfmt::skip]
-            return <Self as $crate::reactive_value::ReactiveValue::<
-                $ReactiveValueKind,
-            >>::pinned_render_update(self, renderer, ::core::pin::Pin::new(state));
+            return <Self as $crate::ReactiveValue<$ReactiveValueKind>>::pinned_render_update(
+                self,
+                renderer,
+                ::core::pin::Pin::new(state),
+            );
         }
     };
 }
@@ -206,9 +208,9 @@ macro_rules! impl_reactive_value_pinned_reuse_and_update_with_unpinned {
             reused_state: ::core::pin::Pin<&mut Self::PinnedState>,
         ) -> Out {
             #[rustfmt::skip]
-                    return <Self as $crate::ReactiveValue::<
-                        $ReactiveValueKind,
-                    >>::unpinned_render_init_by_reusing(
+            return <Self as $crate::ReactiveValue::<
+                $ReactiveValueKind,
+            >>::unpinned_render_init_by_reusing(
                 self,
                 renderer,
                 ::core::pin::Pin::get_mut(reused_state),
@@ -222,10 +224,7 @@ macro_rules! impl_reactive_value_pinned_reuse_and_update_with_unpinned {
             ) -> Out,
             state: ::core::pin::Pin<&mut Self::UnpinnedState>,
         ) -> Option<Out> {
-            #[rustfmt::skip]
-                    return <Self as $crate::ReactiveValue::<
-                        $ReactiveValueKind,
-                    >>::unpinned_render_update(
+            return <Self as $crate::ReactiveValue<$ReactiveValueKind>>::unpinned_render_update(
                 self,
                 renderer,
                 ::core::pin::Pin::get_mut(state),
@@ -279,13 +278,13 @@ macro_rules! proxy_reactive_value {
         $into:block
     ) => {
         type PinnedState =
-            <$ReactiveValue as $crate::reactive_value::ReactiveValue<$VK>>::PinnedState;
+            <$ReactiveValue as $crate::ReactiveValue<$VK>>::PinnedState;
 
         type PinnedRenderInit =
-            <$ReactiveValue as $crate::reactive_value::ReactiveValue<$VK>>::PinnedRenderInit;
+            <$ReactiveValue as $crate::ReactiveValue<$VK>>::PinnedRenderInit;
 
         type UnpinnedState =
-            <$ReactiveValue as $crate::reactive_value::ReactiveValue<$VK>>::UnpinnedState;
+            <$ReactiveValue as $crate::ReactiveValue<$VK>>::UnpinnedState;
 
         $crate::proxy_reactive_value_methods! {
             for<ValueKind = $VK> |$($self_)+| -> $ReactiveValue $into
@@ -310,17 +309,17 @@ macro_rules! proxy_reactive_value_methods {
         $into:block
     ) => {
         fn pinned_render_init($($self_)+) -> (Self::PinnedState, Self::PinnedRenderInit) {
-            <$ReactiveValue as $crate::reactive_value::ReactiveValue<$VK>>::pinned_render_init(
+            <$ReactiveValue as $crate::ReactiveValue<$VK>>::pinned_render_init(
                 $into,
             )
         }
 
         fn pinned_render_init_by_reusing<Out>(
             $($self_)+,
-            renderer: impl $crate::reactive_value::ReusableRendererOfKind<$VK, Output = Out>,
+            renderer: impl $crate::ReusableRendererOfKind<$VK, Output = Out>,
             reused_state: ::core::pin::Pin<&mut Self::PinnedState>,
         ) -> Out {
-            <$ReactiveValue as $crate::reactive_value::ReactiveValue<
+            <$ReactiveValue as $crate::ReactiveValue<
                 $VK,
             >>::pinned_render_init_by_reusing(
                 $into, renderer, reused_state,
@@ -332,7 +331,7 @@ macro_rules! proxy_reactive_value_methods {
             renderer: impl ::core::ops::FnOnce(<$VK as $crate::value_kind::ValueKind>::Value<'_>) -> Out,
             state: ::core::pin::Pin<&mut Self::PinnedState>,
         ) -> Option<Out> {
-            <$ReactiveValue as $crate::reactive_value::ReactiveValue<$VK>>::pinned_render_update(
+            <$ReactiveValue as $crate::ReactiveValue<$VK>>::pinned_render_update(
                 $into, renderer, state,
             )
         }
@@ -341,17 +340,17 @@ macro_rules! proxy_reactive_value_methods {
             $($self_)+,
             renderer: impl ::core::ops::FnOnce(<$VK as $crate::value_kind::ValueKind>::Value<'_>) -> Out,
         ) -> (Self::UnpinnedState, Out) {
-            <$ReactiveValue as $crate::reactive_value::ReactiveValue<$VK>>::unpinned_render_init(
+            <$ReactiveValue as $crate::ReactiveValue<$VK>>::unpinned_render_init(
                 $into, renderer,
             )
         }
 
         fn unpinned_render_init_by_reusing<Out>(
             $($self_)+,
-            renderer: impl $crate::reactive_value::ReusableRendererOfKind<$VK, Output = Out>,
+            renderer: impl $crate::ReusableRendererOfKind<$VK, Output = Out>,
             reused_state: &mut Self::UnpinnedState,
         ) -> Out {
-            <$ReactiveValue as $crate::reactive_value::ReactiveValue<
+            <$ReactiveValue as $crate::ReactiveValue<
                 $VK,
             >>::unpinned_render_init_by_reusing(
                 $into, renderer, reused_state,
@@ -363,7 +362,7 @@ macro_rules! proxy_reactive_value_methods {
             renderer: impl ::core::ops::FnOnce(<$VK as $crate::value_kind::ValueKind>::Value<'_>) -> Out,
             state: &mut Self::UnpinnedState,
         ) -> Option<Out> {
-            <$ReactiveValue as $crate::reactive_value::ReactiveValue<$VK>>::unpinned_render_update(
+            <$ReactiveValue as $crate::ReactiveValue<$VK>>::unpinned_render_update(
                 $into, renderer, state
             )
         }

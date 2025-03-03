@@ -1,4 +1,7 @@
-use frender_attr_value::html::{ContentEditable, Spellcheck};
+use frender_attr_value::{
+    html::{AttrKindOfContentEditable, Spellcheck},
+    AttrKindOfStr,
+};
 #[cfg(feature = "csr")]
 use frender_dom::csr::{
     render::{Render, RenderTextFromKnown, RenderWithContext},
@@ -828,7 +831,7 @@ crate::macros::def_intrinsic_component_props!(
                         fn auto_focus(value: attr_value![bool]) {
                             attr_name!("autofocus");
                         }
-                        fn content_editable(value: attr_value![ContentEditable]) {
+                        fn content_editable(value: attr_value![AttrKindOfContentEditable]) {
                             attr_name!("contenteditable");
                             update_with!(
                                 //

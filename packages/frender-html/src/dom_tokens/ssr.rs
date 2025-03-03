@@ -1,3 +1,5 @@
+pub use frender_dom::dom_tokens::DomTokens as Bounds;
+
 use frender_dom::dom_tokens::DomTokens;
 use frender_ssr::html::attr_value::AttrEqValue;
 

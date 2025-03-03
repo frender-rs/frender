@@ -26,6 +26,7 @@ gloo-events = { version = "0.2.0", optional = true }
 # stack_dst = "0.8.1"
 # pin-project-lite is only used with both web and csr features
 pin-project-lite = { version = "0.2.9", optional = true }
+frender-reactive-value = { version = "0.1.0", path = "../frender-reactive-value" }
 
 [dependencies.web-sys]
 version = "0.3.60"
@@ -51,7 +52,7 @@ features = [
 ]
 
 [features]
-ssr = ["dep:frender-ssr", "dep:async-str-iter"]
+ssr = ["dep:frender-ssr", "dep:async-str-iter", "frender-reactive-value/ssr"]
 csr = ["dep:frender-csr-core"]
 web = [
     "dep:web-sys",

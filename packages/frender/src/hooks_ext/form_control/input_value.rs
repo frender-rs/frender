@@ -1,11 +1,8 @@
-use frender_html::form_control::{
-    input::{InputValue, InputValueKind},
-    ProvideFormControlValueWithKind,
-};
+use frender_html::form_control::input::{InputValue, InputValueKind};
 
 use hooks::Signal;
 
-use super::SignalIntoControlledValue;
+use super::{SignalIntoControlledValue, ToProvideFormControlValueWithKind};
 
 #[cfg(feature = "csr")]
 mod csr;
@@ -15,7 +12,7 @@ mod ssr;
 impl<S, FK> InputValue for SignalIntoControlledValue<S>
 where
     S: Signal + 'static,
-    S::Value: ProvideFormControlValueWithKind<ProvideFormControlValueKind = FK>,
+    S::Value: ToProvideFormControlValueWithKind<ToProvideFormControlValueKind = FK>,
     FK: InputValueKind,
 {
     type ValueKind = FK;

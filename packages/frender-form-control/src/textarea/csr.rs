@@ -1,12 +1,13 @@
-use frender_common::reactive_value::{
+use frender_dom::Empty;
+use frender_reactive_value::{
     non_reactive::{Uncached, UncachedNonReactiveValue},
+    value_kind::KindOfTempRef,
     ReactiveValue,
 };
-use frender_dom::Empty;
 
 use crate::{
     csr::value::FormControlValue,
-    known_str::{KnownCsrStr, KnownReactiveValueStr},
+    known::KnownCsrStr,
     value::KindOfValue,
     values::{EitherFormControlValue, UncontrolledEmptyDefaultValue, UncontrolledWithDefaultValue},
 };
@@ -27,7 +28,7 @@ impl CsrTextAreaValue for Empty {
     }
 }
 
-impl<T: KnownReactiveValueStr> CsrTextAreaValue for T {
+impl<T: KnownCsrStr> CsrTextAreaValue for T {
     type IntoCsrTextAreaValue = UncontrolledWithDefaultValue<Self>;
 
     fn into_csr_text_area_value(self) -> Self::IntoCsrTextAreaValue {
@@ -35,7 +36,7 @@ impl<T: KnownReactiveValueStr> CsrTextAreaValue for T {
     }
 }
 
-impl<T: ReactiveValue<str>> CsrTextAreaValue for UncontrolledWithDefaultValue<T> {
+impl<T: ReactiveValue<KindOfTempRef<str>>> CsrTextAreaValue for UncontrolledWithDefaultValue<T> {
     type IntoCsrTextAreaValue = Self;
 
     fn into_csr_text_area_value(self) -> Self::IntoCsrTextAreaValue {
@@ -86,10 +87,11 @@ impl<A: CsrTextAreaValue, B: CsrTextAreaValue> CsrTextAreaValue for either::Eith
 
 #[cfg(test)]
 mod tests {
-    use frender_common::{
-        reactive_value::{non_reactive::Uncached, ReactiveValue},
-        TempStr,
+    use frender_reactive_value::{
+        non_reactive::Uncached, temp_into_static::TempIntoStatic, temp_ref::TempRef,
+        value_kind::KindOfTempRef, ReactiveValue,
     };
+
     use frender_dom::Empty;
 
     use crate::values::{EitherFormControlValue, UncontrolledWithDefaultValue};
@@ -100,9 +102,8 @@ mod tests {
     where
         Empty: CsrTextAreaValue,
         &'static str: CsrTextAreaValue,
-        for<'a> Uncached<&'a str>: CsrTextAreaValue,
-        for<'a> Uncached<TempStr<&'a str>>: CsrTextAreaValue,
-        for<'a> Uncached<TempStr<std::borrow::Cow<'a, str>>>: CsrTextAreaValue,
+        for<'a> Uncached<TempRef<'a, str>>: CsrTextAreaValue,
+        for<'a> TempIntoStatic<std::borrow::Cow<'a, str>>: CsrTextAreaValue,
         String: CsrTextAreaValue,
         std::borrow::Cow<'static, str>: CsrTextAreaValue,
         std::rc::Rc<str>: CsrTextAreaValue,
@@ -111,7 +112,7 @@ mod tests {
     const _: Test = Test;
 
     trait Tests {
-        type UncontrolledWithDefaultValue<V: ReactiveValue<str>>: CsrTextAreaValue;
+        type UncontrolledWithDefaultValue<V: ReactiveValue<KindOfTempRef<str>>>: CsrTextAreaValue;
 
         type Option<T: CsrTextAreaValue>: CsrTextAreaValue;
 
@@ -124,7 +125,8 @@ mod tests {
     struct TestsImpl;
 
     impl Tests for TestsImpl {
-        type UncontrolledWithDefaultValue<V: ReactiveValue<str>> = UncontrolledWithDefaultValue<V>;
+        type UncontrolledWithDefaultValue<V: ReactiveValue<KindOfTempRef<str>>> =
+            UncontrolledWithDefaultValue<V>;
 
         type Option<T: CsrTextAreaValue> = Option<T>;
 

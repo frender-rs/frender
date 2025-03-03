@@ -4,12 +4,21 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-features = false }
 either = { version = "1.13.0", optional = true, default-features = false }
 frender-common = { version = "0.1.0", path = "../frender-common" }
-frender-ssr-html = { version = "0.1.0", path = "../frender-ssr-html", default-features = false }
+frender-reactive-value = { version = "0.1.0", path = "../frender-reactive-value" }
+# ssr
+async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-features = false, optional = true }
+frender-ssr-html = { version = "0.1.0", path = "../frender-ssr-html", default-features = false, optional = true }
 
 [features]
 either = ["dep:either"]
 # html attributes
 html = []
+csr = []
+ssr = [
+    #
+    "dep:async-str-iter",
+    "dep:frender-ssr-html",
+    "frender-reactive-value/ssr",
+]

@@ -2,7 +2,7 @@ use frender_dom::Empty;
 
 use crate::{
     csr::value::FormControlValue,
-    known_str::KnownReactiveValueStr,
+    known::KnownCsrStr,
     values::{UncontrolledEmptyDefaultValue, UncontrolledWithDefaultValue},
 };
 
@@ -37,14 +37,14 @@ impl CsrInputValue for UncontrolledWithDefaultValue<f64> {
     }
 }
 
-impl<T: KnownReactiveValueStr> CsrInputValue for T {
+impl<T: KnownCsrStr> CsrInputValue for T {
     type IntoCsrInputValue = UncontrolledWithDefaultValue<T>;
 
     fn into_csr_input_value(self) -> Self::IntoCsrInputValue {
         UncontrolledWithDefaultValue(self)
     }
 }
-impl<T: KnownReactiveValueStr> CsrInputValue for UncontrolledWithDefaultValue<T> {
+impl<T: KnownCsrStr> CsrInputValue for UncontrolledWithDefaultValue<T> {
     type IntoCsrInputValue = Self;
 
     fn into_csr_input_value(self) -> Self::IntoCsrInputValue {

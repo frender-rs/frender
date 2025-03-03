@@ -1,8 +1,12 @@
 use frender_common::impl_many;
 
 use crate::{
-    temp_str::{IntoStaticStrCache, TempStr},
-    value_kind::{KindOfOwned, KindOfRef, ValueKind},
+    static_or_temp_ref::StaticOrTempRef,
+    temp_into_static::{
+        IntoStaticCache, IntoStaticWithKind, TempIntoStatic, UncachedTempIntoStatic,
+    },
+    temp_ref::TempRef,
+    value_kind::{KindOfOwned, KindOfStaticOrTempRef, KindOfTempRef, ValueKind},
 };
 
 use super::{
@@ -67,18 +71,33 @@ impl_many!(
     }
 );
 
-impl UncachedNonReactiveValueWithKind for TempStr<&str> {
-    type UncachedNonReactiveValueKind = KindOfRef<str>;
+impl<T: ?Sized + 'static> UncachedNonReactiveValueWithKind for TempRef<'_, T> {
+    type UncachedNonReactiveValueKind = KindOfTempRef<T>;
 }
 
-impl<S: IntoStaticStrCache> ReactiveValueWithKind for TempStr<S> {
-    type ReactiveValueKind = KindOfRef<str>;
+impl<T: IntoStaticWithKind + UncachedTempIntoStatic<T::IntoStaticValue>>
+    UncachedNonReactiveValueWithKind for TempIntoStatic<T>
+{
+    type UncachedNonReactiveValueKind = KindOfTempRef<T::IntoStaticValue>;
+}
+
+impl<T: IntoStaticWithKind + IntoStaticCache<T::IntoStaticValue>> ReactiveValueWithKind
+    for TempIntoStatic<T>
+{
+    type ReactiveValueKind = KindOfTempRef<T::IntoStaticValue>;
+}
+
+impl<T: ?Sized + 'static> UncachedNonReactiveValueWithKind for StaticOrTempRef<'_, T> {
+    type UncachedNonReactiveValueKind = KindOfStaticOrTempRef<T>;
+}
+impl<T: ?Sized + 'static + ToOwned + PartialEq> ReactiveValueWithKind for StaticOrTempRef<'_, T> {
+    type ReactiveValueKind = KindOfStaticOrTempRef<T>;
 }
 
 mod alloc {
     use std::{borrow::Cow, rc::Rc, sync::Arc};
 
-    use crate::value_kind::{KindOfOwned, KindOfRef, KindOfStaticRefOrTempOwned};
+    use crate::value_kind::{KindOfOwned, KindOfStaticOrTempRef, KindOfTempRef};
 
     use super::{ReactiveValueWithKind, UncachedNonReactiveValueWithKind};
 
@@ -87,27 +106,27 @@ mod alloc {
     }
     /// The default kind uses String as cache and &str as value.
     impl ReactiveValueWithKind for String {
-        type ReactiveValueKind = KindOfRef<str>;
+        type ReactiveValueKind = KindOfTempRef<str>;
     }
 
     impl<T: ?Sized + 'static + ToOwned> UncachedNonReactiveValueWithKind for Cow<'static, T> {
         type UncachedNonReactiveValueKind = KindOfOwned<Cow<'static, T>>;
     }
     impl<T: ?Sized + 'static + ToOwned + PartialEq> ReactiveValueWithKind for Cow<'static, T> {
-        type ReactiveValueKind = KindOfStaticRefOrTempOwned<T>;
+        type ReactiveValueKind = KindOfStaticOrTempRef<T>;
     }
 
     impl<T: ?Sized + 'static> UncachedNonReactiveValueWithKind for Rc<T> {
         type UncachedNonReactiveValueKind = KindOfOwned<Rc<T>>;
     }
     impl<T: ?Sized + 'static + PartialEq> ReactiveValueWithKind for Rc<T> {
-        type ReactiveValueKind = KindOfRef<Self>;
+        type ReactiveValueKind = KindOfTempRef<Self>;
     }
 
     impl<T: ?Sized + 'static> UncachedNonReactiveValueWithKind for Arc<T> {
         type UncachedNonReactiveValueKind = KindOfOwned<Arc<T>>;
     }
     impl<T: ?Sized + 'static + PartialEq> ReactiveValueWithKind for Arc<T> {
-        type ReactiveValueKind = KindOfRef<Self>;
+        type ReactiveValueKind = KindOfTempRef<Self>;
     }
 }

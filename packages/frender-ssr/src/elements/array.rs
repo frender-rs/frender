@@ -26,3 +26,5 @@ impl<E: SsrElement, const N: usize> SsrElement for [E; N] {
         Self::HtmlChildren::new(IterHtmlChildren(self.into_iter()))
     }
 }
+
+impl<E: SsrElement + Copy, const N: usize> super::KnownCopySsrElement for [E; N] {}

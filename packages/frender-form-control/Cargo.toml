@@ -12,6 +12,7 @@ frender-common = { version = "0.1.0", path = "../frender-common" }
 frender-dom = { version = "0.1.0", path = "../frender-dom" }
 frender-events = { version = "0.1.0", path = "../frender-events" }
 frender-macro-rules = { version = "0.1.0", path = "../frender-macro-rules" }
+frender-reactive-value = { version = "0.1.0", path = "../frender-reactive-value" }
 frender-ssr = { version = "0.1.0", path = "../frender-ssr", optional = true }
 
 [dependencies.web-sys]
@@ -27,7 +28,7 @@ features = [
 
 [features]
 csr = ["frender-dom/csr"]
-ssr = ["dep:frender-ssr", "frender-dom/ssr"]
+ssr = ["dep:frender-ssr", "frender-dom/ssr", "frender-reactive-value/ssr"]
 web = ["frender-events/web", "frender-dom/web", "dep:web-sys"]
 chrono = ["dep:chrono"]
 either = ["dep:either"]

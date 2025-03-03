@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 frender-common = { version = "0.1.0", path = "../frender-common" }
 pin-project-lite = "0.2.13"
+frender-reactive-value = { version = "0.1.0", path = "../frender-reactive-value" }

@@ -1,4 +1,11 @@
+pub use self::kinds::str::AttrKindOfStr;
+
+#[cfg(feature = "csr")]
+use self::csr::macros::*;
+
+#[cfg(feature = "csr")]
 pub mod csr;
+#[cfg(feature = "ssr")]
 pub mod ssr;
 
 mod kinds;
@@ -8,15 +15,11 @@ pub mod values;
 #[cfg(feature = "html")]
 pub mod html;
 
-/// A trait alias.
-pub trait AttrValue<VK: ?Sized + crate::csr::ValueKind>:
-    ssr::SsrAttrValue<VK> + crate::csr::CsrAttrValue<VK>
-{
+pub trait AttrValueKind: 'static + Sized {
+    type AttrValue<'a>;
 }
 
-impl<
-        T: ?Sized + ssr::SsrAttrValue<VK> + crate::csr::CsrAttrValue<VK>,
-        VK: ?Sized + crate::csr::ValueKind,
-    > AttrValue<VK> for T
-{
-}
+/// A marker trait.
+pub trait AttrValue<VK: AttrValueKind> {}
+
+mod known;

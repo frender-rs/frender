@@ -1,9 +1,9 @@
 use std::marker::PhantomData;
 
 use frender_attr_value::{
-    csr::{UpdateAttrValue, ValueKind},
-    html::{ContentEditable, Spellcheck},
-    AttrValue,
+    csr::{CsrAttrValue, UpdateAttrValue},
+    html::{AttrKindOfContentEditable, Spellcheck},
+    AttrKindOfStr, AttrValueKind,
 };
 use frender_common::convert::FromMut as _;
 use frender_dom::csr::behaviors::Element as _;
@@ -29,7 +29,7 @@ pub(crate) trait UpdateAttrValueOfBehaviorType<BT: BehaviorType>: HasAttrValueKi
         //
         b: &mut BT::OfBehaviorType<R>,
         renderer: &mut R,
-        value: <Self::AttrValueKind as ValueKind>::Value<'_>,
+        value: <Self::AttrValueKind as AttrValueKind>::AttrValue<'_>,
     );
 }
 
@@ -47,7 +47,7 @@ where
         //
         b: &mut <BT as BehaviorType>::OfBehaviorType<R>,
         renderer: &mut R,
-        value: <Self::AttrValueKind as ValueKind>::Value<'_>,
+        value: <Self::AttrValueKind as AttrValueKind>::AttrValue<'_>,
     ) {
         <T::SpecUpdateAttrValueOfBehaviorType>::update_attr_value_of_behavior_type(b, renderer, value)
     }
@@ -68,7 +68,7 @@ impl<
 {
     type Kind = PM::AttrValueKind;
 
-    fn set(self, value: <Self::Kind as ValueKind>::Value<'_>) {
+    fn set(self, value: <Self::Kind as AttrValueKind>::AttrValue<'_>) {
         PM::update_attr_value_of_behavior_type(self.b, self.renderer, value)
     }
 
@@ -81,7 +81,7 @@ impl<
         //
         BT: BehaviorType,
         PM: UpdateAttrValueOfBehaviorType<BT> + RemoveAttrOfBehaviorType<BT>,
-        V: AttrValue<PM::AttrValueKind>,
+        V: CsrAttrValue<PM::AttrValueKind>,
     > UnpinnedRenderWithBehavior<BT> for Property<PM, V>
 {
     type UnpinnedRenderStateKind = Kind<PM, V::State>;
@@ -110,7 +110,7 @@ impl<
 pub(crate) trait HasDomApi<BT: BehaviorType>: HasAttrValueKind {
     type DomApiValue<'a>;
 
-    fn dom_api_value_from_value(value: <Self::AttrValueKind as ValueKind>::Value<'_>) -> Self::DomApiValue<'_>;
+    fn dom_api_value_from_value(value: <Self::AttrValueKind as AttrValueKind>::AttrValue<'_>) -> Self::DomApiValue<'_>;
 
     fn set_attribute_value<R: ?Sized + RenderHtml>(b: &mut BT::OfBehaviorType<R>, renderer: &mut R, value: Self::DomApiValue<'_>);
 }
@@ -118,7 +118,7 @@ pub(crate) trait HasDomApi<BT: BehaviorType>: HasAttrValueKind {
 // region: remove attr with dom api
 pub(crate) struct SpecRemoveAttrWithDomApi<U: ?Sized>(U);
 
-pub(crate) trait AttrValueKindRemoveAttrWithDomApi<BT: BehaviorType, U: ?Sized + HasDomApi<BT, AttrValueKind = Self>> {
+pub(crate) trait AttrValueKindRemoveAttrWithDomApi<BT: BehaviorType, U: ?Sized + HasDomApi<BT, AttrValueKind = Self>>: AttrValueKind {
     fn remove_attr_with_dom_api<R: ?Sized + RenderHtml>(b: &mut BT::OfBehaviorType<R>, renderer: &mut R);
 }
 
@@ -146,10 +146,10 @@ where
     }
 }
 
-trait SimpleAttrValueKindRemoveAttr {}
+trait SimpleAttrValueKindRemoveAttr: AttrValueKind {}
 impl SimpleAttrValueKindRemoveAttr for Spellcheck {}
-impl SimpleAttrValueKindRemoveAttr for ContentEditable {}
-impl SimpleAttrValueKindRemoveAttr for str {}
+impl SimpleAttrValueKindRemoveAttr for AttrKindOfContentEditable {}
+impl SimpleAttrValueKindRemoveAttr for AttrKindOfStr {}
 impl SimpleAttrValueKindRemoveAttr for i32 {}
 impl SimpleAttrValueKindRemoveAttr for u32 {}
 impl SimpleAttrValueKindRemoveAttr for f64 {}
@@ -182,19 +182,19 @@ where
         //
         b: &mut <BT as BehaviorType>::OfBehaviorType<R>,
         renderer: &mut R,
-        value: <Self::AttrValueKind as ValueKind>::Value<'_>,
+        value: <Self::AttrValueKind as AttrValueKind>::AttrValue<'_>,
     ) {
         U::set_attribute_value(b, renderer, U::dom_api_value_from_value(value))
     }
 }
 // endregion
 // region: update attr with attr name
-pub(crate) trait SetAttribute: ValueKind {
-    fn set_attribute<E: ?Sized + behaviors::Element<RR>, RR: ?Sized>(element: &mut E, renderer: &mut RR, attr_name: &str, value: Self::Value<'_>);
+pub(crate) trait SetAttribute: AttrValueKind {
+    fn set_attribute<E: ?Sized + behaviors::Element<RR>, RR: ?Sized>(element: &mut E, renderer: &mut RR, attr_name: &str, value: Self::AttrValue<'_>);
 }
 
-impl SetAttribute for str {
-    fn set_attribute<E: ?Sized + behaviors::Element<RR>, RR: ?Sized>(element: &mut E, renderer: &mut RR, attr_name: &str, value: &Self) {
+impl SetAttribute for AttrKindOfStr {
+    fn set_attribute<E: ?Sized + behaviors::Element<RR>, RR: ?Sized>(element: &mut E, renderer: &mut RR, attr_name: &str, value: &str) {
         element.set_attribute(renderer, attr_name, value)
     }
 }
@@ -221,7 +221,7 @@ where
         //
         b: &mut <ET as BehaviorType>::OfBehaviorType<R>,
         renderer: &mut R,
-        value: <Self::AttrValueKind as ValueKind>::Value<'_>,
+        value: <Self::AttrValueKind as AttrValueKind>::AttrValue<'_>,
     ) {
         <T::AttrValueKind>::set_attribute(<ET::Element<R>>::from_mut(b), renderer, T::ATTR_NAME, value)
     }

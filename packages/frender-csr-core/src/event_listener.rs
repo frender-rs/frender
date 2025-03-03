@@ -1,7 +1,7 @@
 use std::pin::Pin;
 
-use frender_common::reactive_value::RenderInitPinned;
 pub use frender_common::{HandleEvent, MaybeHandleEvent};
+use frender_reactive_value::RenderInitPinned;
 
 pub trait PinnedRegisterUpdate<N: ?Sized, R: ?Sized, F> {
     type PinnedRegisterInit: for<'n, 'r> RenderInitPinned<

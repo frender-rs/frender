@@ -11,6 +11,7 @@ frender-csr-ext = { version = "0.1.0", path = "../frender-csr-ext", optional = t
 frender-html = { version = "0.1.0", path = "../frender-html", features = [
     "web",
 ] }
+frender-reactive-value = { version = "0.1.0", path = "../frender-reactive-value" }
 gloo-events = "0.2.0"
 js-sys = "0.3.64"
 pin-project-lite = "0.2.13"

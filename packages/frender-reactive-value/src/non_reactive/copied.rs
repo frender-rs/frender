@@ -4,11 +4,13 @@
 //! where `T: 'static + Copy + PartialEq`.
 //! `type Value<'_> = T`.
 
-pub use super::owned::{Kind, Provide, RenderInit};
+use crate::value_kind::KindOfOwned;
 
-use super::CachedNonReactiveValue;
+use super::owned::Provide;
 
-impl<T: 'static + PartialEq + Copy> CachedNonReactiveValue<Kind<T>> for T {
+use super::{CachedNonReactiveValue, CachedNonReactiveValueRenderInit};
+
+impl<T: 'static + PartialEq + Copy> CachedNonReactiveValue<KindOfOwned<T>> for T {
     type CacheCanProvideValue = super::CacheCanProvideValue;
     type Cache = T;
     type RenderInit = RenderInit<T>;
@@ -37,5 +39,17 @@ impl<T: 'static + PartialEq + Copy> CachedNonReactiveValue<Kind<T>> for T {
     ) -> Out {
         *cache = self;
         renderer(self)
+    }
+}
+
+pub struct RenderInit<T>(pub T);
+
+impl<T: 'static> CachedNonReactiveValueRenderInit<KindOfOwned<T>, T> for RenderInit<T> {
+    fn cached_non_reactive_value_render_init<Out>(
+        self,
+        renderer: impl FnOnce(T) -> Out,
+        _: &mut T,
+    ) -> Out {
+        renderer(self.0)
     }
 }

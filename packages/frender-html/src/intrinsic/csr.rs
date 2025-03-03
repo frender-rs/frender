@@ -3,11 +3,11 @@ use std::pin::Pin;
 use std::task::Poll;
 
 use frender_common::convert::IntoMut;
-use frender_common::reactive_value::RenderInitPinned;
 use frender_dom::csr::render::RenderWithContext;
 use frender_dom::csr::StateUnmount;
 use frender_dom::csr::{UiHandle, UnmountedUiHandle};
 use frender_dom::HasIntrinsicComponentTag;
+use frender_reactive_value::RenderInitPinned;
 use pin_project_lite::pin_project;
 
 use crate::csr::behavior_type::{PinnedNonReactiveRenderStateKind, PinnedRenderWithBehavior, UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior};

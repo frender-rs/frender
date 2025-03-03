@@ -1,8 +1,10 @@
-pub use self::from::FromFormControlValue;
+pub use self::{
+    from::FromFormControlValue,
+    to_provide::{ToProvideFormControlValue, ToProvideFormControlValueWithKind},
+};
 
-use std::{borrow::Borrow, marker::PhantomData, pin::Pin, task::Poll};
+use std::{marker::PhantomData, pin::Pin, task::Poll};
 
-use frender_common::{IntoStaticStr, ToStaticStr};
 use frender_html::{
     dom::csr::{RegisterUpdate, StateUnmount},
     form_control::{
@@ -15,6 +17,7 @@ use frender_html::{
 use hooks::{Hook as _, HookPollNextUpdate, HookUnmount, ShareValue, Signal};
 
 mod from;
+mod to_provide;
 
 mod input_checked;
 mod input_value;
@@ -99,50 +102,23 @@ where
     }
 }
 
-#[cfg(remove)]
-pub struct SignalIntoControlledValueToStaticStr<S>(pub S);
-
-#[cfg(remove)]
-impl<S> IntoStaticStr for SignalIntoControlledValueToStaticStr<S>
-where
-    S: ShareValue,
-    S::Value: ToStaticStr,
-{
-    type StaticStr = <S::Value as IntoStaticStr>::StaticStr;
-
-    fn into_static_str(self) -> Self::StaticStr {
-        self.to_static_str()
-    }
-}
-
-#[cfg(remove)]
-impl<S> ToStaticStr for SignalIntoControlledValueToStaticStr<S>
-where
-    S: ShareValue,
-    S::Value: ToStaticStr,
-{
-    fn to_static_str(&self) -> Self::StaticStr {
-        self.0.map(ToStaticStr::to_static_str)
-    }
-}
-
 impl<S, Val, VK> ProvideFormControlValue<VK> for SignalIntoControlledValue<S>
 where
     S: ShareValue<Value = Val>,
-    Val: ProvideFormControlValue<VK>,
-    VK: ?Sized + FormControlValueKind,
+    Val: ToProvideFormControlValue<VK>,
+    VK: FormControlValueKind,
 {
-    fn provide_form_control_value<R>(&self, receive: impl FnOnce(VK::Value<'_>) -> R) -> R {
+    fn provide_form_control_value<R>(self, receive: impl FnOnce(VK::Value<'_>) -> R) -> R {
         self.0
-            .map(|value| value.provide_form_control_value(receive))
+            .map(|value| value.to_provide_form_control_value(receive))
     }
 }
 
 impl<S, Val, VK> MaybeProvideFormControlValue<VK> for SignalIntoControlledValue<S>
 where
     S: ShareValue<Value = Val>,
-    Val: ProvideFormControlValue<VK>,
-    VK: ?Sized + FormControlValueKind,
+    Val: ToProvideFormControlValue<VK>,
+    VK: FormControlValueKind,
 {
     type ProvideFormControlValue = Self;
 
@@ -169,7 +145,7 @@ where
     VK: FormControlValueKind,
     S: Signal<Value = Val> + 'static,
     S::SignalHook: Unpin,
-    Val: FromFormControlValue<VK> + ProvideFormControlValue<VK>,
+    Val: FromFormControlValue<VK> + ToProvideFormControlValue<VK>,
 {
     type UnpinnedState<E: FormControlElement<VK, R> + ?Sized, R: ?Sized> =
         State<S::SignalHook, E::OnValueChangeEventListenerUnpinned<SignalIntoControlledValue<S>>>;
@@ -232,7 +208,7 @@ where
 
 fn set_default_value_and_value<
     'a,
-    V: ProvideFormControlValue<FK>,
+    V: ToProvideFormControlValue<FK>,
     FK: FormControlValueKind,
     E: FormControlElement<FK, R> + ?Sized,
     R: ?Sized,
@@ -241,10 +217,10 @@ fn set_default_value_and_value<
     element: &'a mut E,
 ) -> impl 'a + FnMut(&V) {
     |value| {
-        value.provide_form_control_value(|value| {
+        value.to_provide_form_control_value(|value| {
             element.set_default_value(renderer, value);
         });
-        value.provide_form_control_value(|value| {
+        value.to_provide_form_control_value(|value| {
             element.set_value(renderer, value);
         })
     }
@@ -255,7 +231,7 @@ where
     VK: FormControlValueKind,
     S: Signal<Value = Val> + 'static,
     S::SignalHook: Unpin,
-    Val: FromFormControlValue<VK> + ProvideFormControlValue<VK>,
+    Val: FromFormControlValue<VK> + ToProvideFormControlValue<VK>,
 {
     type StateKind = Kind<S>;
 

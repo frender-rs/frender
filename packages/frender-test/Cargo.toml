@@ -11,4 +11,5 @@ frender-html = { version = "0.1.0", path = "../frender-html", features = [
     "csr",
 ] }
 frender-macro-rules = { version = "0.1.0", path = "../frender-macro-rules" }
+frender-reactive-value = { version = "0.1.0", path = "../frender-reactive-value" }
 indexmap = { version = "2.2.6" }

@@ -1,3 +1,3 @@
 mod bool;
 mod number;
-mod str;
+pub(crate) mod str;

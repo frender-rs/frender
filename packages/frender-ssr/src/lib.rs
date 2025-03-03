@@ -7,5 +7,3 @@ mod ssr_ext;
 pub use ssr_ext::*;
 
 pub mod elements;
-
-pub mod temp_str;

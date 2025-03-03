@@ -113,9 +113,9 @@ impl std::fmt::Display for StringElement {
 }
 
 mod reactive_value {
-    use frender_common::{
-        reactive_value::{ReactiveValueWithKind, UncachedNonReactiveValueWithKind},
-        value_kind::{KindOfOwned, KindOfRef},
+    use frender_reactive_value::{
+        value_kind::{KindOfOwned, KindOfTempRef},
+        ReactiveValueWithKind, UncachedNonReactiveValueWithKind,
     };
 
     use super::StringElement;
@@ -125,7 +125,7 @@ mod reactive_value {
     }
 
     impl ReactiveValueWithKind for StringElement {
-        type ReactiveValueKind = KindOfRef<StringElement>;
+        type ReactiveValueKind = KindOfTempRef<StringElement>;
     }
 }
 

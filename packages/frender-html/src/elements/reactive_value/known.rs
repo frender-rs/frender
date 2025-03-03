@@ -1,12 +1,20 @@
-use frender_common::{
-    impl_many,
-    reactive_value::{non_reactive::Uncached, ReactiveValueWithKind, UncachedNonReactiveValueWithKind},
-    strings::{CsrStr, NonReactiveStr},
-    IntoStaticStrCache, TempStr,
-};
+use frender_common::impl_many;
 use frender_dom::string_element::StringElement;
+use frender_reactive_value::{
+    non_reactive::Uncached,
+    static_or_temp_ref::StaticOrTempRef,
+    temp_into_static::{IntoStaticCache, IntoStaticWithKind, TempIntoStatic},
+    temp_ref::TempRef,
+    ReactiveValueWithKind, UncachedNonReactiveValueWithKind,
+};
 
-use crate::{csr::CsrElement, html::RenderHtml};
+use crate::{
+    csr::{
+        stateless_render::{StatelessRender, StatelessRenderStateKind},
+        CsrElement,
+    },
+    html::RenderHtml,
+};
 
 use super::{ReactiveValueIntoElement, ValueKindStatelessRender};
 
@@ -51,12 +59,21 @@ impl_many!(
     }
 );
 // endregion
-// region: TempStr
-/// <code>where TempStr\<S>: [CsrStr](CsrStr)</code>
-impl<S: IntoStaticStrCache> KnownReactiveValue for TempStr<S> {}
+// region: StaticOrTempRef
+impl<T: ?Sized + 'static + ToOwned + PartialEq, K: StatelessRenderStateKind> KnownReactiveValue for StaticOrTempRef<'_, T>
+//
+where
+    for<'a> StaticOrTempRef<'a, T>: StatelessRender<StatelessRenderStateKind = K>,
+{
+}
 // endregion
-// region: NonReactiveStr
-impl<S: CsrStr> KnownReactiveValue for NonReactiveStr<S> {}
+// region: TempRef
+impl<T: IntoStaticWithKind + IntoStaticCache<T::IntoStaticValue>, K: StatelessRenderStateKind> KnownReactiveValue for TempIntoStatic<T>
+//
+where
+    for<'a> TempRef<'a, T::IntoStaticValue>: StatelessRender<StatelessRenderStateKind = K>
+{
+}
 // endregion
 // region: Uncached
 impl<T: UncachedNonReactiveValueWithKind> KnownReactiveValue for Uncached<T>

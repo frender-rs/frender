@@ -1,7 +1,7 @@
 use frender_common::Empty;
 
 use crate::{
-    known_str::KnownIsNonReactiveStrOrUncached,
+    known::KnownStr,
     values::{EitherFormControlValue, UncontrolledWithDefaultValue},
 };
 
@@ -18,7 +18,7 @@ mod ssr;
 pub trait TextAreaValue {}
 
 impl TextAreaValue for Empty {}
-impl<T: KnownIsNonReactiveStrOrUncached> TextAreaValue for T {}
+impl<T: KnownStr> TextAreaValue for T {}
 impl<T: TextAreaValue> TextAreaValue for Option<T> {}
 impl<T> TextAreaValue for UncontrolledWithDefaultValue<T> {}
 impl<A: TextAreaValue, B: TextAreaValue> TextAreaValue for EitherFormControlValue<A, B> {}

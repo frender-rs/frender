@@ -6,7 +6,7 @@ pub use frender_events::{event, event_types, HasEventTypeName};
 
 pub mod style {
     pub mod csr {
-        pub use frender_style::csr::{CssStyleDeclaration, Priority};
+        pub use frender_style::css_style_declaration::{CssStyleDeclaration, Priority};
     }
 }
 

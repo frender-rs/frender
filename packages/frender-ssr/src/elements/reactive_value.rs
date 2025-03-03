@@ -1,6 +1,4 @@
-use frender_reactive_value::{
-    non_reactive::Uncached, ReactiveValueIntoElement, ReactiveValueWithKind,
-};
+use frender_reactive_value::{ReactiveValueIntoElement, ReactiveValueWithKind};
 
 use crate::SsrElement;
 
@@ -13,11 +11,7 @@ impl<V: ReactiveValueWithKind + SsrElement> SsrElement for ReactiveValueIntoElem
     }
 }
 
-/// [`Uncached<V>`] just derives ssr.
-impl<V: SsrElement> SsrElement for Uncached<V> {
-    type HtmlChildren = V::HtmlChildren;
-
-    fn into_html_children(self) -> Self::HtmlChildren {
-        self.0.into_html_children()
-    }
+impl<V: ReactiveValueWithKind + SsrElement + Copy> super::KnownCopySsrElement
+    for ReactiveValueIntoElement<V>
+{
 }

@@ -6,7 +6,7 @@ pub use crate::{
     html::RenderHtml,
 };
 
-pub use frender_common::reactive_value::RenderInitPinned;
+pub use frender_reactive_value::RenderInitPinned;
 
 pub use frender_dom::csr::ProvideRenderContext;
 

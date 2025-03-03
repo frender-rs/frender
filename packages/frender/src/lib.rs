@@ -18,14 +18,15 @@ pub use elements::synced_collection::{SyncedCollection, SyncedVec};
 mod absent;
 pub use absent::Absent;
 
-pub use frender_common::{
-    EventListenerOptions, HandleEventWithOptions, IntoStaticStrCache, TempStr, ToAsRefStr,
-    ToStaticStr,
-};
+pub use frender_common::{EventListenerOptions, HandleEventWithOptions};
 pub use frender_hook_element::new_fn_hook_element;
 pub use frender_html as html;
 pub use frender_html::dom;
 pub use frender_macros::component;
+pub use frender_reactive_value::{
+    non_reactive::Uncached, static_or_temp_ref::StaticOrTempRef, temp_into_static::TempIntoStatic,
+    temp_ref::TempRef,
+};
 
 // #[cfg(feature = "csr")]
 // pub use frender_hook_element::frender_csr as csr;

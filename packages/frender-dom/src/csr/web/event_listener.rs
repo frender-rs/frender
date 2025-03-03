@@ -1,5 +1,5 @@
-use frender_common::reactive_value::RenderInitPinned;
 use frender_events::web::JsCastEventType;
+use frender_reactive_value::RenderInitPinned;
 
 use std::marker::{PhantomData, PhantomPinned};
 

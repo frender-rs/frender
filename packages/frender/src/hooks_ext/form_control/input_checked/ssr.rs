@@ -1,12 +1,14 @@
-use frender_html::form_control::{input::SsrInputChecked, KindOfChecked, ProvideFormControlValue};
+use frender_html::form_control::{input::SsrInputChecked, KindOfChecked};
 use hooks::Signal;
+
+use crate::hooks_ext::form_control::ToProvideFormControlValue;
 
 use super::super::SignalIntoControlledValue;
 
 impl<S> SsrInputChecked for SignalIntoControlledValue<S>
 where
     S: Signal + 'static,
-    S::Value: ProvideFormControlValue<KindOfChecked>,
+    S::Value: ToProvideFormControlValue<KindOfChecked>,
 {
     type IntoSsrInputChecked = Self;
 

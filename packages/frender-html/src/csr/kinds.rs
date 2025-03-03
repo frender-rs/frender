@@ -1,7 +1,7 @@
 use std::{marker::PhantomData, task::Poll};
 
-use frender_common::reactive_value::RenderInitPinned;
 use frender_dom::csr::{render::RenderWithContext, UiHandle, UnmountedUiHandle};
+use frender_reactive_value::RenderInitPinned;
 
 use crate::{
     csr::element::{PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},

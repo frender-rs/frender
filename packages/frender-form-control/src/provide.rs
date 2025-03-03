@@ -1,5 +1,5 @@
 use crate::{
-    value::{FormControlValueKind, KindOfChecked, KindOfValue, KindOfValueAsNumber},
+    value::{FormControlValueKind, KindOfChecked, KindOfValueAsNumber},
     values::{EitherFormControlValue, UncontrolledWithDefaultValue},
 };
 
@@ -12,7 +12,7 @@ pub trait MaybeProvideFormControlValue<VK: ?Sized + FormControlValueKind> {
 pub trait ProvideFormControlValue<VK: ?Sized + FormControlValueKind>:
     MaybeProvideFormControlValue<VK, ProvideFormControlValue = Self>
 {
-    fn provide_form_control_value<R>(&self, receive: impl FnOnce(VK::Value<'_>) -> R) -> R;
+    fn provide_form_control_value<R>(self, receive: impl FnOnce(VK::Value<'_>) -> R) -> R;
 }
 
 pub trait ProvideFormControlValueWithKind:
@@ -46,10 +46,10 @@ impl<VK: ?Sized + FormControlValueKind> ProvideFormControlValue<VK>
     for NeverProvideFormControlValue
 {
     fn provide_form_control_value<R>(
-        &self,
+        self,
         _: impl FnOnce(<VK as FormControlValueKind>::Value<'_>) -> R,
     ) -> R {
-        match *self {}
+        match self {}
     }
 }
 // endregion
@@ -62,8 +62,8 @@ macro_rules! provide_self {
             }
 
             impl ProvideFormControlValue<$FK> for $ty {
-                fn provide_form_control_value<R>(&self, receive: impl FnOnce($ty) -> R) -> R {
-                    receive(*self)
+                fn provide_form_control_value<R>(self, receive: impl FnOnce($ty) -> R) -> R {
+                    receive(self)
                 }
             }
 
@@ -81,32 +81,6 @@ provide_self!(
 );
 // endregion
 // region: str
-impl<T: KnownAsRefStr> MaybeProvideFormControlValue<KindOfValue> for T {
-    impl_maybe_provide_with_some! {}
-}
-impl<T: KnownAsRefStr> ProvideFormControlValue<KindOfValue> for T {
-    fn provide_form_control_value<R>(&self, receive: impl FnOnce(&str) -> R) -> R {
-        receive(self.as_ref())
-    }
-}
-impl<T: KnownAsRefStr> ProvideFormControlValueWithKind for T {
-    type ProvideFormControlValueKind = KindOfValue;
-}
-
-trait KnownAsRefStr: AsRef<str> {}
-frender_common::impl_many!(
-    impl<__> KnownAsRefStr
-        for each_of![
-            //
-            &str,
-            String,
-            std::borrow::Cow<'_, str>,
-            std::rc::Rc<str>,
-            std::sync::Arc<str>
-        ]
-    {
-    }
-);
 
 // endregion
 // nothing
@@ -136,7 +110,7 @@ impl<
         B: ProvideFormControlValue<VK>,
     > ProvideFormControlValue<VK> for EitherFormControlValue<A, B>
 {
-    fn provide_form_control_value<R>(&self, receive: impl FnOnce(VK::Value<'_>) -> R) -> R {
+    fn provide_form_control_value<R>(self, receive: impl FnOnce(VK::Value<'_>) -> R) -> R {
         match self {
             EitherFormControlValue::A(this) => this.provide_form_control_value(receive),
             EitherFormControlValue::B(this) => this.provide_form_control_value(receive),
@@ -174,7 +148,7 @@ impl<
         B: ProvideFormControlValue<VK>,
     > ProvideFormControlValue<VK> for either::Either<A, B>
 {
-    fn provide_form_control_value<R>(&self, receive: impl FnOnce(VK::Value<'_>) -> R) -> R {
+    fn provide_form_control_value<R>(self, receive: impl FnOnce(VK::Value<'_>) -> R) -> R {
         either::for_both!(self, this => this.provide_form_control_value(receive))
     }
 }

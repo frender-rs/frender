@@ -1,9 +1,10 @@
-use frender_common::{reactive_value::non_reactive::Uncached, ToAsRefStr};
 use frender_dom::Empty;
+use frender_reactive_value::static_or_into_static_str::StaticOrIntoStaticStr;
 
 use crate::{
-    known_str::KnownIsNonReactiveStr, values::UncontrolledWithDefaultValue, KindOfValue,
-    MaybeProvideFormControlValue, ProvideFormControlValue,
+    known::KnownStaticOrIntoStaticStr, known_provide_str::KnownProvideStr,
+    values::UncontrolledWithDefaultValue, KindOfValue, MaybeProvideFormControlValue,
+    ProvideFormControlValue,
 };
 
 use super::InputValue;
@@ -36,47 +37,17 @@ impl SsrInputValue for UncontrolledWithDefaultValue<f64> {
     }
 }
 
-pub struct ProvideToAsRefStr<T: ToAsRefStr>(T);
-
-impl<T: ToAsRefStr> MaybeProvideFormControlValue<KindOfValue> for ProvideToAsRefStr<T> {
-    type ProvideFormControlValue = Self;
-
-    fn maybe_into_provide_form_control_value(this: Self) -> Option<Self> {
-        Some(this)
-    }
-}
-
-impl<T: ToAsRefStr> ProvideFormControlValue<KindOfValue> for ProvideToAsRefStr<T> {
-    fn provide_form_control_value<R>(&self, receive: impl FnOnce(&str) -> R) -> R {
-        receive(self.0.to_as_ref_str().as_ref())
-    }
-}
-
-impl<T: KnownIsNonReactiveStr + ToAsRefStr> SsrInputValue for T {
-    type IntoSsrInputValue = ProvideToAsRefStr<T>;
+impl<T: KnownProvideStr> SsrInputValue for T {
+    type IntoSsrInputValue = T::IntoMaybeProvideStr;
 
     fn into_ssr_input_value(self) -> Self::IntoSsrInputValue {
-        ProvideToAsRefStr(self)
+        T::into_maybe_provide_str(self)
     }
 }
-impl<T: ToAsRefStr> SsrInputValue for Uncached<T> {
-    type IntoSsrInputValue = ProvideToAsRefStr<T>;
+impl<T: KnownProvideStr> SsrInputValue for UncontrolledWithDefaultValue<T> {
+    type IntoSsrInputValue = T::IntoMaybeProvideStr;
 
     fn into_ssr_input_value(self) -> Self::IntoSsrInputValue {
-        ProvideToAsRefStr(self.0)
-    }
-}
-impl<T: KnownIsNonReactiveStr + ToAsRefStr> SsrInputValue for UncontrolledWithDefaultValue<T> {
-    type IntoSsrInputValue = ProvideToAsRefStr<T>;
-
-    fn into_ssr_input_value(self) -> Self::IntoSsrInputValue {
-        ProvideToAsRefStr(self.0)
-    }
-}
-impl<T: ToAsRefStr> SsrInputValue for UncontrolledWithDefaultValue<Uncached<T>> {
-    type IntoSsrInputValue = ProvideToAsRefStr<T>;
-
-    fn into_ssr_input_value(self) -> Self::IntoSsrInputValue {
-        ProvideToAsRefStr(self.0 .0)
+        T::into_maybe_provide_str(self.0)
     }
 }

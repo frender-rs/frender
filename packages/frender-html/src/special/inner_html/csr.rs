@@ -1,11 +1,8 @@
-use frender_common::{
-    reactive_value::{ProvideValueOfKind, ReactiveValueWithKind},
-    value_kind::ValueKind,
-};
 use frender_dom::{
     csr::render_from::str::{ValueForStr, ValueKindForStr},
     special::DangerousInnerHtml,
 };
+use frender_reactive_value::{value_kind::ValueKind, ProvideValueOfKind, ReactiveValueWithKind};
 
 use crate::{
     csr::{

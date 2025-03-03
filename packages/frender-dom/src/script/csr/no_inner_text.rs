@@ -1,7 +1,6 @@
-use frender_common::{
-    proxy_reactive_value,
-    reactive_value::{non_reactive::Uncached, ReactiveValue, ReactiveValueWithKind},
-    value_kind::KindOfOwned,
+use frender_reactive_value::{
+    non_reactive::Uncached, proxy_reactive_value, value_kind::KindOfOwned, ReactiveValue,
+    ReactiveValueWithKind,
 };
 
 use crate::csr::render_from::str::{RenderFromKnownStr, ValueForStr};

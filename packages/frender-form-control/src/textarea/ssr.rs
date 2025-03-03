@@ -1,18 +1,13 @@
-use async_str_iter::any_str::IterAnyStr;
-
 use async_str_iter::IntoAsyncStrIterator;
 use frender_ssr::html::assert::SafeTextOrEmpty;
 use frender_ssr::html::encode::Encode;
 use frender_ssr::html::escape_safe::Safe;
 
-use frender_common::{
-    reactive_value::non_reactive::Uncached, strings::SsrStr, Empty, IntoStaticStr,
-};
+use frender_common::Empty;
+use frender_reactive_value::ssr::SsrStr;
 
-use crate::{
-    known_str::KnownSsrStr,
-    values::{EitherFormControlValue, UncontrolledWithDefaultValue},
-};
+use crate::known::KnownSsrStr;
+use crate::values::{EitherFormControlValue, UncontrolledWithDefaultValue};
 
 use super::TextAreaValue;
 
@@ -39,24 +34,12 @@ impl<S: KnownSsrStr> SsrTextAreaValue for S {
     }
 }
 
-impl<S: SsrStr> SsrTextAreaValue for Uncached<S> {
-    type IntoSsrTextAreaValue =
-        <UncontrolledWithDefaultValue<S> as SsrTextAreaValue>::IntoSsrTextAreaValue;
-
-    fn into_ssr_text_area_value(self) -> Self::IntoSsrTextAreaValue {
-        UncontrolledWithDefaultValue(self.0).into_ssr_text_area_value()
-    }
-}
-
 impl<S: SsrStr> SsrTextAreaValue for UncontrolledWithDefaultValue<S> {
-    type IntoSsrTextAreaValue = Encode<Safe, IterAnyStr<S::StaticStr>>;
+    type IntoSsrTextAreaValue = Encode<Safe, S::SsrStrIntoAsyncStrIterator>;
 
     fn into_ssr_text_area_value(self) -> Self::IntoSsrTextAreaValue {
         let Self(this) = self;
-        Encode::new(
-            Safe,
-            IterAnyStr::new(this.into_into_static_str().into_static_str()),
-        )
+        Encode::new(Safe, this.ssr_str_into_async_str_iterator())
     }
 }
 

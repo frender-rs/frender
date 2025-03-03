@@ -1,16 +1,16 @@
 use std::{marker::PhantomData, pin::Pin, task::Poll};
 
-use frender_common::{
-    convert::IntoMut,
-    reactive_value::non_reactive::{CachedNonReactiveValue, CachedNonReactiveValueRenderInit as _},
-    strings::CsrStr,
-    TempStr,
-};
+use frender_common::convert::IntoMut;
 use frender_dom::csr::StateUnmount;
 use frender_form_control::{
     csr::{FormControlValue, FormControlValueStateKind},
     input::{CsrInputChecked, CsrInputValue, InputDataModel, InputType, InputValue, InputValueKind, InputValueKindCsr, IntoCsrInputDataModel, IntoInputDataModel},
     KindOfChecked,
+};
+use frender_reactive_value::{
+    non_reactive::{CachedNonReactiveValue, CachedNonReactiveValueRenderInit as _},
+    temp_ref::TempRef,
+    value_kind::KindOfTempRef,
 };
 
 use crate::{
@@ -38,7 +38,7 @@ type KindOf<Value, Checked, Type> = Kind<
     <Value as InputValue>::ValueKind,
     <<Value as CsrInputValue>::IntoCsrInputValue as FormControlValue<<Value as InputValue>::ValueKind>>::StateKind,
     <<Checked as CsrInputChecked>::IntoCsrInputChecked as FormControlValue<KindOfChecked>>::StateKind,
-    <<Type as InputType>::InputTypeStr as CachedNonReactiveValue<str>>::Cache,
+    <<Type as InputType>::InputTypeStr as CachedNonReactiveValue<KindOfTempRef<str>>>::Cache,
 >;
 
 type StateOf<R, ValueKind, ValueStateKind, CheckedStateKind, TypeCache> = State<
@@ -267,8 +267,8 @@ impl<DataModel: IntoCsrInputDataModel> CsrComponent<DataModel> for input::Marker
     }
 }
 
-fn renderer_update_type<'a, R: ?Sized + RenderHtml>(renderer: &'a mut R, element: &'a mut R::input) -> impl 'a + FnOnce(TempStr<&str>) {
-    |TempStr(input_type_str)| {
+fn renderer_update_type<'a, R: ?Sized + RenderHtml>(renderer: &'a mut R, element: &'a mut R::input) -> impl 'a + FnOnce(TempRef<str>) {
+    |TempRef(input_type_str)| {
         use crate::html::behaviors::ElementWithTypeAttribute as _;
         element.set_type(renderer, input_type_str);
     }

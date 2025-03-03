@@ -26,6 +26,7 @@ frender-form-control = { version = "0.1.0", path = "../frender-form-control", fe
 ] }
 arrayvec = { version = "0.7.6", default-features = false }
 ref-cast = { version = "1.0.23", optional = true }
+frender-reactive-value = { version = "0.1.0", path = "../frender-reactive-value" }
 
 [dependencies.web-sys]
 version = "0.3.60"
@@ -105,14 +106,26 @@ features = [
 ]
 
 [features]
+default = ["macros_not_expanded"] # TODO: remove
 macros_not_expanded = []
 components = []
-csr = ["frender-dom/csr", "frender-form-control/csr"]
-ssr = ["dep:frender-ssr", "frender-dom/ssr", "frender-form-control/ssr"]
+csr = [
+    "frender-attr-value/csr",
+    "frender-dom/csr",
+    "frender-form-control/csr",
+    "frender-style/csr",
+]
+ssr = [
+    "dep:frender-ssr",
+    "frender-attr-value/ssr",
+    "frender-dom/ssr",
+    "frender-form-control/ssr",
+    "frender-style/ssr",
+]
 web = [
-    "frender-style/web",
     "frender-dom/web",
     "frender-form-control/web",
+    "frender-style/web",
     "dep:gloo-events",
     "dep:js-sys",
     "dep:web-sys",

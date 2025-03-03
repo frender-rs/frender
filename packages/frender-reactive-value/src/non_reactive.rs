@@ -63,16 +63,20 @@ mod cache_provide_value;
 
 mod cached;
 
-mod clone_as_cache_if_cache_miss;
-mod clone_as_value_if_cache_miss;
 mod copied;
 mod cow_static;
 mod owned;
 mod r#ref;
 mod refed;
 mod static_string;
-mod temp_str;
+mod temp_into_static;
+mod temp_ref;
 mod uncached;
+
+mod impl_known;
+
+#[doc(hidden)]
+pub mod __private;
 
 pub trait UncachedNonReactiveValue<VK: ?Sized + ValueKind> {
     type UncachedIntoProvideValue: ProvideValueOfKind<VK>;
@@ -93,6 +97,20 @@ pub trait CachedNonReactiveValue<VK: ?Sized + ValueKind> {
     }
 
     fn into_cache_and_render_init(self) -> (Self::Cache, Self::RenderInit);
+
+    fn into_cache_and_render<Out>(
+        self,
+        renderer: impl FnOnce(VK::Value<'_>) -> Out,
+    ) -> (Self::Cache, Out)
+    where
+        Self: Sized,
+    {
+        let (mut cache, render_init) = self.into_cache_and_render_init();
+
+        let out = render_init.cached_non_reactive_value_render_init(renderer, &mut cache);
+
+        (cache, out)
+    }
 
     /// Always render
     fn update_into_cache_and_render<Out>(
@@ -180,8 +198,5 @@ impl<T: CachedNonReactiveValueRenderInit<VK, Cache>, VK: ?Sized + ValueKind, Cac
     type RenderInitPinned<R: FnOnce(<VK as ValueKind>::Value<'_>) -> Out, Out> = Self;
 }
 
-// TODO: proxy SsrStr
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Uncached<T>(pub T);
-
-pub struct CloneIfCacheMiss<T>(pub T);

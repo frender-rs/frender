@@ -1,6 +1,6 @@
 use std::pin::Pin;
 
-use frender::prelude::*;
+use frender::{prelude::*, TempIntoStatic, TempRef, Uncached};
 
 fn use_effect_every_second(
     effect: impl FnMut() + 'static,
@@ -35,7 +35,7 @@ hooks::hook_fn!(
 fn temp_str_with_element_macro() -> impl Element {
     element!(move || -> TempStr<&'hook str> {
         let s = h![use_time_string()];
-        frender::TempStr(s)
+        TempRef(s)
     })
 }
 
@@ -43,15 +43,16 @@ fn temp_str_with_element_macro() -> impl Element {
 fn temp_str_with_hook_closure() -> impl Element {
     frender::new_fn_hook_element(hook_closure!(move || -> TempStr<&'hook str> {
         let s = h![use_time_string()];
-        frender::TempStr(s)
+        TempRef(s)
     }))
 }
 
-fn temp_str_macro_expanded() -> impl ::frender::Element {
+#[allow(unused)]
+fn temp_str_macro_expanded_csr_only() -> impl ::frender::CsrElement {
     #[inline(always)]
     fn identity_fn<
         HookData,
-        F: for<'hook> FnMut(Pin<&'hook mut HookData>) -> frender::TempStr<&'hook str>,
+        F: for<'hook> FnMut(Pin<&'hook mut HookData>) -> Uncached<TempRef<'hook, str>>,
     >(
         v: F,
     ) -> F {
@@ -64,27 +65,47 @@ fn temp_str_macro_expanded() -> impl ::frender::Element {
                 use_time_string(),
                 __hooks_hook_0,
             );
-            frender::TempStr(s)
+            Uncached(TempRef(s))
+        },
+    ))
+}
+
+fn temp_str_macro_expanded() -> impl ::frender::Element {
+    #[inline(always)]
+    fn identity_fn<
+        HookData,
+        F: for<'hook> FnMut(Pin<&'hook mut HookData>) -> Uncached<TempIntoStatic<&'hook str>>,
+    >(
+        v: F,
+    ) -> F {
+        v
+    }
+
+    ::frender::new_fn_hook_element(identity_fn(
+        move |__hooks_hook_0: ::core::pin::Pin<&mut _>| {
+            let s = ::frender::__private::hooks_core::UpdateHookUninitialized::h(
+                use_time_string(),
+                __hooks_hook_0,
+            );
+            Uncached(TempIntoStatic(s))
         },
     ))
 }
 
 fn temp_str_with_inline_component_fn() -> impl Element {
-    // TODO: frender::TempStr<&str> is also allowed in this case
-    component_fn!(move || -> frender::TempStr<&'hook str> {
+    component_fn!(move || -> Uncached<TempIntoStatic<&'hook str>> {
         let s = h![use_time_string()];
 
-        frender::TempStr(s)
+        Uncached(TempIntoStatic(s))
     })
 }
 
 fn temp_str_with_inline_component_fn_with_generics<E: Element + Copy>(el: E) -> impl Element {
-    // TODO: frender::TempStr<&str> is also allowed in this case
     component_fn!(
-        for<E: Element + Copy> move || -> (E, frender::TempStr<&'hook str>) {
+        for<E: Element + Copy> move || -> (E, Uncached<TempIntoStatic<&'hook str>>) {
             let s = h![use_time_string()];
 
-            (el, frender::TempStr(s))
+            (el, Uncached(TempIntoStatic(s)))
         }
     )
 }

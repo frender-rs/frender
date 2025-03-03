@@ -8,6 +8,8 @@ impl<R0: SsrElement> SsrElement for (R0,) {
     }
 }
 
+impl<R0: SsrElement + Copy> super::KnownCopySsrElement for (R0,) {}
+
 macro_rules! impl_render_for_tuple {
     ($(($($field:ident),+) ,)+) => {
         $(
@@ -27,6 +29,8 @@ macro_rules! impl_render_for_tuple {
                     )
                 }
             }
+
+            impl<$($field: SsrElement + Copy),+> super::KnownCopySsrElement for ($($field),+) {}
         )+
     };
 }

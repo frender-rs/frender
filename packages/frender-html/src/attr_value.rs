@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use frender_attr_value::csr::ValueKind;
+use frender_attr_value::AttrValueKind;
 
 #[cfg(feature = "csr")]
 pub(crate) mod csr;
@@ -19,5 +19,5 @@ impl<PM, V> Property<PM, V> {
 }
 
 pub trait HasAttrValueKind {
-    type AttrValueKind: ?Sized + ValueKind;
+    type AttrValueKind: ?Sized + AttrValueKind;
 }

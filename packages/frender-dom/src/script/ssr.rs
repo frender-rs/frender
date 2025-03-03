@@ -1,5 +1,4 @@
-use async_str_iter::any_str::IterAnyStr;
-use frender_common::{strings::SsrStr, IntoStaticStr};
+use frender_reactive_value::ssr::SsrStr;
 use frender_ssr::html::assert;
 
 use super::ScriptContent;
@@ -25,18 +24,16 @@ impl<S: SsrStr> ScriptContent for ScriptInnerTextWronglyEncoded<S> {}
 
 impl<S: SsrStr> SsrScriptContent for ScriptInnerTextWronglyEncoded<S> {
     type IntoScriptContent =
-        frender_ssr::html::script::IterScriptInnerTextWronglyEncoded<IterAnyStr<S::StaticStr>>;
+        frender_ssr::html::script::IterScriptInnerTextWronglyEncoded<S::SsrStrIntoAsyncStrIterator>;
 
     fn into_script_content(this: Self) -> Self::IntoScriptContent {
-        Self::IntoScriptContent::new(IterAnyStr::new(
-            this.0.into_into_static_str().into_static_str(),
-        ))
+        Self::IntoScriptContent::new(this.0.ssr_str_into_async_str_iterator())
     }
 }
 
 #[cfg(feature = "csr")]
 mod csr {
-    use frender_common::{reactive_value::ReactiveValueWithKind, strings::SsrStr};
+    use frender_reactive_value::{ssr::SsrStr, ReactiveValueWithKind};
 
     use crate::csr::render_from::str::ValueKindForStr;
 

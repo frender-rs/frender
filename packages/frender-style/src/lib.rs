@@ -1,8 +1,11 @@
+#[cfg(feature = "csr")]
 pub mod csr;
+#[cfg(feature = "ssr")]
 pub mod ssr;
 
 mod declaration;
 
+pub mod css_style_declaration;
 pub mod styles;
 
 #[cfg(feature = "web")]
@@ -14,14 +17,14 @@ mod web;
 ///
 /// https://drafts.csswg.org/css-style-attr/#syntax
 /// https://w3c.github.io/csswg-drafts/css-style-attr/#syntax
-pub trait Style: csr::CsrStyle + ssr::SsrStyle {}
-
-impl<S: ?Sized + csr::CsrStyle + ssr::SsrStyle> Style for S {}
+pub trait Style {}
 
 pub trait IntoStyle {
-    type IntoStyle;
+    type IntoStyle: Style;
 
     fn into_style(self) -> Self::IntoStyle;
 }
+
+impl<T: ?Sized + IntoStyle> Style for T {}
 
 pub mod style;

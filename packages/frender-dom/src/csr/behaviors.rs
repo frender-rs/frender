@@ -1,3 +1,5 @@
+use frender_style::css_style_declaration::CssStyleDeclaration;
+
 use crate::csr::{render::RenderWithContext, render_from::str::ValueForStr};
 
 #[cfg(feature = "web")]
@@ -85,7 +87,7 @@ pub trait ElementWithRelList<Renderer: ?Sized>: Element<Renderer> {
 }
 
 pub trait ElementWithStyle<Renderer: ?Sized>: Element<Renderer> {
-    type Style<'a>: frender_style::csr::CssStyleDeclaration
+    type Style<'a>: CssStyleDeclaration
     where
         Self: 'a,
         Renderer: 'a;

@@ -1,5 +1,5 @@
 mod content_editable;
-pub use content_editable::ContentEditable;
+pub use content_editable::AttrKindOfContentEditable;
 
 mod spellcheck;
 pub use spellcheck::Spellcheck;

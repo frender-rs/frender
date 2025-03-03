@@ -72,11 +72,10 @@ mod into_js_string {
 mod into_text_node {
     use std::{borrow::Cow, rc::Rc, sync::Arc};
 
+    use frender_reactive_value::{static_or_temp_ref::StaticOrTempRef, temp_ref::TempRef};
     use wasm_bindgen::JsCast as _;
 
-    use frender_common::{
-        impl_many, strings::AsRefStr as _, value_kind::StaticRefOrTempOwned, TempStr,
-    };
+    use frender_common::impl_many;
     use frender_html::dom::string_element::StringElement;
 
     use super::Renderer;
@@ -107,20 +106,20 @@ mod into_text_node {
                 &'static str,
                 String,
                 Cow<'static, str>,
-                TempStr<&str>,
-                StaticRefOrTempOwned<'_, str>,
+                TempRef<'_, str>,
+                StaticOrTempRef<'_, str>,
                 Rc<str>,
-                &Rc<str>,
+                TempRef<'_, Rc<str>>,
                 Arc<str>,
-                &Arc<str>,
+                TempRef<'_, Arc<str>>,
             ]
         {
             fn into_text_node(self, renderer: &mut Renderer) -> web_sys::Text {
-                renderer.document.create_text_node(self.as_ref_str())
+                renderer.document.create_text_node(self.as_ref())
             }
 
             fn update_text_node(self, _: &mut Renderer, text: &web_sys::Text) {
-                text.set_data(self.as_ref_str())
+                text.set_data(self.as_ref())
             }
         }
     );
@@ -144,9 +143,9 @@ mod into_text_node {
         }
     }
 
-    impl IntoTextNode for &StringElement {
+    impl IntoTextNode for TempRef<'_, StringElement> {
         fn into_text_node(self, renderer: &mut Renderer) -> web_sys::Text {
-            match self.as_js_string() {
+            match self.0.as_js_string() {
                 Ok(this) => super::js_shims::Document::create_text_node_ref(
                     renderer.document.unchecked_ref(),
                     this,
@@ -156,7 +155,7 @@ mod into_text_node {
         }
 
         fn update_text_node(self, _: &mut Renderer, text: &web_sys::Text) {
-            match self.as_js_string() {
+            match self.0.as_js_string() {
                 Ok(this) => super::js_shims::Text::set_data_ref(text.unchecked_ref(), this),
                 Err(this) => text.set_data(&this),
             }

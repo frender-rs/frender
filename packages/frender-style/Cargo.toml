@@ -9,12 +9,13 @@ frender-macro-rules = { version = "0.1.0", path = "../frender-macro-rules", feat
 ] }
 frender-common = { version = "0.1.0", path = "../frender-common" }
 ccss = { version = "0.1.0" }
-async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-features = false }
+async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-features = false, optional = true }
 web-sys = { version = "0.3.69", optional = true, default-features = false, features = [
     "CssStyleDeclaration",
 ] }
 frender-const-expr = { version = "0.1.0", path = "../frender-const-expr" }
 either = { version = "1.13.0", optional = true, default-features = false }
+frender-reactive-value = { version = "0.1.0", path = "../frender-reactive-value" }
 
 [dev-dependencies]
 futures-lite = "2.0.1"
@@ -22,3 +23,5 @@ futures-lite = "2.0.1"
 [features]
 web = ["dep:web-sys"]
 either = ["dep:either"]
+csr = []
+ssr = ["dep:async-str-iter", "frender-reactive-value/ssr"]

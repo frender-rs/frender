@@ -68,12 +68,12 @@ const _: () = {
         }
     }
     impl<M: AllowAttribute<prop_markers::id>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn id<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::id<V>), P> {
+        pub fn id<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::id<V>), P> {
             Self::with_attribute_appended(self, props::id(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::part>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn part<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::part<V>), P> {
+        pub fn part<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::part<V>), P> {
             Self::with_attribute_appended(self, props::part(value))
         }
     }
@@ -375,7 +375,7 @@ const _: () = {
     use super::{prop_markers::ElementWithHrefAttribute as prop_markers, props::ElementWithHrefAttribute as props};
     impl AllowAttribute<prop_markers::href> for super::markers::ElementWithHrefAttribute {}
     impl<M: AllowAttribute<prop_markers::href>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn href<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::href<V>), P> {
+        pub fn href<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::href<V>), P> {
             Self::with_attribute_appended(self, props::href(value))
         }
     }
@@ -394,7 +394,7 @@ const _: () = {
     use super::{prop_markers::ElementWithTargetAttribute as prop_markers, props::ElementWithTargetAttribute as props};
     impl AllowAttribute<prop_markers::target> for super::markers::ElementWithTargetAttribute {}
     impl<M: AllowAttribute<prop_markers::target>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn target<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::target<V>), P> {
+        pub fn target<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::target<V>), P> {
             Self::with_attribute_appended(self, props::target(value))
         }
     }
@@ -413,10 +413,10 @@ const _: () = {
     use super::{prop_markers::ElementWithTypeAttribute as prop_markers, props::ElementWithTypeAttribute as props};
     impl AllowAttribute<prop_markers::r#type> for super::markers::ElementWithTypeAttribute {}
     impl<M: AllowAttribute<prop_markers::r#type>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn r#type<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::r#type<V>), P> {
+        pub fn r#type<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::r#type<V>), P> {
             Self::with_attribute_appended(self, props::r#type(value))
         }
-        pub fn type_<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::r#type<V>), P> {
+        pub fn type_<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::r#type<V>), P> {
             Self::with_attribute_appended(self, props::r#type(value))
         }
     }
@@ -435,7 +435,7 @@ const _: () = {
     use super::{prop_markers::ElementWithCiteAttribute as prop_markers, props::ElementWithCiteAttribute as props};
     impl AllowAttribute<prop_markers::cite> for super::markers::ElementWithCiteAttribute {}
     impl<M: AllowAttribute<prop_markers::cite>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn cite<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::cite<V>), P> {
+        pub fn cite<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::cite<V>), P> {
             Self::with_attribute_appended(self, props::cite(value))
         }
     }
@@ -454,7 +454,7 @@ const _: () = {
     use super::{prop_markers::ElementWithPlaceHolderAttribute as prop_markers, props::ElementWithPlaceHolderAttribute as props};
     impl AllowAttribute<prop_markers::placeholder> for super::markers::ElementWithPlaceHolderAttribute {}
     impl<M: AllowAttribute<prop_markers::placeholder>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn placeholder<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::placeholder<V>), P> {
+        pub fn placeholder<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::placeholder<V>), P> {
             Self::with_attribute_appended(self, props::placeholder(value))
         }
     }
@@ -610,7 +610,7 @@ const _: () = {
     use super::{prop_markers::ElementWithNameAttribute as prop_markers, props::ElementWithNameAttribute as props};
     impl AllowAttribute<prop_markers::name> for super::markers::ElementWithNameAttribute {}
     impl<M: AllowAttribute<prop_markers::name>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn name<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::name<V>), P> {
+        pub fn name<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::name<V>), P> {
             Self::with_attribute_appended(self, props::name(value))
         }
     }
@@ -648,7 +648,7 @@ const _: () = {
     use super::{prop_markers::ElementWithCrossOriginAttribute as prop_markers, props::ElementWithCrossOriginAttribute as props};
     impl AllowAttribute<prop_markers::cross_origin> for super::markers::ElementWithCrossOriginAttribute {}
     impl<M: AllowAttribute<prop_markers::cross_origin>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn cross_origin<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::cross_origin<V>), P> {
+        pub fn cross_origin<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::cross_origin<V>), P> {
             Self::with_attribute_appended(self, props::cross_origin(value))
         }
     }
@@ -686,7 +686,7 @@ const _: () = {
     use super::{prop_markers::ElementWithReferrerPolicyAttribute as prop_markers, props::ElementWithReferrerPolicyAttribute as props};
     impl AllowAttribute<prop_markers::referrer_policy> for super::markers::ElementWithReferrerPolicyAttribute {}
     impl<M: AllowAttribute<prop_markers::referrer_policy>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn referrer_policy<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::referrer_policy<V>), P> {
+        pub fn referrer_policy<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::referrer_policy<V>), P> {
             Self::with_attribute_appended(self, props::referrer_policy(value))
         }
     }
@@ -705,7 +705,7 @@ const _: () = {
     use super::{prop_markers::ElementWithAltAttribute as prop_markers, props::ElementWithAltAttribute as props};
     impl AllowAttribute<prop_markers::alt> for super::markers::ElementWithAltAttribute {}
     impl<M: AllowAttribute<prop_markers::alt>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn alt<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::alt<V>), P> {
+        pub fn alt<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::alt<V>), P> {
             Self::with_attribute_appended(self, props::alt(value))
         }
     }
@@ -724,7 +724,7 @@ const _: () = {
     use super::{prop_markers::ElementWithLoadingAttribute as prop_markers, props::ElementWithLoadingAttribute as props};
     impl AllowAttribute<prop_markers::loading> for super::markers::ElementWithLoadingAttribute {}
     impl<M: AllowAttribute<prop_markers::loading>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn loading<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::loading<V>), P> {
+        pub fn loading<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::loading<V>), P> {
             Self::with_attribute_appended(self, props::loading(value))
         }
     }
@@ -743,7 +743,7 @@ const _: () = {
     use super::{prop_markers::ElementWithAcceptAttribute as prop_markers, props::ElementWithAcceptAttribute as props};
     impl AllowAttribute<prop_markers::accept> for super::markers::ElementWithAcceptAttribute {}
     impl<M: AllowAttribute<prop_markers::accept>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn accept<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::accept<V>), P> {
+        pub fn accept<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::accept<V>), P> {
             Self::with_attribute_appended(self, props::accept(value))
         }
     }
@@ -762,7 +762,7 @@ const _: () = {
     use super::{prop_markers::ElementWithAutoCompleteAttribute as prop_markers, props::ElementWithAutoCompleteAttribute as props};
     impl AllowAttribute<prop_markers::auto_complete> for super::markers::ElementWithAutoCompleteAttribute {}
     impl<M: AllowAttribute<prop_markers::auto_complete>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn auto_complete<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::auto_complete<V>), P> {
+        pub fn auto_complete<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::auto_complete<V>), P> {
             Self::with_attribute_appended(self, props::auto_complete(value))
         }
     }
@@ -781,7 +781,7 @@ const _: () = {
     use super::{prop_markers::ElementWithAutoCorrectAttribute as prop_markers, props::ElementWithAutoCorrectAttribute as props};
     impl AllowAttribute<prop_markers::auto_correct> for super::markers::ElementWithAutoCorrectAttribute {}
     impl<M: AllowAttribute<prop_markers::auto_correct>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn auto_correct<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::auto_correct<V>), P> {
+        pub fn auto_correct<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::auto_correct<V>), P> {
             Self::with_attribute_appended(self, props::auto_correct(value))
         }
     }
@@ -800,7 +800,7 @@ const _: () = {
     use super::{prop_markers::ElementWithFormAttribute as prop_markers, props::ElementWithFormAttribute as props};
     impl AllowAttribute<prop_markers::form> for super::markers::ElementWithFormAttribute {}
     impl<M: AllowAttribute<prop_markers::form>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn form<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::form<V>), P> {
+        pub fn form<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::form<V>), P> {
             Self::with_attribute_appended(self, props::form(value))
         }
     }
@@ -824,17 +824,17 @@ const _: () = {
     impl AllowAttribute<prop_markers::form_target> for super::markers::ElementWithFormAttributes {}
     impl AllowAttribute<prop_markers::form> for super::markers::ElementWithFormAttributes {}
     impl<M: AllowAttribute<prop_markers::form_action>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn form_action<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::form_action<V>), P> {
+        pub fn form_action<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::form_action<V>), P> {
             Self::with_attribute_appended(self, props::form_action(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::form_enc_type>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn form_enc_type<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::form_enc_type<V>), P> {
+        pub fn form_enc_type<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::form_enc_type<V>), P> {
             Self::with_attribute_appended(self, props::form_enc_type(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::form_method>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn form_method<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::form_method<V>), P> {
+        pub fn form_method<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::form_method<V>), P> {
             Self::with_attribute_appended(self, props::form_method(value))
         }
     }
@@ -844,7 +844,7 @@ const _: () = {
         }
     }
     impl<M: AllowAttribute<prop_markers::form_target>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn form_target<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::form_target<V>), P> {
+        pub fn form_target<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::form_target<V>), P> {
             Self::with_attribute_appended(self, props::form_target(value))
         }
     }
@@ -863,7 +863,7 @@ const _: () = {
     use super::{prop_markers::ElementWithFetchPriorityAttribute as prop_markers, props::ElementWithFetchPriorityAttribute as props};
     impl AllowAttribute<prop_markers::fetch_priority> for super::markers::ElementWithFetchPriorityAttribute {}
     impl<M: AllowAttribute<prop_markers::fetch_priority>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn fetch_priority<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::fetch_priority<V>), P> {
+        pub fn fetch_priority<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::fetch_priority<V>), P> {
             Self::with_attribute_appended(self, props::fetch_priority(value))
         }
     }
@@ -883,7 +883,7 @@ const _: () = {
     impl AllowAttribute<prop_markers::href_lang> for super::markers::ElementWithHrefLangAttribute {}
     impl AllowAttribute<prop_markers::href> for super::markers::ElementWithHrefLangAttribute {}
     impl<M: AllowAttribute<prop_markers::href_lang>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn href_lang<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::href_lang<V>), P> {
+        pub fn href_lang<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::href_lang<V>), P> {
             Self::with_attribute_appended(self, props::href_lang(value))
         }
     }
@@ -902,7 +902,7 @@ const _: () = {
     use super::{prop_markers::ElementWithSizesAttribute as prop_markers, props::ElementWithSizesAttribute as props};
     impl AllowAttribute<prop_markers::sizes> for super::markers::ElementWithSizesAttribute {}
     impl<M: AllowAttribute<prop_markers::sizes>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn sizes<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::sizes<V>), P> {
+        pub fn sizes<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::sizes<V>), P> {
             Self::with_attribute_appended(self, props::sizes(value))
         }
     }
@@ -921,7 +921,7 @@ const _: () = {
     use super::{prop_markers::ElementWithUseMapAttribute as prop_markers, props::ElementWithUseMapAttribute as props};
     impl AllowAttribute<prop_markers::use_map> for super::markers::ElementWithUseMapAttribute {}
     impl<M: AllowAttribute<prop_markers::use_map>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn use_map<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::use_map<V>), P> {
+        pub fn use_map<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::use_map<V>), P> {
             Self::with_attribute_appended(self, props::use_map(value))
         }
     }
@@ -940,7 +940,7 @@ const _: () = {
     use super::{prop_markers::ElementWithLabelAttribute as prop_markers, props::ElementWithLabelAttribute as props};
     impl AllowAttribute<prop_markers::label> for super::markers::ElementWithLabelAttribute {}
     impl<M: AllowAttribute<prop_markers::label>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn label<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::label<V>), P> {
+        pub fn label<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::label<V>), P> {
             Self::with_attribute_appended(self, props::label(value))
         }
     }
@@ -959,10 +959,10 @@ const _: () = {
     use super::{prop_markers::ElementWithForAttribute as prop_markers, props::ElementWithForAttribute as props};
     impl AllowAttribute<prop_markers::r#for> for super::markers::ElementWithForAttribute {}
     impl<M: AllowAttribute<prop_markers::r#for>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn r#for<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::r#for<V>), P> {
+        pub fn r#for<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::r#for<V>), P> {
             Self::with_attribute_appended(self, props::r#for(value))
         }
-        pub fn html_for<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::r#for<V>), P> {
+        pub fn html_for<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::r#for<V>), P> {
             Self::with_attribute_appended(self, props::r#for(value))
         }
     }
@@ -981,7 +981,7 @@ const _: () = {
     use super::{prop_markers::ElementWithIntegrityAttribute as prop_markers, props::ElementWithIntegrityAttribute as props};
     impl AllowAttribute<prop_markers::integrity> for super::markers::ElementWithIntegrityAttribute {}
     impl<M: AllowAttribute<prop_markers::integrity>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn integrity<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::integrity<V>), P> {
+        pub fn integrity<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::integrity<V>), P> {
             Self::with_attribute_appended(self, props::integrity(value))
         }
     }
@@ -1000,7 +1000,7 @@ const _: () = {
     use super::{prop_markers::ElementWithBlockingAttribute as prop_markers, props::ElementWithBlockingAttribute as props};
     impl AllowAttribute<prop_markers::blocking> for super::markers::ElementWithBlockingAttribute {}
     impl<M: AllowAttribute<prop_markers::blocking>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn blocking<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::blocking<V>), P> {
+        pub fn blocking<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::blocking<V>), P> {
             Self::with_attribute_appended(self, props::blocking(value))
         }
     }
@@ -1076,7 +1076,7 @@ const _: () = {
     use super::{prop_markers::ElementWithSrcAttribute as prop_markers, props::ElementWithSrcAttribute as props};
     impl AllowAttribute<prop_markers::src> for super::markers::ElementWithSrcAttribute {}
     impl<M: AllowAttribute<prop_markers::src>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn src<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::src<V>), P> {
+        pub fn src<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::src<V>), P> {
             Self::with_attribute_appended(self, props::src(value))
         }
     }
@@ -1096,7 +1096,7 @@ const _: () = {
     impl AllowAttribute<prop_markers::srcset> for super::markers::ElementWithSrcsetAttribute {}
     impl AllowAttribute<prop_markers::src> for super::markers::ElementWithSrcsetAttribute {}
     impl<M: AllowAttribute<prop_markers::srcset>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn srcset<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::srcset<V>), P> {
+        pub fn srcset<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::srcset<V>), P> {
             Self::with_attribute_appended(self, props::srcset(value))
         }
     }
@@ -1115,7 +1115,7 @@ const _: () = {
     use super::{prop_markers::ElementWithBgColorAttribute as prop_markers, props::ElementWithBgColorAttribute as props};
     impl AllowAttribute<prop_markers::bg_color> for super::markers::ElementWithBgColorAttribute {}
     impl<M: AllowAttribute<prop_markers::bg_color>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn bg_color<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::bg_color<V>), P> {
+        pub fn bg_color<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::bg_color<V>), P> {
             Self::with_attribute_appended(self, props::bg_color(value))
         }
     }
@@ -1134,7 +1134,7 @@ const _: () = {
     use super::{prop_markers::ElementWithAlignAttribute as prop_markers, props::ElementWithAlignAttribute as props};
     impl AllowAttribute<prop_markers::align> for super::markers::ElementWithAlignAttribute {}
     impl<M: AllowAttribute<prop_markers::align>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn align<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::align<V>), P> {
+        pub fn align<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::align<V>), P> {
             Self::with_attribute_appended(self, props::align(value))
         }
     }
@@ -1153,7 +1153,7 @@ const _: () = {
     use super::{prop_markers::ElementWithMediaAttribute as prop_markers, props::ElementWithMediaAttribute as props};
     impl AllowAttribute<prop_markers::media> for super::markers::ElementWithMediaAttribute {}
     impl<M: AllowAttribute<prop_markers::media>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn media<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::media<V>), P> {
+        pub fn media<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::media<V>), P> {
             Self::with_attribute_appended(self, props::media(value))
         }
     }
@@ -1191,7 +1191,7 @@ const _: () = {
     use super::{prop_markers::ElementWithDateTimeAttribute as prop_markers, props::ElementWithDateTimeAttribute as props};
     impl AllowAttribute<prop_markers::date_time> for super::markers::ElementWithDateTimeAttribute {}
     impl<M: AllowAttribute<prop_markers::date_time>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn date_time<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::date_time<V>), P> {
+        pub fn date_time<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::date_time<V>), P> {
             Self::with_attribute_appended(self, props::date_time(value))
         }
     }
@@ -1271,12 +1271,12 @@ const _: () = {
         }
     }
     impl<M: AllowAttribute<prop_markers::access_key>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn access_key<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::access_key<V>), P> {
+        pub fn access_key<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::access_key<V>), P> {
             Self::with_attribute_appended(self, props::access_key(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::auto_capitalize>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn auto_capitalize<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::auto_capitalize<V>), P> {
+        pub fn auto_capitalize<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::auto_capitalize<V>), P> {
             Self::with_attribute_appended(self, props::auto_capitalize(value))
         }
     }
@@ -1286,18 +1286,18 @@ const _: () = {
         }
     }
     impl<M: AllowAttribute<prop_markers::content_editable>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn content_editable<V: frender_attr_value::AttrValue<ContentEditable>>(self, value: V) -> Intrinsic<M, C, (A, props::content_editable<V>), P> {
+        pub fn content_editable<V: frender_attr_value::AttrValue<AttrKindOfContentEditable>>(self, value: V) -> Intrinsic<M, C, (A, props::content_editable<V>), P> {
             Self::with_attribute_appended(self, props::content_editable(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::context_menu>, C, A, P> Intrinsic<M, C, A, P> {
         #[deprecated = "See https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/contextMenu"]
-        pub fn context_menu<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::context_menu<V>), P> {
+        pub fn context_menu<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::context_menu<V>), P> {
             Self::with_attribute_appended(self, props::context_menu(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::dir>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn dir<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::dir<V>), P> {
+        pub fn dir<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::dir<V>), P> {
             Self::with_attribute_appended(self, props::dir(value))
         }
     }
@@ -1307,7 +1307,7 @@ const _: () = {
         }
     }
     impl<M: AllowAttribute<prop_markers::enter_key_hint>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn enter_key_hint<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::enter_key_hint<V>), P> {
+        pub fn enter_key_hint<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::enter_key_hint<V>), P> {
             Self::with_attribute_appended(self, props::enter_key_hint(value))
         }
     }
@@ -1322,57 +1322,57 @@ const _: () = {
         }
     }
     impl<M: AllowAttribute<prop_markers::input_mode>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn input_mode<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::input_mode<V>), P> {
+        pub fn input_mode<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::input_mode<V>), P> {
             Self::with_attribute_appended(self, props::input_mode(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::is>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn is<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::is<V>), P> {
+        pub fn is<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::is<V>), P> {
             Self::with_attribute_appended(self, props::is(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::item_id>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn item_id<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::item_id<V>), P> {
+        pub fn item_id<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::item_id<V>), P> {
             Self::with_attribute_appended(self, props::item_id(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::item_prop>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn item_prop<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::item_prop<V>), P> {
+        pub fn item_prop<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::item_prop<V>), P> {
             Self::with_attribute_appended(self, props::item_prop(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::item_ref>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn item_ref<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::item_ref<V>), P> {
+        pub fn item_ref<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::item_ref<V>), P> {
             Self::with_attribute_appended(self, props::item_ref(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::item_scope>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn item_scope<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::item_scope<V>), P> {
+        pub fn item_scope<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::item_scope<V>), P> {
             Self::with_attribute_appended(self, props::item_scope(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::item_type>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn item_type<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::item_type<V>), P> {
+        pub fn item_type<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::item_type<V>), P> {
             Self::with_attribute_appended(self, props::item_type(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::lang>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn lang<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::lang<V>), P> {
+        pub fn lang<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::lang<V>), P> {
             Self::with_attribute_appended(self, props::lang(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::nonce>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn nonce<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::nonce<V>), P> {
+        pub fn nonce<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::nonce<V>), P> {
             Self::with_attribute_appended(self, props::nonce(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::role>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn role<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::role<V>), P> {
+        pub fn role<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::role<V>), P> {
             Self::with_attribute_appended(self, props::role(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::slot>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn slot<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::slot<V>), P> {
+        pub fn slot<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::slot<V>), P> {
             Self::with_attribute_appended(self, props::slot(value))
         }
     }
@@ -1392,17 +1392,17 @@ const _: () = {
         }
     }
     impl<M: AllowAttribute<prop_markers::title>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn title<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::title<V>), P> {
+        pub fn title<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::title<V>), P> {
             Self::with_attribute_appended(self, props::title(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::translate>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn translate<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::translate<V>), P> {
+        pub fn translate<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::translate<V>), P> {
             Self::with_attribute_appended(self, props::translate(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::virtual_keyboard_policy>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn virtual_keyboard_policy<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::virtual_keyboard_policy<V>), P> {
+        pub fn virtual_keyboard_policy<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::virtual_keyboard_policy<V>), P> {
             Self::with_attribute_appended(self, props::virtual_keyboard_policy(value))
         }
     }
@@ -1840,12 +1840,12 @@ const _: () = {
     impl AllowAttribute<prop_markers::referrer_policy> for super::markers::HtmlElementWithHref {}
     impl AllowAttribute<prop_markers::rel> for super::markers::HtmlElementWithHref {}
     impl<M: AllowAttribute<prop_markers::download>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn download<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::download<V>), P> {
+        pub fn download<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::download<V>), P> {
             Self::with_attribute_appended(self, props::download(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::ping>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn ping<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::ping<V>), P> {
+        pub fn ping<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::ping<V>), P> {
             Self::with_attribute_appended(self, props::ping(value))
         }
     }
@@ -1893,12 +1893,12 @@ const _: () = {
     impl AllowAttribute<prop_markers::referrer_policy> for super::markers::HtmlAreaElement {}
     impl AllowAttribute<prop_markers::rel> for super::markers::HtmlAreaElement {}
     impl<M: AllowAttribute<prop_markers::coords>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn coords<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::coords<V>), P> {
+        pub fn coords<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::coords<V>), P> {
             Self::with_attribute_appended(self, props::coords(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::shape>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn shape<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::shape<V>), P> {
+        pub fn shape<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::shape<V>), P> {
             Self::with_attribute_appended(self, props::shape(value))
         }
     }
@@ -1968,7 +1968,7 @@ const _: () = {
         }
     }
     impl<M: AllowAttribute<prop_markers::preload>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn preload<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::preload<V>), P> {
+        pub fn preload<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::preload<V>), P> {
             Self::with_attribute_appended(self, props::preload(value))
         }
     }
@@ -2193,7 +2193,7 @@ const _: () = {
     impl AllowAttribute<prop_markers::alink> for super::markers::HtmlBodyElement {}
     impl<M: AllowAttribute<prop_markers::alink>, C, A, P> Intrinsic<M, C, A, P> {
         #[deprecated = "Use the CSS color property in conjunction with the :active pseudo-class instead."]
-        pub fn alink<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::alink<V>), P> {
+        pub fn alink<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::alink<V>), P> {
             Self::with_attribute_appended(self, props::alink(value))
         }
     }
@@ -2213,7 +2213,7 @@ const _: () = {
     impl AllowAttribute<prop_markers::clear> for super::markers::HtmlBrElement {}
     impl<M: AllowAttribute<prop_markers::clear>, C, A, P> Intrinsic<M, C, A, P> {
         #[deprecated]
-        pub fn clear<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::clear<V>), P> {
+        pub fn clear<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::clear<V>), P> {
             Self::with_attribute_appended(self, props::clear(value))
         }
     }
@@ -2404,22 +2404,22 @@ const _: () = {
     impl AllowAttribute<prop_markers::rel> for super::markers::HtmlFormElement {}
     impl AllowAttribute<prop_markers::name> for super::markers::HtmlFormElement {}
     impl<M: AllowAttribute<prop_markers::accept_charset>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn accept_charset<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::accept_charset<V>), P> {
+        pub fn accept_charset<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::accept_charset<V>), P> {
             Self::with_attribute_appended(self, props::accept_charset(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::action>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn action<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::action<V>), P> {
+        pub fn action<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::action<V>), P> {
             Self::with_attribute_appended(self, props::action(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::enc_type>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn enc_type<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::enc_type<V>), P> {
+        pub fn enc_type<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::enc_type<V>), P> {
             Self::with_attribute_appended(self, props::enc_type(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::method>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn method<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::method<V>), P> {
+        pub fn method<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::method<V>), P> {
             Self::with_attribute_appended(self, props::method(value))
         }
     }
@@ -2467,7 +2467,7 @@ const _: () = {
     use super::{prop_markers::HtmlHtmlElement as prop_markers, props::HtmlHtmlElement as props};
     impl AllowAttribute<prop_markers::xmlns> for super::markers::HtmlHtmlElement {}
     impl<M: AllowAttribute<prop_markers::xmlns>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn xmlns<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::xmlns<V>), P> {
+        pub fn xmlns<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::xmlns<V>), P> {
             Self::with_attribute_appended(self, props::xmlns(value))
         }
     }
@@ -2504,7 +2504,7 @@ const _: () = {
     }
     impl AllowAttribute<prop_markers::width> for super::markers::HtmlIFrameElement {}
     impl<M: AllowAttribute<prop_markers::allow>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn allow<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::allow<V>), P> {
+        pub fn allow<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::allow<V>), P> {
             Self::with_attribute_appended(self, props::allow(value))
         }
     }
@@ -2519,17 +2519,17 @@ const _: () = {
         }
     }
     impl<M: AllowAttribute<prop_markers::csp>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn csp<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::csp<V>), P> {
+        pub fn csp<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::csp<V>), P> {
             Self::with_attribute_appended(self, props::csp(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::sandbox>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn sandbox<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::sandbox<V>), P> {
+        pub fn sandbox<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::sandbox<V>), P> {
             Self::with_attribute_appended(self, props::sandbox(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::src_doc>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn src_doc<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::src_doc<V>), P> {
+        pub fn src_doc<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::src_doc<V>), P> {
             Self::with_attribute_appended(self, props::src_doc(value))
         }
     }
@@ -2566,12 +2566,12 @@ const _: () = {
     impl AllowAttribute<prop_markers::width> for super::markers::HtmlImageElement {}
     impl AllowAttribute<prop_markers::src> for super::markers::HtmlImageElement {}
     impl<M: AllowAttribute<prop_markers::decoding>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn decoding<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::decoding<V>), P> {
+        pub fn decoding<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::decoding<V>), P> {
             Self::with_attribute_appended(self, props::decoding(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::element_timing>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn element_timing<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::element_timing<V>), P> {
+        pub fn element_timing<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::element_timing<V>), P> {
             Self::with_attribute_appended(self, props::element_timing(value))
         }
     }
@@ -2635,27 +2635,27 @@ const _: () = {
     impl AllowAttribute<prop_markers::width> for super::markers::HtmlInputElement {}
     impl AllowAttribute<prop_markers::form> for super::markers::HtmlInputElement {}
     impl<M: AllowAttribute<prop_markers::capture>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn capture<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::capture<V>), P> {
+        pub fn capture<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::capture<V>), P> {
             Self::with_attribute_appended(self, props::capture(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::dirname>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn dirname<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::dirname<V>), P> {
+        pub fn dirname<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::dirname<V>), P> {
             Self::with_attribute_appended(self, props::dirname(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::list>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn list<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::list<V>), P> {
+        pub fn list<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::list<V>), P> {
             Self::with_attribute_appended(self, props::list(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::pattern>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn pattern<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::pattern<V>), P> {
+        pub fn pattern<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::pattern<V>), P> {
             Self::with_attribute_appended(self, props::pattern(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::step>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn step<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::step<V>), P> {
+        pub fn step<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::step<V>), P> {
             Self::with_attribute_appended(self, props::step(value))
         }
     }
@@ -2719,25 +2719,25 @@ const _: () = {
     impl AllowAttribute<prop_markers::rel> for super::markers::HtmlLinkElement {}
     impl AllowAttribute<prop_markers::cross_origin> for super::markers::HtmlLinkElement {}
     impl<M: AllowAttribute<prop_markers::r#as>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn r#as<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::r#as<V>), P> {
+        pub fn r#as<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::r#as<V>), P> {
             Self::with_attribute_appended(self, props::r#as(value))
         }
-        pub fn as_<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::r#as<V>), P> {
+        pub fn as_<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::r#as<V>), P> {
             Self::with_attribute_appended(self, props::r#as(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::image_sizes>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn image_sizes<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::image_sizes<V>), P> {
+        pub fn image_sizes<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::image_sizes<V>), P> {
             Self::with_attribute_appended(self, props::image_sizes(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::image_src_set>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn image_src_set<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::image_src_set<V>), P> {
+        pub fn image_src_set<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::image_src_set<V>), P> {
             Self::with_attribute_appended(self, props::image_src_set(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::prefetch>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn prefetch<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::prefetch<V>), P> {
+        pub fn prefetch<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::prefetch<V>), P> {
             Self::with_attribute_appended(self, props::prefetch(value))
         }
     }
@@ -2773,17 +2773,17 @@ const _: () = {
     impl AllowAttribute<prop_markers::http_equiv> for super::markers::HtmlMetaElement {}
     impl AllowAttribute<prop_markers::name> for super::markers::HtmlMetaElement {}
     impl<M: AllowAttribute<prop_markers::charset>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn charset<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::charset<V>), P> {
+        pub fn charset<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::charset<V>), P> {
             Self::with_attribute_appended(self, props::charset(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::content>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn content<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::content<V>), P> {
+        pub fn content<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::content<V>), P> {
             Self::with_attribute_appended(self, props::content(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::http_equiv>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn http_equiv<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::http_equiv<V>), P> {
+        pub fn http_equiv<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::http_equiv<V>), P> {
             Self::with_attribute_appended(self, props::http_equiv(value))
         }
     }
@@ -2857,7 +2857,7 @@ const _: () = {
     }
     impl AllowAttribute<prop_markers::width> for super::markers::HtmlObjectElement {}
     impl<M: AllowAttribute<prop_markers::data>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn data<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::data<V>), P> {
+        pub fn data<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::data<V>), P> {
             Self::with_attribute_appended(self, props::data(value))
         }
     }
@@ -3106,37 +3106,37 @@ const _: () = {
     impl AllowAttribute<prop_markers::bg_color> for super::markers::HtmlTableElement {}
     impl<M: AllowAttribute<prop_markers::border>, C, A, P> Intrinsic<M, C, A, P> {
         #[deprecated]
-        pub fn border<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::border<V>), P> {
+        pub fn border<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::border<V>), P> {
             Self::with_attribute_appended(self, props::border(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::cell_padding>, C, A, P> Intrinsic<M, C, A, P> {
         #[deprecated]
-        pub fn cell_padding<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::cell_padding<V>), P> {
+        pub fn cell_padding<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::cell_padding<V>), P> {
             Self::with_attribute_appended(self, props::cell_padding(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::cell_spacing>, C, A, P> Intrinsic<M, C, A, P> {
         #[deprecated]
-        pub fn cell_spacing<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::cell_spacing<V>), P> {
+        pub fn cell_spacing<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::cell_spacing<V>), P> {
             Self::with_attribute_appended(self, props::cell_spacing(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::frame>, C, A, P> Intrinsic<M, C, A, P> {
         #[deprecated]
-        pub fn frame<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::frame<V>), P> {
+        pub fn frame<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::frame<V>), P> {
             Self::with_attribute_appended(self, props::frame(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::rules>, C, A, P> Intrinsic<M, C, A, P> {
         #[deprecated]
-        pub fn rules<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::rules<V>), P> {
+        pub fn rules<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::rules<V>), P> {
             Self::with_attribute_appended(self, props::rules(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::summary>, C, A, P> Intrinsic<M, C, A, P> {
         #[deprecated]
-        pub fn summary<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::summary<V>), P> {
+        pub fn summary<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::summary<V>), P> {
             Self::with_attribute_appended(self, props::summary(value))
         }
     }
@@ -3160,19 +3160,19 @@ const _: () = {
     impl AllowAttribute<prop_markers::bg_color> for super::markers::HtmlTableChildElement {}
     impl<M: AllowAttribute<prop_markers::char>, C, A, P> Intrinsic<M, C, A, P> {
         #[deprecated]
-        pub fn char<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::char<V>), P> {
+        pub fn char<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::char<V>), P> {
             Self::with_attribute_appended(self, props::char(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::char_off>, C, A, P> Intrinsic<M, C, A, P> {
         #[deprecated]
-        pub fn char_off<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::char_off<V>), P> {
+        pub fn char_off<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::char_off<V>), P> {
             Self::with_attribute_appended(self, props::char_off(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::v_align>, C, A, P> Intrinsic<M, C, A, P> {
         #[deprecated]
-        pub fn v_align<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::v_align<V>), P> {
+        pub fn v_align<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::v_align<V>), P> {
             Self::with_attribute_appended(self, props::v_align(value))
         }
     }
@@ -3278,7 +3278,7 @@ const _: () = {
         }
     }
     impl<M: AllowAttribute<prop_markers::headers>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn headers<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::headers<V>), P> {
+        pub fn headers<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::headers<V>), P> {
             Self::with_attribute_appended(self, props::headers(value))
         }
     }
@@ -3289,19 +3289,19 @@ const _: () = {
     }
     impl<M: AllowAttribute<prop_markers::abbr>, C, A, P> Intrinsic<M, C, A, P> {
         #[deprecated = "Do not use this attribute as it is obsolete in the latest standard. Alternatively, you can put the abbreviated description inside the cell and place the long content in the title attribute."]
-        pub fn abbr<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::abbr<V>), P> {
+        pub fn abbr<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::abbr<V>), P> {
             Self::with_attribute_appended(self, props::abbr(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::axis>, C, A, P> Intrinsic<M, C, A, P> {
         #[deprecated]
-        pub fn axis<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::axis<V>), P> {
+        pub fn axis<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::axis<V>), P> {
             Self::with_attribute_appended(self, props::axis(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::scope>, C, A, P> Intrinsic<M, C, A, P> {
         #[deprecated]
-        pub fn scope<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::scope<V>), P> {
+        pub fn scope<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::scope<V>), P> {
             Self::with_attribute_appended(self, props::scope(value))
         }
     }
@@ -3343,7 +3343,7 @@ const _: () = {
         }
     }
     impl<M: AllowAttribute<prop_markers::wrap>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn wrap<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::wrap<V>), P> {
+        pub fn wrap<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::wrap<V>), P> {
             Self::with_attribute_appended(self, props::wrap(value))
         }
     }
@@ -3385,12 +3385,12 @@ const _: () = {
         }
     }
     impl<M: AllowAttribute<prop_markers::kind>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn kind<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::kind<V>), P> {
+        pub fn kind<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::kind<V>), P> {
             Self::with_attribute_appended(self, props::kind(value))
         }
     }
     impl<M: AllowAttribute<prop_markers::src_lang>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn src_lang<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::src_lang<V>), P> {
+        pub fn src_lang<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::src_lang<V>), P> {
             Self::with_attribute_appended(self, props::src_lang(value))
         }
     }
@@ -3457,7 +3457,7 @@ const _: () = {
         }
     }
     impl<M: AllowAttribute<prop_markers::poster>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn poster<V: frender_attr_value::AttrValue<str>>(self, value: V) -> Intrinsic<M, C, (A, props::poster<V>), P> {
+        pub fn poster<V: frender_attr_value::AttrValue<AttrKindOfStr>>(self, value: V) -> Intrinsic<M, C, (A, props::poster<V>), P> {
             Self::with_attribute_appended(self, props::poster(value))
         }
     }

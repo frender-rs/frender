@@ -9,3 +9,5 @@ impl SsrElement for char {
         IterCharStringEncodeSafe::new(self)
     }
 }
+
+impl super::KnownCopySsrElement for char {}

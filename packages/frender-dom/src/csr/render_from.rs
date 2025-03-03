@@ -5,9 +5,8 @@ pub trait RenderFrom<V> {
 pub mod str {
     use std::{borrow::Cow, rc::Rc, sync::Arc};
 
-    use frender_common::{
-        value_kind::{StaticRefOrTempOwned, ValueKind},
-        TempStr,
+    use frender_reactive_value::{
+        static_or_temp_ref::StaticOrTempRef, temp_ref::TempRef, value_kind::ValueKind,
     };
 
     use crate::string_element::StringElement;
@@ -57,7 +56,7 @@ pub mod str {
             type From = &'static str;
             // type Kind = KindOfOwned<&'static str>;
 
-            type From<'a> = TempStr<&'a str>;
+            type From<'a> = TempRef<'a, str>;
             // type Kind = str;
 
             type From = StringElement;
@@ -72,7 +71,7 @@ pub mod str {
             type From = Cow<'static, str>;
             // type Kind = KindOfOwned<Cow<'static, str>>;
 
-            type From<'a> = StaticRefOrTempOwned<'a, str>;
+            type From<'a> = StaticOrTempRef<'a, str>;
             // type Kind = KindOfStaticRefOrTempOwned<str>;
 
             type From = Rc<str>;

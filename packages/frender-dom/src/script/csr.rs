@@ -1,4 +1,4 @@
-use frender_common::reactive_value::ReactiveValueWithKind;
+use frender_reactive_value::ReactiveValueWithKind;
 
 use crate::{csr::render_from::str::ValueKindForStr, Empty};
 

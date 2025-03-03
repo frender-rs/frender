@@ -1,11 +1,11 @@
 use std::pin::Pin;
 
-use frender_common::reactive_value::RenderInitPinned;
 use frender_dom::csr::{
     behaviors::{NodeRenderSelf, NodeWithRenderContextAfterSelf},
     render::{Render, RenderContext},
     StateUnmount, UiHandle as _, UnmountedUiHandle as _,
 };
+use frender_reactive_value::RenderInitPinned;
 use pin_project_lite::pin_project;
 
 use crate::{

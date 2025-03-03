@@ -3,8 +3,8 @@ use std::pin::Pin;
 use std::task::Poll;
 
 use frender_common::convert::FromMut as _;
-use frender_common::reactive_value::RenderInitPinned;
 use frender_dom::csr::behaviors::ElementWithChildren;
+use frender_reactive_value::RenderInitPinned;
 
 use crate::{
     csr::{

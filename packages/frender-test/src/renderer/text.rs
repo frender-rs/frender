@@ -1,11 +1,11 @@
 use std::{borrow::Cow, rc::Rc, sync::Arc};
 
-use frender_common::{value_kind::StaticRefOrTempOwned, TempStr};
 use frender_html::dom::{
     csr::{render::RenderTextFrom, UnmountedUiHandle},
     string_element::StringElement,
 };
 use frender_macro_rules::impl_many;
+use frender_reactive_value::{static_or_temp_ref::StaticOrTempRef, temp_ref::TempRef};
 
 use crate::text::{Text, UnmountedText};
 
@@ -18,13 +18,10 @@ impl_many!(
         for each_of![
             &'static str,
             StringElement,
-            &StringElement,
             String,
             Cow<'static, str>,
             Rc<str>,
-            &Rc<str>,
             Arc<str>,
-            &Arc<str>,
             i8,
             u8,
             i16,
@@ -55,15 +52,30 @@ impl<T: KnownToString> CustomIntoString for T {
     }
 }
 
-impl CustomIntoString for StaticRefOrTempOwned<'_, str> {
+impl CustomIntoString for StaticOrTempRef<'_, str> {
     fn custom_into_string(self) -> String {
         self.as_ref().to_owned()
     }
 }
 
-impl CustomIntoString for TempStr<&str> {
+impl_many!(
+    impl<__> CustomIntoString
+        for each_of![
+            //
+            TempRef<'_, str>,
+            TempRef<'_, Rc<str>>,
+            TempRef<'_, Arc<str>>,
+        ]
+    {
+        fn custom_into_string(self) -> String {
+            str::to_owned(self.0)
+        }
+    }
+);
+
+impl CustomIntoString for TempRef<'_, StringElement> {
     fn custom_into_string(self) -> String {
-        self.0.to_owned()
+        self.0.to_string()
     }
 }
 

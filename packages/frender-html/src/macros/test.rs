@@ -10,13 +10,13 @@ macro_rules! type_prop {
             PinnedRenderWithBehavior<BT>
         ;
     };
-    ($fn_name:ident ($value:ident : attr_value![&$($maybe_ty:tt)*]) $fn_body_or_semi:tt) => {
+    ($fn_name:ident ($value:ident : attr_value![&str]) $fn_body_or_semi:tt) => {
         crate::macros::test::type_prop! {
-            $fn_name ($value : attr_value![$($maybe_ty)*]) $fn_body_or_semi
+            $fn_name ($value : attr_value![::frender_attr_value::AttrKindOfStr]) $fn_body_or_semi
         }
     };
     ($fn_name:ident ($value:ident : attr_value![$($maybe_ty:tt)*]) $fn_body_or_semi:tt) => {
-        type $fn_name<V: frender_attr_value::AttrValue<$($maybe_ty)*>, BT: BehaviorTypeTrait>:
+        type $fn_name<V: frender_attr_value::csr::CsrAttrValue<$($maybe_ty)*>, BT: BehaviorTypeTrait>:
             UnpinnedRenderWithBehavior<BT>
         ;
     };
@@ -48,13 +48,13 @@ macro_rules! impl_prop {
             props::$fn_name<V>
         ;
     };
-    ($fn_name:ident ($value:ident : attr_value![&$($maybe_ty:tt)*]) $fn_body_or_semi:tt) => {
+    ($fn_name:ident ($value:ident : attr_value![&str]) $fn_body_or_semi:tt) => {
         crate::macros::test::impl_prop! {
-            $fn_name ($value : attr_value![$($maybe_ty)*]) $fn_body_or_semi
+            $fn_name ($value : attr_value![::frender_attr_value::AttrKindOfStr]) $fn_body_or_semi
         }
     };
     ($fn_name:ident ($value:ident : attr_value![$($maybe_ty:tt)*]) $fn_body_or_semi:tt) => {
-        type $fn_name<V: frender_attr_value::AttrValue<$($maybe_ty)*>, BT: BehaviorTypeTrait> =
+        type $fn_name<V: frender_attr_value::csr::CsrAttrValue<$($maybe_ty)*>, BT: BehaviorTypeTrait> =
             props::$fn_name<V>
         ;
     };
@@ -142,17 +142,18 @@ pub(crate) use {impl_prop, test, type_prop};
 #[cfg(feature = "components")]
 #[cfg(feature = "csr")]
 mod test_id {
-    use frender_attr_value::AttrValue;
+    use frender_attr_value::{csr::CsrAttrValue, AttrKindOfStr};
 
     use crate::csr::behavior_type::UnpinnedRenderWithBehavior;
 
+    #[allow(non_camel_case_types)]
     const _: () = {
         trait Test {
-            type id<V: AttrValue<str>, BT: crate::html::behavior_type_traits::Element>: UnpinnedRenderWithBehavior<BT>;
+            type id<V: CsrAttrValue<AttrKindOfStr>, BT: crate::html::behavior_type_traits::Element>: UnpinnedRenderWithBehavior<BT>;
         }
 
         impl Test for () {
-            type id<V: AttrValue<str>, BT: crate::html::behavior_type_traits::Element> = crate::html::props::Element::id<V>;
+            type id<V: CsrAttrValue<AttrKindOfStr>, BT: crate::html::behavior_type_traits::Element> = crate::html::props::Element::id<V>;
         }
     };
 }

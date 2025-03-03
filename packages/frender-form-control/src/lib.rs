@@ -1,7 +1,8 @@
 pub mod input;
 pub mod textarea;
 
-mod known_str;
+mod known;
+mod known_provide_str;
 
 mod value;
 pub use value::{FormControlValueKind, KindOfChecked, KindOfValue, KindOfValueAsNumber};

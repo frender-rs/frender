@@ -1,6 +1,8 @@
+use std::borrow::Borrow;
+
 use frender_common::Empty;
 
-use crate::known_str::KnownIsNonReactiveStr;
+use crate::known::KnownStr;
 
 use super::InputType;
 
@@ -8,8 +10,8 @@ use super::InputType;
 #[derive(PartialEq, Eq)]
 pub enum NeverStr {}
 
-impl AsRef<str> for NeverStr {
-    fn as_ref(&self) -> &str {
+impl Borrow<str> for NeverStr {
+    fn borrow(&self) -> &str {
         match *self {}
     }
 }
@@ -22,7 +24,7 @@ impl InputType for Empty {
     }
 }
 
-impl<S: KnownIsNonReactiveStr> InputType for S {
+impl<S: KnownStr> InputType for S {
     type InputTypeStr = S;
 
     fn maybe_into_input_type_str(this: Self) -> Option<Self::InputTypeStr> {

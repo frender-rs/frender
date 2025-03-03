@@ -46,8 +46,8 @@ pub(crate) mod proxy_attr {
 mod event_listener {
     use std::pin::Pin;
 
-    use frender_common::reactive_value::RenderInitPinned;
     use frender_dom::csr::{HandleEvent, OnEvent, PinnedRegisterUpdate, RegisterUpdate};
+    use frender_reactive_value::RenderInitPinned;
 
     use super::super::ElementProxyAttrs;
 

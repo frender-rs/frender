@@ -249,41 +249,6 @@ macro_rules! DefaultSsrHaevoe {
 
 pub(crate) use {default_impl_csr, default_impl_ssr, impl_bounds};
 
-mod updater {
-    use std::marker::PhantomData;
-
-    use frender_attr_value::csr::ValueKind;
-
-    pub(super) struct UpdaterOfKind<'a, VK: ?Sized, E: ?Sized, RR: ?Sized, U, R> {
-        pub(super) _kind: PhantomData<VK>,
-        pub(super) element: &'a mut E,
-        pub(super) renderer: &'a mut RR,
-        pub(super) attr_name: &'static str,
-        pub(super) update: U,
-        pub(super) remove: R,
-    }
-
-    impl<
-            //
-            'a,
-            VT: ?Sized + ValueKind,
-            E: ?Sized,
-            RR: ?Sized,
-            U: FnOnce(&mut E, &mut RR, &'static str, VT::Value<'_>),
-            R: FnOnce(&mut E, &mut RR, &'static str),
-        > frender_attr_value::csr::UpdateAttrValue for UpdaterOfKind<'a, VT, E, RR, U, R>
-    {
-        type Kind = VT;
-        fn set(mut self, value: VT::Value<'_>) {
-            (self.update)(&mut self.element, &mut self.renderer, self.attr_name, value)
-        }
-
-        fn remove(mut self) {
-            (self.remove)(&mut self.element, &mut self.renderer, self.attr_name)
-        }
-    }
-}
-
 #[allow(non_snake_case)]
 pub(crate) mod SetRef {
     macro_rules! __Ref_csr {

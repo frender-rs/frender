@@ -70,7 +70,9 @@ pub mod with {
 }
 
 mod imps {
-    use crate::TempStr;
+    use frender_reactive_value::{
+        non_reactive::Uncached, temp_into_static::TempIntoStatic, temp_ref::TempRef,
+    };
 
     use super::ToElement;
 
@@ -92,33 +94,22 @@ mod imps {
         }
     );
 
-    // acts like `TempStr<&'static str>`
-    impl ToElement for str {
-        type ToElement<'a>
-            = TempStr<&'a str>
-        where
-            Self: 'a;
-
-        fn to_element(&self) -> Self::ToElement<'_> {
-            TempStr(self)
-        }
-    }
-
-    // acts like `TempStr<&'static String>`
+    // acts like `Uncached<TempIntoStatic<&'a str>>`
     frender_common::impl_many!(
         impl<__> ToElement
             for each_of![
                 //
+                str,
                 String,
                 std::borrow::Cow<'_, str>,
             ]
         {
             type ToElement<'a>
-                = TempStr<&'a Self>
+                = Uncached<TempIntoStatic<&'a str>>
             where
                 Self: 'a;
-            fn to_element(&self) -> TempStr<&Self> {
-                TempStr(self)
+            fn to_element(&self) -> Self::ToElement<'_> {
+                Uncached(TempIntoStatic(self))
             }
         }
     );
@@ -132,11 +123,11 @@ mod imps {
             ]
         {
             type ToElement<'a>
-                = Self
+                = Uncached<TempIntoStatic<&'a Self>>
             where
                 Self: 'a;
-            fn to_element(&self) -> Self {
-                self.clone()
+            fn to_element(&self) -> Self::ToElement<'_> {
+                Uncached(TempIntoStatic(self))
             }
         }
     );
@@ -147,66 +138,69 @@ mod tests {
     use std::{borrow::Cow, rc::Rc, sync::Arc};
 
     use super::ToElement;
-    use frender_common::TempStr;
     use frender_element::Element;
     use frender_html::csr::CsrElement;
+    use frender_reactive_value::{
+        non_reactive::Uncached, temp_into_static::TempIntoStatic, temp_ref::TempRef,
+    };
     use frender_ssr::SsrElement;
 
-    const fn type_assert()
+    trait ToElementLikeUncachedTempIntoStatic<V: ?Sized + 'static>:
+        for<'a> ToElement<
+        ToElement<'a>: Element<
+            HtmlChildren = <Uncached<TempIntoStatic<&'static V>> as SsrElement>::HtmlChildren,
+            RenderStateKind = <Uncached<TempIntoStatic<&'static V>> as CsrElement>::RenderStateKind,
+        >,
+    >
     where
-        str: for<'a> ToElement<
-            ToElement<'a>: Element<
-                HtmlChildren = <TempStr<&'static str> as SsrElement>::HtmlChildren,
-                RenderStateKind = <TempStr<&'static str> as CsrElement>::RenderStateKind,
-            >,
-        >,
-        String: for<'a> ToElement<
-            ToElement<'a>: Element<
-                HtmlChildren = <TempStr<&'static String> as SsrElement>::HtmlChildren,
-                RenderStateKind = <TempStr<&'static String> as CsrElement>::RenderStateKind,
-            >,
-        >,
-        Cow<'static, str>: for<'a> ToElement<
-            ToElement<'a>: Element<
-                HtmlChildren = <TempStr<&'static String> as SsrElement>::HtmlChildren,
-                RenderStateKind = <TempStr<&'static String> as CsrElement>::RenderStateKind,
-            >,
-        >,
-        for<'c> Cow<'c, str>: TypeAssertCow,
-        Rc<str>: for<'a> ToElement<
-            ToElement<'a>: Element<
-                HtmlChildren = <Rc<str> as SsrElement>::HtmlChildren,
-                RenderStateKind = <Rc<str> as CsrElement>::RenderStateKind,
-            >,
-        >, //
-        Arc<str>: for<'a> ToElement<
-            ToElement<'a>: Element<
-                HtmlChildren = <Arc<str> as SsrElement>::HtmlChildren,
-                RenderStateKind = <Arc<str> as CsrElement>::RenderStateKind,
-            >,
-        >,
+        TempIntoStatic<&'static V>: SsrElement,
+        Uncached<TempIntoStatic<&'static V>>: CsrElement,
     {
     }
 
-    trait TypeAssertCow {
-        type Expected<'a>: ToElement<
+    impl<T: ?Sized, V: ?Sized + 'static> ToElementLikeUncachedTempIntoStatic<V> for T
+    where
+        T: for<'a> ToElement<
             ToElement<'a>: Element<
-                HtmlChildren = <TempStr<&'static String> as SsrElement>::HtmlChildren,
-                RenderStateKind = <TempStr<&'static String> as CsrElement>::RenderStateKind,
+                HtmlChildren = <Uncached<TempIntoStatic<&'static V>> as SsrElement>::HtmlChildren,
+                RenderStateKind = <Uncached<TempIntoStatic<&'static V>> as CsrElement>::RenderStateKind,
+            >,
+        >,
+        TempIntoStatic<&'static V>: SsrElement,
+        Uncached<TempIntoStatic<&'static V>>: CsrElement,
+    {
+    }
+
+    const fn type_assert()
+    where
+        str: ToElementLikeUncachedTempIntoStatic<str>,
+        String: ToElementLikeUncachedTempIntoStatic<str>,
+        Cow<'static, str>: ToElementLikeUncachedTempIntoStatic<str>,
+        (): TypeAssertCowStr,
+        Rc<str>: ToElementLikeUncachedTempIntoStatic<Rc<str>>,
+        Arc<str>: ToElementLikeUncachedTempIntoStatic<Arc<str>>,
+    {
+    }
+
+    const _: () = type_assert();
+
+    trait TypeAssertCowStr {
+        type Assert<'a>: ToElement<
+            ToElement<'a>: Element<
+                HtmlChildren = <Uncached<TempIntoStatic<&'static str>> as SsrElement>::HtmlChildren,
+                RenderStateKind = <Uncached<TempIntoStatic<&'static str>> as CsrElement>::RenderStateKind,
             >,
         >
         where
             Self: 'a;
     }
 
-    impl<'c> TypeAssertCow for Cow<'c, str> {
-        type Expected<'a>
-            = Cow<'c, str>
+    impl TypeAssertCowStr for () {
+        type Assert<'a>
+            = Cow<'a, str>
         where
-            'c: 'a;
+            Self: 'a;
     }
-
-    const _: () = type_assert();
 
     // use the above code
     #[test]

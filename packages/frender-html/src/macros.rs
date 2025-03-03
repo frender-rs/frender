@@ -897,17 +897,16 @@ macro_rules! impl_attribute {
     ($fn_name:ident ($value:ident : attr_value![$($maybe_ty:tt)*]) ; $trait_name:ident) => {
         crate::macros::impl_attribute! {$fn_name ($value : attr_value![$($maybe_ty)*]) {} $trait_name }
     };
-    ($fn_name:ident ($value:ident : attr_value![&$($maybe_ty:tt)*]) $maybe:tt $trait_name:ident) => {
+    ($fn_name:ident ($value:ident : attr_value![&str]) $maybe:tt $trait_name:ident) => {
         crate::macros::impl_attribute! {
-            $fn_name ($value : attr_value![$($maybe_ty)*]) $maybe $trait_name
-            ref_value_kind(&)
+            $fn_name ($value : attr_value![AttrKindOfStr]) $maybe $trait_name
         }
     };
     ($fn_name:ident ($value:ident : attr_value![$($maybe_ty:tt)*]) {
         $(alias! $alias:tt;)?
         $(attr_name!($attr_name:expr);)?
         $(update_with! $update_with:tt;)?
-    } $trait_name:ident $(ref_value_kind($ref_value_kind:tt))?) => {
+    } $trait_name:ident) => {
         impl<
             V: frender_attr_value::AttrValue<$($maybe_ty)*>,
         > crate::into_property::IntoProperty
@@ -934,13 +933,12 @@ macro_rules! impl_attribute {
             prop_marker(prop_markers::$fn_name)
             trait_name($trait_name)
             value($value)
-            ref_value_kind($($ref_value_kind)?)
             value_kind($($maybe_ty)*)
         }
 
         #[cfg(feature = "ssr")]
         impl<
-            V: frender_attr_value::AttrValue<$($maybe_ty)*>,
+            V: frender_attr_value::ssr::SsrAttrValue<$($maybe_ty)*>,
         > crate::dom::ssr::IntoSpaceAndHtmlAttributesOrEmpty
             for props::$fn_name<V>
         {
@@ -977,7 +975,7 @@ macro_rules! impl_attribute {
 
         #[cfg(feature = "ssr")]
         impl<
-            V: crate::impl_bounds::$bounds::Bounds,
+            V: crate::impl_bounds::$bounds::ssr::Bounds,
         > crate::dom::ssr::IntoSpaceAndHtmlAttributesOrEmpty
             for props::$fn_name<V>
         {
@@ -1023,6 +1021,15 @@ macro_rules! impl_attribute {
     };
 }
 
+macro_rules! DomApiValue_from_value_kind {
+    ($lt:lifetime bool) => {
+        bool
+    };
+    ($lt:lifetime $value_kind:ty) => {
+        <$value_kind as frender_attr_value::AttrValueKind>::AttrValue<$lt>
+    };
+}
+
 macro_rules! dom_api_value_from_value {
     (
         value_kind(bool)
@@ -1048,7 +1055,6 @@ macro_rules! impl_attr_value_dom_api_for_prop_marker {
         prop_marker($prop_marker:ty)
         trait_name($trait_name:ident)
         value($value:ident)
-        ref_value_kind($($ref_value_kind:tt)?)
         value_kind($($value_kind:tt)*)
     ) => {
         impl<BT: behavior_type_traits::$trait_name> crate::attr_value::csr::HasDomApi<BT> for $prop_marker {
@@ -1056,18 +1062,17 @@ macro_rules! impl_attr_value_dom_api_for_prop_marker {
                 {$($DomApiValue)?}
                 or ($($custom_type)?)
                 or (
-                    $($ref_value_kind 'a)?
-                    $($value_kind)*
+                    crate::macros::DomApiValue_from_value_kind! { 'a $($value_kind)* }
                 )
             ];
 
             frender_common::expand! {
                 {$(
-                    fn dom_api_value_from_value($dom_api_value_from_value: <Self::AttrValueKind as frender_attr_value::csr::ValueKind>::Value<'_>) -> Self::DomApiValue<'_> {
+                    fn dom_api_value_from_value($dom_api_value_from_value: <Self::AttrValueKind as frender_attr_value::AttrValueKind>::AttrValue<'_>) -> Self::DomApiValue<'_> {
                         $dom_api_value
                     }
                 )?} or (
-                    fn dom_api_value_from_value(value: <Self::AttrValueKind as frender_attr_value::csr::ValueKind>::Value<'_>) -> Self::DomApiValue<'_> {
+                    fn dom_api_value_from_value(value: <Self::AttrValueKind as frender_attr_value::AttrValueKind>::AttrValue<'_>) -> Self::DomApiValue<'_> {
                         crate::macros::dom_api_value_from_value! {
                             value_kind($($value_kind)*)
                             value(value)
@@ -1090,7 +1095,6 @@ macro_rules! impl_attr_value_for_prop_marker {
         prop_marker($prop_marker:ty)
         trait_name($trait_name:ident)
         value($value:ident)
-        ref_value_kind($($ref_value_kind:tt)?)
         value_kind($($value_kind:tt)*)
     ) => {
         impl crate::csr::property_common::UseSpecRemoveAttrOfBehaviorType for $prop_marker {}
@@ -1108,7 +1112,6 @@ macro_rules! impl_attr_value_for_prop_marker {
         prop_marker($prop_marker:ty)
         trait_name($trait_name:ident)
         value($value:ident)
-        ref_value_kind($($ref_value_kind:tt)?)
         value_kind($($value_kind:tt)*)
     ) => {
         crate::macros::impl_attr_value_for_prop_marker! {
@@ -1121,7 +1124,6 @@ macro_rules! impl_attr_value_for_prop_marker {
             prop_marker($prop_marker)
             trait_name($trait_name)
             value($value)
-            ref_value_kind($($ref_value_kind)?)
             value_kind($($value_kind)*)
         }
     };
@@ -1140,7 +1142,6 @@ macro_rules! impl_attr_value_for_prop_marker {
         prop_marker($prop_marker:ty)
         trait_name($trait_name:ident)
         value($value:ident)
-        ref_value_kind($($ref_value_kind:tt)?)
         value_kind($($value_kind:tt)*)
     ) => {
         impl crate::csr::property_common::UseSpecRemoveAttrOfBehaviorType for $prop_marker {}
@@ -1160,7 +1161,6 @@ macro_rules! impl_attr_value_for_prop_marker {
             prop_marker($prop_marker)
             trait_name($trait_name)
             value($value)
-            ref_value_kind($($ref_value_kind)?)
             value_kind($($value_kind)*)
         }
     };
@@ -1178,7 +1178,6 @@ macro_rules! impl_attr_value_for_prop_marker {
         prop_marker($prop_marker:ty)
         trait_name($trait_name:ident)
         value($value:ident)
-        ref_value_kind($($ref_value_kind:tt)?)
         value_kind($value_kind:ty)
     ) => {
         impl<BT: behavior_type_traits::$trait_name> crate::csr::property_common::RemoveAttrOfBehaviorType<BT> for $prop_marker {
@@ -1204,7 +1203,6 @@ macro_rules! impl_attr_value_for_prop_marker {
             prop_marker($prop_marker)
             trait_name($trait_name)
             value($value)
-            ref_value_kind($($ref_value_kind)?)
             value_kind($value_kind)
         }
     };
@@ -1599,9 +1597,9 @@ macro_rules! parse_fn_args_as_bounds {
             do $commands
         }
     };
-    (($value:ident : attr_value![&$maybe_ty:ty]) do $commands:tt) => {
+    (($value:ident : attr_value![&str]) do $commands:tt) => {
         $crate::expand! {
-            { frender_attr_value::AttrValue::<$maybe_ty> }
+            { frender_attr_value::AttrValue::<AttrKindOfStr> }
             do $commands
         }
     };
@@ -1829,7 +1827,7 @@ pub(crate) use {
     dom_api_value_from_value, event_type, event_types, event_types_macros, expand_item_and_prepend_expanded, expand_item_simple, expand_nested_traits, extract_attr_builder_fn_names, extract_only_children_or,
     impl_BehaviorTypeTrait, impl_HasConstAttrName, impl_OnEventType, impl_attr_value_dom_api_for_prop_marker, impl_attr_value_for_prop_marker, impl_attribute, impl_behavior_fn, impl_behavior_fn_update_with,
     on_event_implementations, parse_fn_args_as_bounds, parse_fn_args_as_whether_pinned_state, prop_markers, props, props_implementations, tag_and_props_markers, tag_custom_content_model, tag_implementations,
-    unwrap_brace_concat, RenderHtml,
+    unwrap_brace_concat, DomApiValue_from_value_kind, RenderHtml,
 };
 
 pub(crate) mod event_names;

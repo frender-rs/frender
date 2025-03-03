@@ -9,3 +9,5 @@ impl<E: SsrElement> SsrElement for Option<E> {
         self.map(E::into_html_children).into_async_str_iterator()
     }
 }
+
+impl<E: SsrElement + Copy> super::KnownCopySsrElement for Option<E> {}

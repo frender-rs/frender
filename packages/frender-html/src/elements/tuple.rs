@@ -2,7 +2,7 @@
 
 use std::{pin::Pin, task::Poll};
 
-use frender_common::reactive_value::RenderInitPinned;
+use frender_reactive_value::RenderInitPinned;
 
 use crate::{
     csr::element::{

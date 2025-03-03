@@ -1,10 +1,7 @@
 use std::{marker::PhantomData, pin::Pin};
 
-use frender_common::{
-    reactive_value::{ReactiveValueIntoElement, ReactiveValueRenderInitPinned, ReactiveValueState, ReactiveValueWithKind, RenderInitPinned, ReusableRendererOfKind},
-    value_kind::ValueKind,
-};
 use frender_dom::csr::{StateUnmount, UnmountedUiHandle};
+use frender_reactive_value::{value_kind::ValueKind, ReactiveValueIntoElement, ReactiveValueRenderInitPinned, ReactiveValueState, ReactiveValueWithKind, RenderInitPinned, ReusableRendererOfKind};
 
 use crate::{
     csr::element::{self, CsrElement, HtmlRenderContext, PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
@@ -231,7 +228,7 @@ where
         self.ui_handle
     }
 
-    fn reuse(self, provide_value: impl frender_common::reactive_value::ProvideValueOfKind<VK>) -> Self::Output {
+    fn reuse(self, provide_value: impl frender_reactive_value::ProvideValueOfKind<VK>) -> Self::Output {
         // TODO: check when debug_assertions
         let _ = provide_value;
 

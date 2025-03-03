@@ -1,10 +1,10 @@
-use std::convert::identity;
+use std::{borrow::Borrow as _, convert::identity};
 
 use async_str_iter::{
-    any_str::IterAnyStr, chain::Chain, option::IterOption, IntoAsyncStrIterator as _,
+    borrow_str::IterBorrowStr, chain::Chain, option::IterOption, IntoAsyncStrIterator as _,
 };
-use frender_common::{strings::SsrStr, IntoStaticStr};
 use frender_dom::ssr::IntoSpaceAndHtmlAttributesOrEmpty;
+use frender_reactive_value::static_or_into_static_str::StaticOrIntoStaticStr;
 use frender_ssr::html::{
     attr::{AssertSpaceAndHtmlAttributeName, SpaceAndHtmlAttribute},
     attr_value::AttrEqValue,
@@ -30,7 +30,11 @@ impl<
             SpaceAndHtmlAttribute<
                 //
                 AssertSpaceAndHtmlAttributeName<&'static str>,
-                AttrEqValue<IterAnyStr<<<Type as InputType>::InputTypeStr as SsrStr>::StaticStr>>,
+                AttrEqValue<
+                    IterBorrowStr<
+                        <<Type as InputType>::InputTypeStr as StaticOrIntoStaticStr>::StaticStr,
+                    >,
+                >,
             >,
         >,
         Chain<
@@ -66,14 +70,14 @@ impl<
             checked,
         } = self;
 
-        let input_type = Type::maybe_into_input_type_str(input_type)
-            .map(|v| v.into_into_static_str().into_static_str());
+        let input_type =
+            Type::maybe_into_input_type_str(input_type).map(|v| v.static_or_into_static_str());
 
         let value_attr = Value::IntoSsrInputValue::maybe_into_provide_form_control_value(
             Value::into_ssr_input_value(value),
         )
         .map(|value| {
-            let input_type = input_type.as_ref().map_or("", |v| v.as_ref());
+            let input_type = input_type.as_ref().map_or("", |v| v.borrow());
             Value::ValueKind::into_input_value_attr_value(value, input_type)
         })
         .map(|eq_value| SpaceAndHtmlAttribute(VALUE, eq_value));
@@ -91,7 +95,7 @@ impl<
         Chain::new(
             input_type
                 .map(|input_type| {
-                    let value = IterAnyStr::new(input_type);
+                    let value = IterBorrowStr::new(input_type);
                     let value = AttrEqValue(value);
                     SpaceAndHtmlAttribute(TYPE, value)
                 })

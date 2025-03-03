@@ -1,14 +1,52 @@
+use frender_common::Empty;
+use frender_reactive_value::non_reactive::Uncached;
+
+mod sealed {
+    pub trait IntoDeclarationImportant {}
+}
+
+#[cfg(feature = "ssr")]
+#[cfg(feature = "csr")]
 pub trait IntoDeclarationImportant:
-    ssr::IntoSsrDeclarationImportant + csr::CsrDeclarationImportant
+    sealed::IntoDeclarationImportant
+    + ssr::IntoSsrDeclarationImportant
+    + csr::IntoCsrDeclarationImportant
 {
 }
 
-impl<T: ssr::IntoSsrDeclarationImportant + csr::CsrDeclarationImportant> IntoDeclarationImportant
-    for T
+#[cfg(not(feature = "ssr"))]
+#[cfg(feature = "csr")]
+pub trait IntoDeclarationImportant:
+    sealed::IntoDeclarationImportant + csr::IntoCsrDeclarationImportant
 {
 }
 
-pub mod ssr {
+#[cfg(feature = "ssr")]
+#[cfg(not(feature = "csr"))]
+pub trait IntoDeclarationImportant:
+    sealed::IntoDeclarationImportant + ssr::IntoSsrDeclarationImportant
+{
+}
+
+#[cfg(not(feature = "ssr"))]
+#[cfg(not(feature = "csr"))]
+pub trait IntoDeclarationImportant: sealed::IntoDeclarationImportant {}
+
+impl sealed::IntoDeclarationImportant for Empty {}
+impl IntoDeclarationImportant for Empty {}
+
+impl sealed::IntoDeclarationImportant for bool {}
+impl IntoDeclarationImportant for bool {}
+
+impl sealed::IntoDeclarationImportant for Uncached<bool> {}
+impl IntoDeclarationImportant for Uncached<bool> {}
+
+// TODO: impl for AlwaysTrue
+
+#[cfg(feature = "ssr")]
+pub(crate) mod ssr {
+    use frender_reactive_value::non_reactive::Uncached;
+
     async_str_iter::Strings!(
         enum BangImportantState {}
         pub struct BangImportant(bang_important!("!important"));
@@ -73,62 +111,14 @@ pub mod ssr {
             }
         }
     }
-}
 
-pub mod csr {
-    use crate::csr::Priority;
+    impl IntoSsrDeclarationImportant for Uncached<bool> {
+        type BangImportant = <bool as IntoSsrDeclarationImportant>::BangImportant;
 
-    pub trait CsrDeclarationImportant {
-        type StaticCache: 'static;
-
-        fn match_cache(&self, cache: &Self::StaticCache) -> bool;
-
-        fn into_static_cache(self) -> Self::StaticCache;
-        fn update_into_cache(self, cache: &mut Self::StaticCache);
-
-        fn update_style(&self, style: impl UpdateStyleWithDeclarationImportant);
-    }
-
-    impl CsrDeclarationImportant for frender_common::Empty {
-        type StaticCache = ();
-
-        fn match_cache(&self, (): &Self::StaticCache) -> bool {
-            true
+        fn into_ssr_declaration_important(self) -> Self::BangImportant {
+            self.0.into_ssr_declaration_important()
         }
-
-        fn into_static_cache(self) -> Self::StaticCache {}
-
-        fn update_into_cache(self, (): &mut Self::StaticCache) {}
-
-        fn update_style(&self, style: impl UpdateStyleWithDeclarationImportant) {
-            style.update_not_important()
-        }
-    }
-
-    impl CsrDeclarationImportant for bool {
-        type StaticCache = Self;
-
-        fn match_cache(&self, cache: &Self::StaticCache) -> bool {
-            self == cache
-        }
-
-        fn into_static_cache(self) -> Self::StaticCache {
-            self
-        }
-
-        fn update_into_cache(self, cache: &mut Self::StaticCache) {
-            *cache = self
-        }
-
-        fn update_style(&self, style: impl UpdateStyleWithDeclarationImportant) {
-            style.update_with_priority(Priority::from_bool(*self))
-        }
-    }
-
-    pub trait UpdateStyleWithDeclarationImportant {
-        fn update_not_important(self);
-        fn update_with_priority(self, priority: Priority);
     }
 }
-
-// TODO: impl for AlwaysTrue
+#[cfg(feature = "csr")]
+pub(crate) mod csr;

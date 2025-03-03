@@ -1,14 +1,18 @@
-use async_str_iter::{any_str::IterAnyStr, AsyncStrIterator};
+use std::borrow::Borrow;
+
+use async_str_iter::{borrow_str::IterBorrowStr, AsyncStrIterator};
 
 use crate::{
     declaration::{
         important::ssr::{assert::BangImportantOrEmpty, IntoSsrDeclarationImportant},
         name::ssr::IntoSsrDeclarationName,
         value::ssr::IntoSsrDeclarationValue,
-        Declaration, DeclarationName, DeclarationValue, IntoDeclaration, IntoDeclarationAsStyle,
+        Declaration, DeclarationName, DeclarationValue, IntoDeclaration,
     },
     ssr::{SsrDeclarationList, SsrStyle},
 };
+
+use super::IntoDeclarationAsStyle;
 
 impl<D: IntoDeclaration> SsrStyle for IntoDeclarationAsStyle<D> {
     type IntoSsrDeclarationList = Self;
@@ -20,14 +24,14 @@ impl<D: IntoDeclaration> SsrStyle for IntoDeclarationAsStyle<D> {
 
 impl<D: IntoDeclaration> SsrDeclarationList for IntoDeclarationAsStyle<D> {
     type IntoDeclarationList = OneDeclarationAsList<
-        IterAnyStr<<D::Name as IntoSsrDeclarationName>::StaticDeclarationNameStr>,
-        IterAnyStr<<D::Value as IntoSsrDeclarationValue>::StaticDeclarationValueStr>,
+        IterBorrowStr<<D::Name as IntoSsrDeclarationName>::StaticDeclarationNameStr>,
+        IterBorrowStr<<D::Value as IntoSsrDeclarationValue>::StaticDeclarationValueStr>,
         <D::Important as IntoSsrDeclarationImportant>::BangImportant,
     >;
 
     type IntoDeclarationListPrefixSemicolon = OneDeclarationAsListPrefixSemicolon<
-        IterAnyStr<<D::Name as IntoSsrDeclarationName>::StaticDeclarationNameStr>,
-        IterAnyStr<<D::Value as IntoSsrDeclarationValue>::StaticDeclarationValueStr>,
+        IterBorrowStr<<D::Name as IntoSsrDeclarationName>::StaticDeclarationNameStr>,
+        IterBorrowStr<<D::Value as IntoSsrDeclarationValue>::StaticDeclarationValueStr>,
         <D::Important as IntoSsrDeclarationImportant>::BangImportant,
     >;
 
@@ -73,8 +77,8 @@ async_str_iter::Strings!(
     );
 );
 
-impl<N: AsRef<str>, V: AsRef<str>, I: BangImportantOrEmpty>
-    OneDeclarationAsList<IterAnyStr<N>, IterAnyStr<V>, I>
+impl<N: Borrow<str>, V: Borrow<str>, I: BangImportantOrEmpty>
+    OneDeclarationAsList<IterBorrowStr<N>, IterBorrowStr<V>, I>
 {
     pub fn new(
         name: DeclarationName<N>,
@@ -83,9 +87,9 @@ impl<N: AsRef<str>, V: AsRef<str>, I: BangImportantOrEmpty>
     ) -> Self {
         Self {
             _state: OneDeclarationAsListState(),
-            name: IterAnyStr::new(name.into_unparsed()),
+            name: IterBorrowStr::new(name.into_unparsed()),
             colon: (),
-            value: IterAnyStr::new(value.into_unparsed()),
+            value: IterBorrowStr::new(value.into_unparsed()),
             bang_important_or_empty,
         }
     }
@@ -107,8 +111,8 @@ async_str_iter::Strings!(
     );
 );
 
-impl<N: AsRef<str>, V: AsRef<str>, I: BangImportantOrEmpty>
-    OneDeclarationAsListPrefixSemicolon<IterAnyStr<N>, IterAnyStr<V>, I>
+impl<N: Borrow<str>, V: Borrow<str>, I: BangImportantOrEmpty>
+    OneDeclarationAsListPrefixSemicolon<IterBorrowStr<N>, IterBorrowStr<V>, I>
 {
     pub fn new(
         name: DeclarationName<N>,
@@ -118,9 +122,9 @@ impl<N: AsRef<str>, V: AsRef<str>, I: BangImportantOrEmpty>
         Self {
             _state: OneDeclarationAsListPrefixSemicolonState(),
             semicolon: (),
-            name: IterAnyStr::new(name.into_unparsed()),
+            name: IterBorrowStr::new(name.into_unparsed()),
             colon: (),
-            value: IterAnyStr::new(value.into_unparsed()),
+            value: IterBorrowStr::new(value.into_unparsed()),
             bang_important_or_empty,
         }
     }

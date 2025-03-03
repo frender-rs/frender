@@ -11,28 +11,20 @@
 //! aasf
 //! </code></li></ul>
 
-use crate::value_kind::KindOfStaticRefOrTempOwned;
-
-pub type Kind<T> = KindOfStaticRefOrTempOwned<T>;
-
-pub mod refed {
+mod cached_refed_cow_static {
     use std::borrow::Cow;
 
     use crate::{
         non_reactive::{CachedNonReactiveValue, CachedNonReactiveValueRenderInit},
-        value_kind::StaticRefOrTempOwned,
+        static_or_temp_ref::StaticOrTempRef,
+        value_kind::KindOfStaticOrTempRef,
         ProvideValueOfKind,
     };
 
-    use super::Kind;
-
     pub struct Provide<T: ?Sized + 'static + ToOwned>(Cow<'static, T>);
 
-    impl<T: ?Sized + 'static + ToOwned> ProvideValueOfKind<Kind<T>> for Provide<T> {
-        fn provide_value_of_kind<Out>(
-            self,
-            f: impl FnOnce(StaticRefOrTempOwned<'_, T>) -> Out,
-        ) -> Out {
+    impl<T: ?Sized + 'static + ToOwned> ProvideValueOfKind<KindOfStaticOrTempRef<T>> for Provide<T> {
+        fn provide_value_of_kind<Out>(self, f: impl FnOnce(StaticOrTempRef<'_, T>) -> Out) -> Out {
             f(From::from(&self.0))
         }
     }
@@ -40,18 +32,20 @@ pub mod refed {
     pub struct RenderInit;
 
     impl<T: ?Sized + 'static + ToOwned + PartialEq>
-        CachedNonReactiveValueRenderInit<Kind<T>, Cow<'static, T>> for RenderInit
+        CachedNonReactiveValueRenderInit<KindOfStaticOrTempRef<T>, Cow<'static, T>> for RenderInit
     {
         fn cached_non_reactive_value_render_init<Out>(
             self,
-            renderer: impl FnOnce(<Kind<T> as crate::value_kind::ValueKind>::Value<'_>) -> Out,
+            renderer: impl FnOnce(
+                <KindOfStaticOrTempRef<T> as crate::value_kind::ValueKind>::Value<'_>,
+            ) -> Out,
             cache: &mut Cow<'static, T>,
         ) -> Out {
             renderer(From::<&_>::from(cache))
         }
     }
 
-    impl<T: ?Sized + 'static + ToOwned + PartialEq> CachedNonReactiveValue<Kind<T>>
+    impl<T: ?Sized + 'static + ToOwned + PartialEq> CachedNonReactiveValue<KindOfStaticOrTempRef<T>>
         for Cow<'static, T>
     {
         type CacheCanProvideValue = super::super::CacheCanProvideValue;
@@ -78,7 +72,9 @@ pub mod refed {
 
         fn update_into_cache_and_render<Out>(
             self,
-            renderer: impl FnOnce(<Kind<T> as crate::value_kind::ValueKind>::Value<'_>) -> Out,
+            renderer: impl FnOnce(
+                <KindOfStaticOrTempRef<T> as crate::value_kind::ValueKind>::Value<'_>,
+            ) -> Out,
             cache: &mut Self::Cache,
         ) -> Out {
             *cache = self;
@@ -87,100 +83,60 @@ pub mod refed {
     }
 }
 
-pub mod r#ref {
-    pub use super::static_or_temp::RenderInit;
-
+mod uncached_ref_cow_static {
     use std::borrow::Cow;
 
     use crate::{
-        non_reactive::{CachedNonReactiveValue, CloneIfCacheMiss, UncachedNonReactiveValue},
-        value_kind::StaticRefOrTempOwned,
-        ProvideValueOfKind,
+        non_reactive::UncachedNonReactiveValue, static_or_temp_ref::StaticOrTempRef,
+        value_kind::KindOfStaticOrTempRef, ProvideValueOfKind,
     };
 
-    use super::Kind;
+    pub struct Provide<'a, T: ?Sized + 'static + ToOwned>(pub(super) &'a Cow<'static, T>);
 
-    pub struct Provide<'a, T: ?Sized + 'static + ToOwned>(&'a Cow<'static, T>);
-
-    impl<T: ?Sized + 'static + ToOwned> ProvideValueOfKind<Kind<T>> for Provide<'_, T> {
-        fn provide_value_of_kind<Out>(
-            self,
-            f: impl FnOnce(StaticRefOrTempOwned<'_, T>) -> Out,
-        ) -> Out {
+    impl<T: ?Sized + 'static + ToOwned> ProvideValueOfKind<KindOfStaticOrTempRef<T>>
+        for Provide<'_, T>
+    {
+        fn provide_value_of_kind<Out>(self, f: impl FnOnce(StaticOrTempRef<'_, T>) -> Out) -> Out {
             f(From::from(self.0))
         }
     }
 
-    impl<'a, T: ?Sized + 'static + ToOwned> UncachedNonReactiveValue<Kind<T>> for &'a Cow<'static, T> {
+    impl<'a, T: ?Sized + 'static + ToOwned> UncachedNonReactiveValue<KindOfStaticOrTempRef<T>>
+        for &'a Cow<'static, T>
+    {
         type UncachedIntoProvideValue = Provide<'a, T>;
 
         fn uncached_into_provide_value(self) -> Self::UncachedIntoProvideValue {
             Provide(self)
-        }
-    }
-
-    impl<'a, T: ?Sized + 'static + ToOwned + PartialEq> CachedNonReactiveValue<Kind<T>>
-        for CloneIfCacheMiss<&'a Cow<'static, T>>
-    {
-        type CacheCanProvideValue = super::super::CacheCanProvideValue;
-        type Cache = Cow<'static, T>;
-
-        type RenderInit = RenderInit<'a, T>;
-
-        type CachedIntoProvideValue = Provide<'a, T>;
-        fn cached_into_provide_value(self) -> Self::CachedIntoProvideValue {
-            Provide(self.0)
-        }
-
-        fn match_cache(&self, cache: &Self::Cache) -> bool {
-            <Cow<'static, T>>::eq(self.0, cache)
-        }
-
-        fn not_match_cache(&self, cache: &Self::Cache) -> bool {
-            <Cow<'static, T>>::ne(self.0, cache)
-        }
-
-        fn into_cache_and_render_init(self) -> (Self::Cache, Self::RenderInit) {
-            (self.0.clone(), RenderInit(From::from(self.0)))
-        }
-
-        fn update_into_cache_and_render<Out>(
-            self,
-            renderer: impl FnOnce(<Kind<T> as crate::value_kind::ValueKind>::Value<'_>) -> Out,
-            cache: &mut Self::Cache,
-        ) -> Out {
-            cache.clone_from(self.0);
-            renderer(From::from(self.0))
         }
     }
 }
 
-pub mod static_or_temp {
-    use std::borrow::Cow;
-
+mod uncached_static_or_temp_ref {
     use crate::{
-        non_reactive::{
-            CachedNonReactiveValue, CachedNonReactiveValueRenderInit, UncachedNonReactiveValue,
-        },
-        value_kind::StaticRefOrTempOwned,
+        non_reactive::UncachedNonReactiveValue,
+        static_or_temp_ref::StaticOrTempRef,
+        temp_ref::TempRef,
+        value_kind::{KindOfStaticOrTempRef, KindOfTempRef},
         ProvideValueOfKind,
     };
 
-    use super::Kind;
+    pub struct Provide<'a, T: ?Sized + 'static>(pub(super) StaticOrTempRef<'a, T>);
 
-    pub struct Provide<'a, T: ?Sized + 'static + ToOwned>(StaticRefOrTempOwned<'a, T>);
-
-    impl<T: ?Sized + 'static + ToOwned> ProvideValueOfKind<Kind<T>> for Provide<'_, T> {
-        fn provide_value_of_kind<Out>(
-            self,
-            f: impl FnOnce(StaticRefOrTempOwned<'_, T>) -> Out,
-        ) -> Out {
+    impl<T: ?Sized + 'static> ProvideValueOfKind<KindOfStaticOrTempRef<T>> for Provide<'_, T> {
+        fn provide_value_of_kind<Out>(self, f: impl FnOnce(StaticOrTempRef<'_, T>) -> Out) -> Out {
             f(self.0)
         }
     }
 
-    impl<'a, T: ?Sized + 'static + ToOwned> UncachedNonReactiveValue<Kind<T>>
-        for StaticRefOrTempOwned<'a, T>
+    impl<T: ?Sized + 'static> ProvideValueOfKind<KindOfTempRef<T>> for Provide<'_, T> {
+        fn provide_value_of_kind<Out>(self, f: impl FnOnce(TempRef<'_, T>) -> Out) -> Out {
+            f(TempRef(&self.0))
+        }
+    }
+
+    impl<'a, T: ?Sized + 'static> UncachedNonReactiveValue<KindOfStaticOrTempRef<T>>
+        for StaticOrTempRef<'a, T>
     {
         type UncachedIntoProvideValue = Provide<'a, T>;
 
@@ -188,53 +144,216 @@ pub mod static_or_temp {
             Provide(self)
         }
     }
+}
 
-    pub struct RenderInit<'a, T: ?Sized + 'static + ToOwned>(pub StaticRefOrTempOwned<'a, T>);
+mod partially_cached {
+    use std::borrow::Cow;
+
+    use crate::{
+        non_reactive::{CachedNonReactiveValue, CachedNonReactiveValueRenderInit},
+        static_or_temp_ref::StaticOrTempRef,
+        temp_ref::TempRef,
+        value_kind::{KindOfStaticOrTempRef, KindOfTempRef},
+    };
+
+    use super::{
+        super::cache_provide_value::CacheCanNotProvideValue,
+        uncached_ref_cow_static::Provide as ProvideRefCow,
+        uncached_static_or_temp_ref::Provide as ProvideRef,
+    };
+
+    pub enum PartialCacheCowStatic<T: ?Sized + 'static> {
+        StaticBorrowed(&'static T),
+        TempOwned,
+    }
+
+    impl<T: ?Sized + 'static> Copy for PartialCacheCowStatic<T> {}
+
+    impl<T: ?Sized + 'static> Clone for PartialCacheCowStatic<T> {
+        fn clone(&self) -> Self {
+            *self
+        }
+    }
+
+    impl<T: ?Sized + 'static> PartialCacheCowStatic<T> {
+        fn from_ref_cow(this: &Cow<'static, T>) -> Self
+        where
+            T: ToOwned,
+        {
+            match this {
+                Cow::Borrowed(this) => PartialCacheCowStatic::StaticBorrowed(this),
+                Cow::Owned(_) => PartialCacheCowStatic::TempOwned,
+            }
+        }
+
+        fn from_ref(this: StaticOrTempRef<T>) -> Self
+        where
+            T: ToOwned,
+        {
+            match this {
+                StaticOrTempRef::Static(this) => Self::StaticBorrowed(this),
+                StaticOrTempRef::Temp(_) => Self::TempOwned,
+            }
+        }
+
+        fn cache_match(self, v: &T) -> bool
+        where
+            T: PartialEq,
+        {
+            match self {
+                PartialCacheCowStatic::StaticBorrowed(cache) => T::eq(cache, v),
+                PartialCacheCowStatic::TempOwned => false,
+            }
+        }
+        fn cache_not_match(self, v: &T) -> bool
+        where
+            T: PartialEq,
+        {
+            match self {
+                PartialCacheCowStatic::StaticBorrowed(cache) => T::ne(cache, v),
+                PartialCacheCowStatic::TempOwned => true,
+            }
+        }
+    }
+
+    pub struct RenderInit<'a, T: ?Sized + 'static + ToOwned>(StaticOrTempRef<'a, T>);
 
     impl<'a, T: ?Sized + 'static + ToOwned>
-        CachedNonReactiveValueRenderInit<Kind<T>, Cow<'static, T>> for RenderInit<'a, T>
+        CachedNonReactiveValueRenderInit<KindOfStaticOrTempRef<T>, PartialCacheCowStatic<T>>
+        for RenderInit<'a, T>
     {
         fn cached_non_reactive_value_render_init<Out>(
             self,
-            renderer: impl FnOnce(<Kind<T> as crate::value_kind::ValueKind>::Value<'_>) -> Out,
-            _: &mut Cow<'static, T>,
+            renderer: impl FnOnce(
+                <KindOfStaticOrTempRef<T> as crate::value_kind::ValueKind>::Value<'_>,
+            ) -> Out,
+            _: &mut PartialCacheCowStatic<T>,
         ) -> Out {
             renderer(self.0)
         }
     }
 
-    impl<'a, T: ?Sized + 'static + ToOwned + PartialEq> CachedNonReactiveValue<Kind<T>>
-        for StaticRefOrTempOwned<'a, T>
+    impl<'a, T: ?Sized + 'static + ToOwned>
+        CachedNonReactiveValueRenderInit<KindOfTempRef<T>, PartialCacheCowStatic<T>>
+        for RenderInit<'a, T>
     {
-        type CacheCanProvideValue = super::super::CacheCanProvideValue;
-        type Cache = Cow<'static, T>;
+        fn cached_non_reactive_value_render_init<Out>(
+            self,
+            renderer: impl FnOnce(<KindOfTempRef<T> as crate::value_kind::ValueKind>::Value<'_>) -> Out,
+            _: &mut PartialCacheCowStatic<T>,
+        ) -> Out {
+            renderer(TempRef(&self.0))
+        }
+    }
+
+    /// Partially cached
+    impl<'a, T: ?Sized + 'static + ToOwned + PartialEq>
+        CachedNonReactiveValue<KindOfStaticOrTempRef<T>> for &'a Cow<'static, T>
+    {
+        type CacheCanProvideValue = CacheCanNotProvideValue;
+        type Cache = PartialCacheCowStatic<T>;
 
         type RenderInit = RenderInit<'a, T>;
 
-        type CachedIntoProvideValue = Provide<'a, T>;
+        type CachedIntoProvideValue = ProvideRefCow<'a, T>;
         fn cached_into_provide_value(self) -> Self::CachedIntoProvideValue {
-            Provide(self)
+            ProvideRefCow(self)
         }
 
         fn match_cache(&self, cache: &Self::Cache) -> bool {
-            Self::eq(self, cache)
+            cache.cache_match(self)
         }
 
         fn not_match_cache(&self, cache: &Self::Cache) -> bool {
-            Self::ne(self, cache)
+            cache.cache_not_match(self)
         }
 
         fn into_cache_and_render_init(self) -> (Self::Cache, Self::RenderInit) {
-            (self.to_owned_cow_static(), RenderInit(self))
+            (
+                PartialCacheCowStatic::from_ref_cow(self),
+                RenderInit(From::from(self)),
+            )
         }
 
         fn update_into_cache_and_render<Out>(
             self,
-            renderer: impl FnOnce(<Kind<T> as crate::value_kind::ValueKind>::Value<'_>) -> Out,
+            renderer: impl FnOnce(StaticOrTempRef<T>) -> Out,
             cache: &mut Self::Cache,
         ) -> Out {
-            self.clone_into_cow_static(cache);
+            *cache = PartialCacheCowStatic::from_ref_cow(self);
+            renderer(From::from(self))
+        }
+    }
+
+    /// Partially cached
+    impl<'a, T: ?Sized + 'static + ToOwned + PartialEq>
+        CachedNonReactiveValue<KindOfStaticOrTempRef<T>> for StaticOrTempRef<'a, T>
+    {
+        type CacheCanProvideValue = CacheCanNotProvideValue;
+        type Cache = PartialCacheCowStatic<T>;
+
+        type RenderInit = RenderInit<'a, T>;
+
+        type CachedIntoProvideValue = ProvideRef<'a, T>;
+        fn cached_into_provide_value(self) -> Self::CachedIntoProvideValue {
+            ProvideRef(self)
+        }
+
+        fn match_cache(&self, cache: &Self::Cache) -> bool {
+            cache.cache_match(self)
+        }
+
+        fn not_match_cache(&self, cache: &Self::Cache) -> bool {
+            cache.cache_not_match(self)
+        }
+
+        fn into_cache_and_render_init(self) -> (Self::Cache, Self::RenderInit) {
+            (PartialCacheCowStatic::from_ref(self), RenderInit(self))
+        }
+
+        fn update_into_cache_and_render<Out>(
+            self,
+            renderer: impl FnOnce(StaticOrTempRef<T>) -> Out,
+            cache: &mut Self::Cache,
+        ) -> Out {
+            *cache = PartialCacheCowStatic::from_ref(self);
             renderer(self)
+        }
+    }
+
+    /// Partially cached
+    impl<'a, T: ?Sized + 'static + ToOwned + PartialEq> CachedNonReactiveValue<KindOfTempRef<T>>
+        for StaticOrTempRef<'a, T>
+    {
+        type CacheCanProvideValue = CacheCanNotProvideValue;
+        type Cache = PartialCacheCowStatic<T>;
+
+        type RenderInit = RenderInit<'a, T>;
+
+        type CachedIntoProvideValue = ProvideRef<'a, T>;
+        fn cached_into_provide_value(self) -> Self::CachedIntoProvideValue {
+            ProvideRef(self)
+        }
+
+        fn match_cache(&self, cache: &Self::Cache) -> bool {
+            cache.cache_match(self)
+        }
+
+        fn not_match_cache(&self, cache: &Self::Cache) -> bool {
+            cache.cache_not_match(self)
+        }
+
+        fn into_cache_and_render_init(self) -> (Self::Cache, Self::RenderInit) {
+            (PartialCacheCowStatic::from_ref(self), RenderInit(self))
+        }
+
+        fn update_into_cache_and_render<Out>(
+            self,
+            renderer: impl FnOnce(TempRef<T>) -> Out,
+            cache: &mut Self::Cache,
+        ) -> Out {
+            *cache = PartialCacheCowStatic::from_ref(self);
+            renderer(TempRef(&self))
         }
     }
 }

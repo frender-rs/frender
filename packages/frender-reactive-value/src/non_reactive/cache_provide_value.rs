@@ -2,7 +2,10 @@ use std::borrow::{Borrow, Cow};
 
 pub(super) use self::sealed::{CacheCanNotProvideValue, CacheCanProvideValueMarker};
 
-use crate::value_kind::{KindOfOwned, KindOfRef, KindOfStaticRefOrTempOwned, ValueKind};
+use crate::{
+    temp_ref::TempRef,
+    value_kind::{KindOfOwned, KindOfStaticOrTempRef, KindOfTempRef, ValueKind},
+};
 
 pub struct CacheCanProvideValue;
 
@@ -68,34 +71,22 @@ impl<T: 'static + Copy> CacheProvideValue<KindOfOwned<T>> for T {
     }
 }
 
-impl<T: Borrow<U>, U: ?Sized + 'static> CacheProvideValue<KindOfRef<U>> for T {
+impl<T: Borrow<U>, U: ?Sized + 'static> CacheProvideValue<KindOfTempRef<U>> for T {
     fn cache_provide_value_with_marker<Out>(
         &self,
-        receive: impl FnOnce(<KindOfRef<U> as ValueKind>::Value<'_>) -> Out,
+        receive: impl FnOnce(<KindOfTempRef<U> as ValueKind>::Value<'_>) -> Out,
         _: CacheCanProvideValue,
     ) -> Out {
-        receive(self.borrow())
+        receive(TempRef(self.borrow()))
     }
 }
 
-pub struct CacheAsRef<T: ?Sized>(pub(crate) T);
-
-impl<T: ?Sized + AsRef<str>> CacheProvideValue<KindOfRef<str>> for CacheAsRef<T> {
-    fn cache_provide_value_with_marker<Out>(
-        &self,
-        receive: impl FnOnce(&str) -> Out,
-        _: CacheCanProvideValue,
-    ) -> Out {
-        receive(self.0.as_ref())
-    }
-}
-
-impl<T: ?Sized + 'static + ToOwned> CacheProvideValue<KindOfStaticRefOrTempOwned<T>>
+impl<T: ?Sized + 'static + ToOwned> CacheProvideValue<KindOfStaticOrTempRef<T>>
     for Cow<'static, T>
 {
     fn cache_provide_value_with_marker<Out>(
         &self,
-        receive: impl FnOnce(<KindOfStaticRefOrTempOwned<T> as ValueKind>::Value<'_>) -> Out,
+        receive: impl FnOnce(<KindOfStaticOrTempRef<T> as ValueKind>::Value<'_>) -> Out,
         _: CacheCanProvideValue,
     ) -> Out {
         receive(From::from(self))

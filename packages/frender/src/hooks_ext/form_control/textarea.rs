@@ -23,17 +23,17 @@ where
 
 #[cfg(feature = "csr")]
 mod csr {
-    use frender_html::form_control::{
-        textarea::CsrTextAreaValue, KindOfValue, ProvideFormControlValue,
-    };
+    use frender_html::form_control::{textarea::CsrTextAreaValue, KindOfValue};
     use hooks::Signal;
 
-    use crate::hooks_ext::form_control::{FromFormControlValue, SignalIntoControlledValue};
+    use crate::hooks_ext::form_control::{
+        FromFormControlValue, SignalIntoControlledValue, ToProvideFormControlValue,
+    };
 
     impl<S: Signal + 'static> CsrTextAreaValue for SignalIntoControlledValue<S>
     where
         S::SignalHook: Unpin,
-        S::Value: FromFormControlValue<KindOfValue> + ProvideFormControlValue<KindOfValue>,
+        S::Value: FromFormControlValue<KindOfValue> + ToProvideFormControlValue<KindOfValue>,
     {
         type IntoCsrTextAreaValue = Self; // TODO: into instead of self
 

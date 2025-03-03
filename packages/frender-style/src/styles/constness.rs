@@ -1,8 +1,13 @@
+use std::borrow::Borrow;
+
 use ccss::collections::array_vec::ArrayVec;
 use frender_common::const_utils::ArrayString;
 
-use crate::declaration::{
-    important::IntoDeclarationImportant, Declaration, DeclarationName, DeclarationValue,
+use crate::{
+    declaration::{
+        important::IntoDeclarationImportant, Declaration, DeclarationName, DeclarationValue,
+    },
+    Style,
 };
 
 /// Note that implementations might have different values for csr and ssr.
@@ -10,8 +15,8 @@ pub trait HasConstDeclarationList {
     /// This is used for ssr.
     const DECLARATION_LIST_PREFIX_SEMICOLON: DeclarationListPrefixSemicolonStr<'static>;
 
-    type DeclarationNameStr: 'static + AsRef<str> + Clone + PartialEq;
-    type DeclarationValueStr: 'static + AsRef<str> + Clone + PartialEq;
+    type DeclarationNameStr: 'static + Borrow<str> + PartialEq;
+    type DeclarationValueStr: 'static + Borrow<str> + PartialEq;
     type DeclarationImportant: IntoDeclarationImportant;
 
     /// This is used for csr.
@@ -303,6 +308,7 @@ macro_rules! impl_has_const_declaration_list_for {
             const DECLARATION_ARRAY: $crate::styles::constness::DeclarationArray<{ DECLARATION_LIST_INFO.len }> =
                 DECLARATION_LIST_STR.into_array();
 
+            #[allow(non_local_definitions)]
             impl $crate::styles::constness::HasConstDeclarationList for $for_ty {
                 const DECLARATION_LIST_PREFIX_SEMICOLON: $crate::styles::constness::DeclarationListPrefixSemicolonStr<'static> =
                     DECLARATION_ARRAY.to_string_prefix_semicolon::<{DECLARATION_LIST_INFO.prefix_semicolon_str_len}>().as_str();
@@ -594,189 +600,16 @@ frender_macro_rules::define_phantom_wrapper!(
     pub struct ConstDeclarationList<T: ?Sized + HasConstDeclarationList>;
 );
 
-pub mod ssr {
-    use std::{marker::PhantomData, task::Poll};
+impl<T: ?Sized + HasConstDeclarationList> Style for ConstDeclarationList<T> {}
 
-    use async_str_iter::AsyncStrIterator;
-
-    use crate::ssr::{SsrDeclarationList, SsrStyle};
-
-    use super::{ConstDeclarationList, HasConstDeclarationList};
-
-    pub struct ConstDeclarationListIntoSsr<T: ?Sized + HasConstDeclarationList> {
-        yielded: bool,
-        __: PhantomData<T>,
-    }
-
-    impl<T: ?Sized + HasConstDeclarationList> Unpin for ConstDeclarationListIntoSsr<T> {}
-
-    impl<T: ?Sized + HasConstDeclarationList> AsyncStrIterator for ConstDeclarationListIntoSsr<T> {
-        fn poll_next_str(
-            self: std::pin::Pin<&mut Self>,
-            _: &mut std::task::Context<'_>,
-        ) -> Poll<Option<&str>> {
-            let this = self.get_mut();
-            if this.yielded {
-                Poll::Ready(None)
-            } else {
-                this.yielded = true;
-                Poll::Ready(Some(
-                    T::DECLARATION_LIST_PREFIX_SEMICOLON.to_str_without_prefix_semicolon(),
-                ))
-            }
-        }
-    }
-
-    pub struct ConstDeclarationListIntoSsrPrefixSemicolon<T: ?Sized + HasConstDeclarationList> {
-        yielded: bool,
-        __: PhantomData<T>,
-    }
-
-    impl<T: ?Sized + HasConstDeclarationList> Unpin for ConstDeclarationListIntoSsrPrefixSemicolon<T> {}
-    impl<T: ?Sized + HasConstDeclarationList> AsyncStrIterator
-        for ConstDeclarationListIntoSsrPrefixSemicolon<T>
-    {
-        fn poll_next_str(
-            self: std::pin::Pin<&mut Self>,
-            _: &mut std::task::Context<'_>,
-        ) -> Poll<Option<&str>> {
-            // TODO: ASSERT match csr
-            let this = self.get_mut();
-            if this.yielded {
-                Poll::Ready(None)
-            } else {
-                this.yielded = true;
-                Poll::Ready(Some(T::DECLARATION_LIST_PREFIX_SEMICOLON.to_str()))
-            }
-        }
-    }
-
-    impl<T: ?Sized + HasConstDeclarationList> SsrDeclarationList for ConstDeclarationList<T> {
-        type IntoDeclarationList = ConstDeclarationListIntoSsr<T>;
-
-        type IntoDeclarationListPrefixSemicolon = ConstDeclarationListIntoSsrPrefixSemicolon<T>;
-
-        fn into_declaration_list(_: Self) -> Self::IntoDeclarationList {
-            ConstDeclarationListIntoSsr {
-                yielded: false,
-                __: PhantomData,
-            }
-        }
-
-        fn into_declaration_list_prefix_semicolon(
-            _: Self,
-        ) -> Self::IntoDeclarationListPrefixSemicolon {
-            ConstDeclarationListIntoSsrPrefixSemicolon {
-                yielded: false,
-                __: PhantomData,
-            }
-        }
-    }
-
-    impl<T: ?Sized + HasConstDeclarationList> SsrStyle for ConstDeclarationList<T> {
-        type IntoSsrDeclarationList = Self;
-
-        fn into_ssr_declaration_list(this: Self) -> Self::IntoSsrDeclarationList {
-            this
-        }
-    }
-}
-
-pub mod csr {
-    use std::marker::PhantomData;
-
-    use crate::csr::{CsrStyle, CsrStyleStateUnmount};
-
-    use super::{ConstDeclarationList, HasConstDeclarationList};
-
-    pub struct State<T: ?Sized + HasConstDeclarationList>(PhantomData<T>);
-
-    impl<T: ?Sized + HasConstDeclarationList> CsrStyleStateUnmount for State<T> {
-        fn csr_style_state_unmount(_: &mut Self, style: &mut impl crate::csr::CssStyleDeclaration) {
-            T::DECLARATION_LIST
-                .into_iter()
-                .for_each(|d| style.remove_property(d.name.as_ref_str()));
-        }
-    }
-
-    impl<T: ?Sized + HasConstDeclarationList> CsrStyle for ConstDeclarationList<T> {
-        type State = State<T>;
-
-        fn csr_style_render_init(
-            _: Self,
-            style: &mut impl crate::csr::CssStyleDeclaration,
-        ) -> Self::State {
-            T::DECLARATION_LIST.into_iter().for_each(|d| {
-                let name = d.name;
-                let value = d.value;
-                crate::styles::declaration::csr::update_style(
-                    style,
-                    name.as_ref_str(),
-                    value.as_ref_str(),
-                    d.important,
-                );
-            });
-            State(PhantomData)
-        }
-
-        fn csr_style_render_update(
-            _: Self,
-            _: &mut impl crate::csr::CssStyleDeclaration,
-            _: &mut Self::State,
-        ) {
-            return;
-        }
-    }
-}
+#[cfg(feature = "csr")]
+mod csr;
+#[cfg(feature = "ssr")]
+pub(crate) mod ssr;
 
 #[cfg(test)]
-mod tests {
-    use async_str_iter::ext::AsyncStrIteratorExt;
-    use futures_lite::future::block_on;
-
-    use crate::{ssr::SsrDeclarationList, styles::constness::HasConstDeclarationList};
-
-    enum Demo {}
-
-    impl_has_const_declaration_list_for!(
-        impl<__> Demo {
-            const _: _ = r"
-                font-size: large;
-                animation: 3s infinite alternate slidein;
-            ";
-        }
-    );
-
-    #[test]
-    fn test() {
-        let v = super::ConstDeclarationList::<Demo>();
-
-        assert_eq!(
-            Demo::DECLARATION_LIST_PREFIX_SEMICOLON.to_str(),
-            ";font-size:large;animation:3s infinite alternate slidein"
-        );
-
-        assert_eq!(
-            Demo::DECLARATION_LIST_PREFIX_SEMICOLON.to_str_without_prefix_semicolon(),
-            "font-size:large;animation:3s infinite alternate slidein"
-        );
-
-        {
-            let s = block_on(SsrDeclarationList::into_declaration_list(v).collect::<String>());
-            assert_eq!(
-                s,
-                Demo::DECLARATION_LIST_PREFIX_SEMICOLON.to_str_without_prefix_semicolon()
-            )
-        }
-
-        {
-            let s = block_on(
-                SsrDeclarationList::into_declaration_list_prefix_semicolon(v).collect::<String>(),
-            );
-            assert_eq!(s, Demo::DECLARATION_LIST_PREFIX_SEMICOLON.to_str())
-        }
-    }
-}
+#[cfg(feature = "ssr")]
+mod tests;
 
 #[doc(hidden)]
 #[macro_export]

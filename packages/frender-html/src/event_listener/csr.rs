@@ -1,10 +1,11 @@
 use std::{marker::PhantomData, pin::Pin};
 
-use frender_common::{convert::FromMut, reactive_value::RenderInitPinned};
+use frender_common::convert::FromMut;
 use frender_dom::{
     csr::{HandleEvent, MaybeHandleEvent, PinnedRegisterUpdate, RegisterUpdate},
     event_types::EventType,
 };
+use frender_reactive_value::RenderInitPinned;
 
 use crate::{
     csr::behavior_type::{BehaviorType, OnEventType, PinnedNonReactiveRenderStateKind, PinnedRenderWithBehavior, UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior},

@@ -1,3 +1,5 @@
+pub use frender_style::ssr::SsrStyle as Bounds;
+
 use frender_ssr::html::attr_value::AttrEqValue;
 use frender_style::ssr::{SsrDeclarationList, SsrStyle};
 

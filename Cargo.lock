@@ -892,6 +892,7 @@ dependencies = [
  "frender-html",
  "frender-keyed-elements",
  "frender-macros",
+ "frender-reactive-value",
  "frender-render-with",
  "frender-ssr",
  "frender-style",
@@ -911,6 +912,7 @@ dependencies = [
  "async-str-iter",
  "either",
  "frender-common",
+ "frender-reactive-value",
  "frender-ssr-html",
 ]
 
@@ -952,6 +954,7 @@ name = "frender-csr-core"
 version = "0.1.0"
 dependencies = [
  "frender-common",
+ "frender-reactive-value",
  "pin-project-lite",
 ]
 
@@ -970,6 +973,7 @@ dependencies = [
  "frender-common",
  "frender-csr-ext",
  "frender-html",
+ "frender-reactive-value",
  "gloo-events 0.2.0",
  "js-sys",
  "pin-project-lite",
@@ -999,6 +1003,7 @@ dependencies = [
  "frender-csr-core",
  "frender-dom-tokens",
  "frender-events",
+ "frender-reactive-value",
  "frender-ssr",
  "frender-style",
  "gloo-events 0.2.0",
@@ -1050,6 +1055,7 @@ dependencies = [
  "frender-dom",
  "frender-events",
  "frender-macro-rules",
+ "frender-reactive-value",
  "frender-ssr",
  "web-sys",
 ]
@@ -1078,6 +1084,7 @@ dependencies = [
  "frender-dom",
  "frender-events",
  "frender-form-control",
+ "frender-reactive-value",
  "frender-ssr",
  "frender-style",
  "gloo-events 0.2.0",
@@ -1155,6 +1162,7 @@ version = "0.1.0"
 name = "frender-reactive-value"
 version = "0.1.0"
 dependencies = [
+ "async-str-iter",
  "frender-common",
 ]
 
@@ -1201,6 +1209,7 @@ dependencies = [
  "frender-common",
  "frender-const-expr",
  "frender-macro-rules",
+ "frender-reactive-value",
  "futures-lite 2.3.0",
  "web-sys",
 ]
@@ -1212,6 +1221,7 @@ dependencies = [
  "frender-common",
  "frender-html",
  "frender-macro-rules",
+ "frender-reactive-value",
  "indexmap 2.2.6",
 ]
 

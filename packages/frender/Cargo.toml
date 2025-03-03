@@ -29,6 +29,7 @@ frender-context = { version = "0.1.0", path = "../frender-context", default-feat
 frender-element = { version = "0.1.0", path = "../frender-element", default-features = false }
 frender-style = { version = "0.1.0", path = "../frender-style" }
 frender-dom-tokens = { version = "0.1.0", path = "../frender-dom-tokens" }
+frender-reactive-value = { version = "0.1.0", path = "../frender-reactive-value" }
 
 [dependencies.frender-hook-element]
 path = "../frender-hook-element"

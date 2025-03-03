@@ -20,12 +20,12 @@ pub mod Element {
     impl<V: DomTokens::Bounds> Property for class<V> {
         type PropertyMarker = _prop_markers::class;
     }
-    pub struct id<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for id<V> {
+    pub struct id<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for id<V> {
         type PropertyMarker = _prop_markers::id;
     }
-    pub struct part<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for part<V> {
+    pub struct part<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for part<V> {
         type PropertyMarker = _prop_markers::part;
     }
     pub struct on_cancel<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
@@ -176,8 +176,8 @@ pub mod ElementWithHrefAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct href<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for href<V> {
+    pub struct href<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for href<V> {
         type PropertyMarker = _prop_markers::href;
     }
 }
@@ -188,8 +188,8 @@ pub mod ElementWithTargetAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct target<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for target<V> {
+    pub struct target<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for target<V> {
         type PropertyMarker = _prop_markers::target;
     }
 }
@@ -200,8 +200,8 @@ pub mod ElementWithTypeAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct r#type<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for r#type<V> {
+    pub struct r#type<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for r#type<V> {
         type PropertyMarker = _prop_markers::r#type;
     }
 }
@@ -212,8 +212,8 @@ pub mod ElementWithCiteAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct cite<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for cite<V> {
+    pub struct cite<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for cite<V> {
         type PropertyMarker = _prop_markers::cite;
     }
 }
@@ -224,8 +224,8 @@ pub mod ElementWithPlaceHolderAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct placeholder<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for placeholder<V> {
+    pub struct placeholder<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for placeholder<V> {
         type PropertyMarker = _prop_markers::placeholder;
     }
 }
@@ -252,12 +252,12 @@ pub mod ElementWithHeightWidthStrAttributes {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct height<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for height<V> {
+    pub struct height<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for height<V> {
         type PropertyMarker = _prop_markers::height;
     }
-    pub struct width<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for width<V> {
+    pub struct width<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for width<V> {
         type PropertyMarker = _prop_markers::width;
     }
 }
@@ -308,8 +308,8 @@ pub mod ElementWithValueStrAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct value<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for value<V> {
+    pub struct value<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for value<V> {
         type PropertyMarker = _prop_markers::value;
     }
 }
@@ -332,8 +332,8 @@ pub mod ElementWithNameAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct name<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for name<V> {
+    pub struct name<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for name<V> {
         type PropertyMarker = _prop_markers::name;
     }
 }
@@ -356,8 +356,8 @@ pub mod ElementWithCrossOriginAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct cross_origin<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for cross_origin<V> {
+    pub struct cross_origin<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for cross_origin<V> {
         type PropertyMarker = _prop_markers::cross_origin;
     }
 }
@@ -380,8 +380,8 @@ pub mod ElementWithReferrerPolicyAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct referrer_policy<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for referrer_policy<V> {
+    pub struct referrer_policy<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for referrer_policy<V> {
         type PropertyMarker = _prop_markers::referrer_policy;
     }
 }
@@ -392,8 +392,8 @@ pub mod ElementWithAltAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct alt<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for alt<V> {
+    pub struct alt<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for alt<V> {
         type PropertyMarker = _prop_markers::alt;
     }
 }
@@ -404,8 +404,8 @@ pub mod ElementWithLoadingAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct loading<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for loading<V> {
+    pub struct loading<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for loading<V> {
         type PropertyMarker = _prop_markers::loading;
     }
 }
@@ -416,8 +416,8 @@ pub mod ElementWithAcceptAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct accept<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for accept<V> {
+    pub struct accept<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for accept<V> {
         type PropertyMarker = _prop_markers::accept;
     }
 }
@@ -428,8 +428,8 @@ pub mod ElementWithAutoCompleteAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct auto_complete<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for auto_complete<V> {
+    pub struct auto_complete<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for auto_complete<V> {
         type PropertyMarker = _prop_markers::auto_complete;
     }
 }
@@ -440,8 +440,8 @@ pub mod ElementWithAutoCorrectAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct auto_correct<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for auto_correct<V> {
+    pub struct auto_correct<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for auto_correct<V> {
         type PropertyMarker = _prop_markers::auto_correct;
     }
 }
@@ -452,8 +452,8 @@ pub mod ElementWithFormAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct form<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for form<V> {
+    pub struct form<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for form<V> {
         type PropertyMarker = _prop_markers::form;
     }
 }
@@ -466,24 +466,24 @@ pub mod ElementWithFormAttributes {
     #[allow(unused_imports)]
     pub use super::ElementWithFormAttribute::*;
     use crate::intrinsic::Property;
-    pub struct form_action<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for form_action<V> {
+    pub struct form_action<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for form_action<V> {
         type PropertyMarker = _prop_markers::form_action;
     }
-    pub struct form_enc_type<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for form_enc_type<V> {
+    pub struct form_enc_type<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for form_enc_type<V> {
         type PropertyMarker = _prop_markers::form_enc_type;
     }
-    pub struct form_method<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for form_method<V> {
+    pub struct form_method<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for form_method<V> {
         type PropertyMarker = _prop_markers::form_method;
     }
     pub struct form_no_validate<V: frender_attr_value::AttrValue<bool>>(pub V);
     impl<V: frender_attr_value::AttrValue<bool>> Property for form_no_validate<V> {
         type PropertyMarker = _prop_markers::form_no_validate;
     }
-    pub struct form_target<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for form_target<V> {
+    pub struct form_target<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for form_target<V> {
         type PropertyMarker = _prop_markers::form_target;
     }
 }
@@ -494,8 +494,8 @@ pub mod ElementWithFetchPriorityAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct fetch_priority<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for fetch_priority<V> {
+    pub struct fetch_priority<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for fetch_priority<V> {
         type PropertyMarker = _prop_markers::fetch_priority;
     }
 }
@@ -508,8 +508,8 @@ pub mod ElementWithHrefLangAttribute {
     #[allow(unused_imports)]
     pub use super::ElementWithHrefAttribute::*;
     use crate::intrinsic::Property;
-    pub struct href_lang<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for href_lang<V> {
+    pub struct href_lang<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for href_lang<V> {
         type PropertyMarker = _prop_markers::href_lang;
     }
 }
@@ -520,8 +520,8 @@ pub mod ElementWithSizesAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct sizes<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for sizes<V> {
+    pub struct sizes<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for sizes<V> {
         type PropertyMarker = _prop_markers::sizes;
     }
 }
@@ -532,8 +532,8 @@ pub mod ElementWithUseMapAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct use_map<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for use_map<V> {
+    pub struct use_map<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for use_map<V> {
         type PropertyMarker = _prop_markers::use_map;
     }
 }
@@ -544,8 +544,8 @@ pub mod ElementWithLabelAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct label<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for label<V> {
+    pub struct label<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for label<V> {
         type PropertyMarker = _prop_markers::label;
     }
 }
@@ -556,8 +556,8 @@ pub mod ElementWithForAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct r#for<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for r#for<V> {
+    pub struct r#for<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for r#for<V> {
         type PropertyMarker = _prop_markers::r#for;
     }
 }
@@ -568,8 +568,8 @@ pub mod ElementWithIntegrityAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct integrity<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for integrity<V> {
+    pub struct integrity<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for integrity<V> {
         type PropertyMarker = _prop_markers::integrity;
     }
 }
@@ -580,8 +580,8 @@ pub mod ElementWithBlockingAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct blocking<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for blocking<V> {
+    pub struct blocking<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for blocking<V> {
         type PropertyMarker = _prop_markers::blocking;
     }
 }
@@ -628,8 +628,8 @@ pub mod ElementWithSrcAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct src<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for src<V> {
+    pub struct src<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for src<V> {
         type PropertyMarker = _prop_markers::src;
     }
 }
@@ -642,8 +642,8 @@ pub mod ElementWithSrcsetAttribute {
     #[allow(unused_imports)]
     pub use super::ElementWithSrcAttribute::*;
     use crate::intrinsic::Property;
-    pub struct srcset<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for srcset<V> {
+    pub struct srcset<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for srcset<V> {
         type PropertyMarker = _prop_markers::srcset;
     }
 }
@@ -654,8 +654,8 @@ pub mod ElementWithBgColorAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct bg_color<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for bg_color<V> {
+    pub struct bg_color<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for bg_color<V> {
         type PropertyMarker = _prop_markers::bg_color;
     }
 }
@@ -666,8 +666,8 @@ pub mod ElementWithAlignAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct align<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for align<V> {
+    pub struct align<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for align<V> {
         type PropertyMarker = _prop_markers::align;
     }
 }
@@ -678,8 +678,8 @@ pub mod ElementWithMediaAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct media<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for media<V> {
+    pub struct media<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for media<V> {
         type PropertyMarker = _prop_markers::media;
     }
 }
@@ -702,8 +702,8 @@ pub mod ElementWithDateTimeAttribute {
     #[allow(unused_imports)]
     pub use super::Element::*;
     use crate::intrinsic::Property;
-    pub struct date_time<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for date_time<V> {
+    pub struct date_time<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for date_time<V> {
         type PropertyMarker = _prop_markers::date_time;
     }
 }
@@ -718,36 +718,36 @@ pub mod HtmlElement {
     impl<V: FnOnce(&frender_dom::node_ref::HtmlElement)> Property for ref_html_element<V> {
         type PropertyMarker = _prop_markers::ref_html_element;
     }
-    pub struct access_key<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for access_key<V> {
+    pub struct access_key<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for access_key<V> {
         type PropertyMarker = _prop_markers::access_key;
     }
-    pub struct auto_capitalize<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for auto_capitalize<V> {
+    pub struct auto_capitalize<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for auto_capitalize<V> {
         type PropertyMarker = _prop_markers::auto_capitalize;
     }
     pub struct auto_focus<V: frender_attr_value::AttrValue<bool>>(pub V);
     impl<V: frender_attr_value::AttrValue<bool>> Property for auto_focus<V> {
         type PropertyMarker = _prop_markers::auto_focus;
     }
-    pub struct content_editable<V: frender_attr_value::AttrValue<ContentEditable>>(pub V);
-    impl<V: frender_attr_value::AttrValue<ContentEditable>> Property for content_editable<V> {
+    pub struct content_editable<V: frender_attr_value::AttrValue<AttrKindOfContentEditable>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfContentEditable>> Property for content_editable<V> {
         type PropertyMarker = _prop_markers::content_editable;
     }
-    pub struct context_menu<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for context_menu<V> {
+    pub struct context_menu<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for context_menu<V> {
         type PropertyMarker = _prop_markers::context_menu;
     }
-    pub struct dir<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for dir<V> {
+    pub struct dir<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for dir<V> {
         type PropertyMarker = _prop_markers::dir;
     }
     pub struct draggable<V: frender_attr_value::AttrValue<bool>>(pub V);
     impl<V: frender_attr_value::AttrValue<bool>> Property for draggable<V> {
         type PropertyMarker = _prop_markers::draggable;
     }
-    pub struct enter_key_hint<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for enter_key_hint<V> {
+    pub struct enter_key_hint<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for enter_key_hint<V> {
         type PropertyMarker = _prop_markers::enter_key_hint;
     }
     pub struct hidden<V: frender_attr_value::AttrValue<bool>>(pub V);
@@ -758,48 +758,48 @@ pub mod HtmlElement {
     impl<V: frender_attr_value::AttrValue<bool>> Property for inert<V> {
         type PropertyMarker = _prop_markers::inert;
     }
-    pub struct input_mode<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for input_mode<V> {
+    pub struct input_mode<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for input_mode<V> {
         type PropertyMarker = _prop_markers::input_mode;
     }
-    pub struct is<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for is<V> {
+    pub struct is<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for is<V> {
         type PropertyMarker = _prop_markers::is;
     }
-    pub struct item_id<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for item_id<V> {
+    pub struct item_id<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for item_id<V> {
         type PropertyMarker = _prop_markers::item_id;
     }
-    pub struct item_prop<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for item_prop<V> {
+    pub struct item_prop<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for item_prop<V> {
         type PropertyMarker = _prop_markers::item_prop;
     }
-    pub struct item_ref<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for item_ref<V> {
+    pub struct item_ref<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for item_ref<V> {
         type PropertyMarker = _prop_markers::item_ref;
     }
-    pub struct item_scope<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for item_scope<V> {
+    pub struct item_scope<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for item_scope<V> {
         type PropertyMarker = _prop_markers::item_scope;
     }
-    pub struct item_type<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for item_type<V> {
+    pub struct item_type<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for item_type<V> {
         type PropertyMarker = _prop_markers::item_type;
     }
-    pub struct lang<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for lang<V> {
+    pub struct lang<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for lang<V> {
         type PropertyMarker = _prop_markers::lang;
     }
-    pub struct nonce<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for nonce<V> {
+    pub struct nonce<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for nonce<V> {
         type PropertyMarker = _prop_markers::nonce;
     }
-    pub struct role<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for role<V> {
+    pub struct role<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for role<V> {
         type PropertyMarker = _prop_markers::role;
     }
-    pub struct slot<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for slot<V> {
+    pub struct slot<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for slot<V> {
         type PropertyMarker = _prop_markers::slot;
     }
     pub struct spellcheck<V: frender_attr_value::AttrValue<Spellcheck>>(pub V);
@@ -814,16 +814,16 @@ pub mod HtmlElement {
     impl<V: frender_attr_value::AttrValue<i32>> Property for tab_index<V> {
         type PropertyMarker = _prop_markers::tab_index;
     }
-    pub struct title<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for title<V> {
+    pub struct title<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for title<V> {
         type PropertyMarker = _prop_markers::title;
     }
-    pub struct translate<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for translate<V> {
+    pub struct translate<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for translate<V> {
         type PropertyMarker = _prop_markers::translate;
     }
-    pub struct virtual_keyboard_policy<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for virtual_keyboard_policy<V> {
+    pub struct virtual_keyboard_policy<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for virtual_keyboard_policy<V> {
         type PropertyMarker = _prop_markers::virtual_keyboard_policy;
     }
     pub struct on_invalid<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
@@ -1014,12 +1014,12 @@ pub mod HtmlElementWithHref {
     #[allow(unused_imports)]
     pub use super::HtmlElement::*;
     use crate::intrinsic::Property;
-    pub struct download<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for download<V> {
+    pub struct download<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for download<V> {
         type PropertyMarker = _prop_markers::download;
     }
-    pub struct ping<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for ping<V> {
+    pub struct ping<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for ping<V> {
         type PropertyMarker = _prop_markers::ping;
     }
 }
@@ -1044,12 +1044,12 @@ pub mod HtmlAreaElement {
     #[allow(unused_imports)]
     pub use super::HtmlElementWithHref::*;
     use crate::intrinsic::Property;
-    pub struct coords<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for coords<V> {
+    pub struct coords<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for coords<V> {
         type PropertyMarker = _prop_markers::coords;
     }
-    pub struct shape<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for shape<V> {
+    pub struct shape<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for shape<V> {
         type PropertyMarker = _prop_markers::shape;
     }
 }
@@ -1080,8 +1080,8 @@ pub mod HtmlMediaElement {
     impl<V: frender_attr_value::AttrValue<bool>> Property for muted<V> {
         type PropertyMarker = _prop_markers::muted;
     }
-    pub struct preload<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for preload<V> {
+    pub struct preload<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for preload<V> {
         type PropertyMarker = _prop_markers::preload;
     }
     pub struct on_abort<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
@@ -1194,8 +1194,8 @@ pub mod HtmlBodyElement {
     #[allow(unused_imports)]
     pub use super::HtmlElement::*;
     use crate::intrinsic::Property;
-    pub struct alink<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for alink<V> {
+    pub struct alink<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for alink<V> {
         type PropertyMarker = _prop_markers::alink;
     }
 }
@@ -1206,8 +1206,8 @@ pub mod HtmlBrElement {
     #[allow(unused_imports)]
     pub use super::HtmlElement::*;
     use crate::intrinsic::Property;
-    pub struct clear<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for clear<V> {
+    pub struct clear<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for clear<V> {
         type PropertyMarker = _prop_markers::clear;
     }
 }
@@ -1300,20 +1300,20 @@ pub mod HtmlFormElement {
     #[allow(unused_imports)]
     pub use super::HtmlElement::*;
     use crate::intrinsic::Property;
-    pub struct accept_charset<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for accept_charset<V> {
+    pub struct accept_charset<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for accept_charset<V> {
         type PropertyMarker = _prop_markers::accept_charset;
     }
-    pub struct action<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for action<V> {
+    pub struct action<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for action<V> {
         type PropertyMarker = _prop_markers::action;
     }
-    pub struct enc_type<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for enc_type<V> {
+    pub struct enc_type<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for enc_type<V> {
         type PropertyMarker = _prop_markers::enc_type;
     }
-    pub struct method<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for method<V> {
+    pub struct method<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for method<V> {
         type PropertyMarker = _prop_markers::method;
     }
     pub struct no_validate<V: frender_attr_value::AttrValue<bool>>(pub V);
@@ -1340,8 +1340,8 @@ pub mod HtmlHtmlElement {
     #[allow(unused_imports)]
     pub use super::HtmlElement::*;
     use crate::intrinsic::Property;
-    pub struct xmlns<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for xmlns<V> {
+    pub struct xmlns<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for xmlns<V> {
         type PropertyMarker = _prop_markers::xmlns;
     }
 }
@@ -1364,8 +1364,8 @@ pub mod HtmlIFrameElement {
     #[allow(unused_imports)]
     pub use super::HtmlElement::*;
     use crate::intrinsic::Property;
-    pub struct allow<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for allow<V> {
+    pub struct allow<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for allow<V> {
         type PropertyMarker = _prop_markers::allow;
     }
     pub struct allow_fullscreen<V: frender_attr_value::AttrValue<bool>>(pub V);
@@ -1376,16 +1376,16 @@ pub mod HtmlIFrameElement {
     impl<V: frender_attr_value::AttrValue<bool>> Property for allow_payment_request<V> {
         type PropertyMarker = _prop_markers::allow_payment_request;
     }
-    pub struct csp<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for csp<V> {
+    pub struct csp<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for csp<V> {
         type PropertyMarker = _prop_markers::csp;
     }
-    pub struct sandbox<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for sandbox<V> {
+    pub struct sandbox<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for sandbox<V> {
         type PropertyMarker = _prop_markers::sandbox;
     }
-    pub struct src_doc<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for src_doc<V> {
+    pub struct src_doc<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for src_doc<V> {
         type PropertyMarker = _prop_markers::src_doc;
     }
 }
@@ -1412,12 +1412,12 @@ pub mod HtmlImageElement {
     #[allow(unused_imports)]
     pub use super::HtmlElement::*;
     use crate::intrinsic::Property;
-    pub struct decoding<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for decoding<V> {
+    pub struct decoding<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for decoding<V> {
         type PropertyMarker = _prop_markers::decoding;
     }
-    pub struct element_timing<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for element_timing<V> {
+    pub struct element_timing<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for element_timing<V> {
         type PropertyMarker = _prop_markers::element_timing;
     }
     pub struct is_map<V: frender_attr_value::AttrValue<bool>>(pub V);
@@ -1462,32 +1462,32 @@ pub mod HtmlInputElement {
     #[allow(unused_imports)]
     pub use super::HtmlElement::*;
     use crate::intrinsic::Property;
-    pub struct capture<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for capture<V> {
+    pub struct capture<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for capture<V> {
         type PropertyMarker = _prop_markers::capture;
     }
-    pub struct dirname<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for dirname<V> {
+    pub struct dirname<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for dirname<V> {
         type PropertyMarker = _prop_markers::dirname;
     }
-    pub struct list<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for list<V> {
+    pub struct list<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for list<V> {
         type PropertyMarker = _prop_markers::list;
     }
-    pub struct max<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for max<V> {
+    pub struct max<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for max<V> {
         type PropertyMarker = _prop_markers::max;
     }
-    pub struct min<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for min<V> {
+    pub struct min<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for min<V> {
         type PropertyMarker = _prop_markers::min;
     }
-    pub struct pattern<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for pattern<V> {
+    pub struct pattern<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for pattern<V> {
         type PropertyMarker = _prop_markers::pattern;
     }
-    pub struct step<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for step<V> {
+    pub struct step<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for step<V> {
         type PropertyMarker = _prop_markers::step;
     }
 }
@@ -1538,20 +1538,20 @@ pub mod HtmlLinkElement {
     #[allow(unused_imports)]
     pub use super::HtmlElement::*;
     use crate::intrinsic::Property;
-    pub struct r#as<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for r#as<V> {
+    pub struct r#as<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for r#as<V> {
         type PropertyMarker = _prop_markers::r#as;
     }
-    pub struct image_sizes<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for image_sizes<V> {
+    pub struct image_sizes<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for image_sizes<V> {
         type PropertyMarker = _prop_markers::image_sizes;
     }
-    pub struct image_src_set<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for image_src_set<V> {
+    pub struct image_src_set<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for image_src_set<V> {
         type PropertyMarker = _prop_markers::image_src_set;
     }
-    pub struct prefetch<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for prefetch<V> {
+    pub struct prefetch<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for prefetch<V> {
         type PropertyMarker = _prop_markers::prefetch;
     }
 }
@@ -1570,16 +1570,16 @@ pub mod HtmlMetaElement {
     #[allow(unused_imports)]
     pub use super::HtmlElement::*;
     use crate::intrinsic::Property;
-    pub struct charset<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for charset<V> {
+    pub struct charset<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for charset<V> {
         type PropertyMarker = _prop_markers::charset;
     }
-    pub struct content<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for content<V> {
+    pub struct content<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for content<V> {
         type PropertyMarker = _prop_markers::content;
     }
-    pub struct http_equiv<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for http_equiv<V> {
+    pub struct http_equiv<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for http_equiv<V> {
         type PropertyMarker = _prop_markers::http_equiv;
     }
 }
@@ -1628,8 +1628,8 @@ pub mod HtmlObjectElement {
     #[allow(unused_imports)]
     pub use super::HtmlElement::*;
     use crate::intrinsic::Property;
-    pub struct data<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for data<V> {
+    pub struct data<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for data<V> {
         type PropertyMarker = _prop_markers::data;
     }
 }
@@ -1792,32 +1792,32 @@ pub mod HtmlTableElement {
     #[allow(unused_imports)]
     pub use super::HtmlElement::*;
     use crate::intrinsic::Property;
-    pub struct border<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for border<V> {
+    pub struct border<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for border<V> {
         type PropertyMarker = _prop_markers::border;
     }
-    pub struct cell_padding<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for cell_padding<V> {
+    pub struct cell_padding<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for cell_padding<V> {
         type PropertyMarker = _prop_markers::cell_padding;
     }
-    pub struct cell_spacing<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for cell_spacing<V> {
+    pub struct cell_spacing<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for cell_spacing<V> {
         type PropertyMarker = _prop_markers::cell_spacing;
     }
-    pub struct frame<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for frame<V> {
+    pub struct frame<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for frame<V> {
         type PropertyMarker = _prop_markers::frame;
     }
-    pub struct rules<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for rules<V> {
+    pub struct rules<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for rules<V> {
         type PropertyMarker = _prop_markers::rules;
     }
-    pub struct summary<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for summary<V> {
+    pub struct summary<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for summary<V> {
         type PropertyMarker = _prop_markers::summary;
     }
-    pub struct width<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for width<V> {
+    pub struct width<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for width<V> {
         type PropertyMarker = _prop_markers::width;
     }
 }
@@ -1832,16 +1832,16 @@ pub mod HtmlTableChildElement {
     #[allow(unused_imports)]
     pub use super::HtmlElement::*;
     use crate::intrinsic::Property;
-    pub struct char<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for char<V> {
+    pub struct char<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for char<V> {
         type PropertyMarker = _prop_markers::char;
     }
-    pub struct char_off<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for char_off<V> {
+    pub struct char_off<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for char_off<V> {
         type PropertyMarker = _prop_markers::char_off;
     }
-    pub struct v_align<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for v_align<V> {
+    pub struct v_align<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for v_align<V> {
         type PropertyMarker = _prop_markers::v_align;
     }
 }
@@ -1870,8 +1870,8 @@ pub mod HtmlTableColElement {
     impl<V: frender_attr_value::AttrValue<u32>> Property for span<V> {
         type PropertyMarker = _prop_markers::span;
     }
-    pub struct width<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for width<V> {
+    pub struct width<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for width<V> {
         type PropertyMarker = _prop_markers::width;
     }
 }
@@ -1890,24 +1890,24 @@ pub mod HtmlTableCellElement {
     impl<V: frender_attr_value::AttrValue<u32>> Property for col_span<V> {
         type PropertyMarker = _prop_markers::col_span;
     }
-    pub struct headers<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for headers<V> {
+    pub struct headers<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for headers<V> {
         type PropertyMarker = _prop_markers::headers;
     }
     pub struct row_span<V: frender_attr_value::AttrValue<u32>>(pub V);
     impl<V: frender_attr_value::AttrValue<u32>> Property for row_span<V> {
         type PropertyMarker = _prop_markers::row_span;
     }
-    pub struct abbr<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for abbr<V> {
+    pub struct abbr<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for abbr<V> {
         type PropertyMarker = _prop_markers::abbr;
     }
-    pub struct axis<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for axis<V> {
+    pub struct axis<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for axis<V> {
         type PropertyMarker = _prop_markers::axis;
     }
-    pub struct scope<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for scope<V> {
+    pub struct scope<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for scope<V> {
         type PropertyMarker = _prop_markers::scope;
     }
 }
@@ -1948,8 +1948,8 @@ pub mod HtmlTextAreaElement {
     impl<V: frender_attr_value::AttrValue<u32>> Property for rows<V> {
         type PropertyMarker = _prop_markers::rows;
     }
-    pub struct wrap<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for wrap<V> {
+    pub struct wrap<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for wrap<V> {
         type PropertyMarker = _prop_markers::wrap;
     }
 }
@@ -1974,12 +1974,12 @@ pub mod HtmlTrackElement {
     impl<V: frender_attr_value::AttrValue<bool>> Property for default<V> {
         type PropertyMarker = _prop_markers::default;
     }
-    pub struct kind<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for kind<V> {
+    pub struct kind<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for kind<V> {
         type PropertyMarker = _prop_markers::kind;
     }
-    pub struct src_lang<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for src_lang<V> {
+    pub struct src_lang<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for src_lang<V> {
         type PropertyMarker = _prop_markers::src_lang;
     }
 }
@@ -2014,8 +2014,8 @@ pub mod HtmlVideoElement {
     impl<V: frender_attr_value::AttrValue<bool>> Property for plays_inline<V> {
         type PropertyMarker = _prop_markers::plays_inline;
     }
-    pub struct poster<V: frender_attr_value::AttrValue<str>>(pub V);
-    impl<V: frender_attr_value::AttrValue<str>> Property for poster<V> {
+    pub struct poster<V: frender_attr_value::AttrValue<AttrKindOfStr>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for poster<V> {
         type PropertyMarker = _prop_markers::poster;
     }
 }

@@ -1,35 +1,52 @@
-use frender_common::IntoStaticStrCache;
-
 use crate::{
-    csr::{CsrStyle, CsrStyleStateUnmount, CssStyleDeclaration, Priority},
+    csr::{CsrStyle, CsrStyleStateUnmount},
+    css_style_declaration::{CssStyleDeclaration, Priority},
     declaration::{
         important::{
-            csr::{CsrDeclarationImportant, UpdateStyleWithDeclarationImportant},
+            csr::{IntoCsrDeclarationImportant, UpdateStyleWithDeclarationImportant},
             IntoDeclarationImportant,
         },
-        name::csr::{CsrDeclarationName, UpdateStyleWithDeclarationName},
-        value::csr::{CsrDeclarationValue, UpdateStyleWithDeclarationValue},
-        Declaration, DeclarationName, DeclarationValue, IntoDeclaration, IntoDeclarationAsStyle,
+        name::csr::{
+            CsrDeclarationNameCache, IntoCsrDeclarationName, UpdateStyleWithDeclarationName,
+        },
+        value::csr::{IntoCsrDeclarationValue, UpdateStyleWithDeclarationValue},
+        Declaration, DeclarationName, DeclarationValue, IntoDeclaration,
     },
 };
 
-pub struct State<N, V, I> {
-    name: N,
-    value: V,
-    important: I,
+use super::IntoDeclarationAsStyle;
+
+pub struct State<N, V, I>((N, (V, I)));
+
+macro_rules! state_name {
+    ($v:expr) => {
+        $v.0 .0
+    };
 }
 
-impl<N: CsrStyleStateUnmount, V, I> CsrStyleStateUnmount for State<N, V, I> {
+macro_rules! state_value {
+    ($v:expr) => {
+        $v.0 .1 .0
+    };
+}
+
+macro_rules! state_important {
+    ($v:expr) => {
+        $v.0 .1 .1
+    };
+}
+
+impl<N: CsrDeclarationNameCache, V, I> CsrStyleStateUnmount for State<N, V, I> {
     fn csr_style_state_unmount(state: &mut Self, style: &mut impl CssStyleDeclaration) {
-        N::csr_style_state_unmount(&mut state.name, style);
+        state_name!(state).remove_style(style)
     }
 }
 
 impl<D: IntoDeclaration> CsrStyle for IntoDeclarationAsStyle<D> {
     type State = State<
-        <D::Name as CsrDeclarationName>::StaticCache,
-        <D::Value as CsrDeclarationValue>::StaticCache,
-        <D::Important as CsrDeclarationImportant>::StaticCache,
+        <D::Name as IntoCsrDeclarationName>::Cache,
+        <D::Value as IntoCsrDeclarationValue>::Cache,
+        <D::Important as IntoCsrDeclarationImportant>::StaticCache,
     >;
 
     fn csr_style_render_init(this: Self, style: &mut impl CssStyleDeclaration) -> Self::State {
@@ -39,22 +56,14 @@ impl<D: IntoDeclaration> CsrStyle for IntoDeclarationAsStyle<D> {
             important,
         } = this.0.into_declaration();
 
-        let name = <D::Name>::into_cacheable(name).into_static_str_cache();
-        let value = <D::Value>::into_cacheable(value).into_static_str_cache();
-
-        StyleWithAllReady::<_, D::Name, D::Value, D::Important> {
-            style,
-            name: &name,
-            value: &value,
-            important: &important,
-        }
-        .update();
-
-        State {
+        State(D::Name::into_cache_and_render(
             name,
-            value,
-            important: important.into_static_cache(),
-        }
+            StyleWithNothing {
+                style,
+                value,
+                important,
+            },
+        ))
     }
 
     fn csr_style_render_init_with_old_state(
@@ -68,18 +77,15 @@ impl<D: IntoDeclaration> CsrStyle for IntoDeclarationAsStyle<D> {
             important,
         } = this.0.into_declaration();
 
-        <D::Name>::into_cacheable(name).update_into_static_str_cache(&mut old_state.name);
-        <D::Value>::into_cacheable(value).update_into_static_str_cache(&mut old_state.value);
-
-        StyleWithAllReady::<_, D::Name, D::Value, D::Important> {
-            style,
-            name: &old_state.name,
-            value: &old_state.value,
-            important: &important,
-        }
-        .update();
-
-        important.update_into_cache(&mut old_state.important);
+        ((), ()) = D::Name::update_into_cache_and_render(
+            name,
+            &mut old_state.0 .0,
+            StyleWithNothing {
+                style,
+                value: UpdateIntoCache(value, &mut state_value!(old_state)),
+                important: UpdateIntoCache(important, &mut state_important!(old_state)),
+            },
+        );
     }
 
     fn csr_style_render_update(
@@ -93,48 +99,204 @@ impl<D: IntoDeclaration> CsrStyle for IntoDeclarationAsStyle<D> {
             important,
         } = this.0.into_declaration();
 
-        if <D::Name>::match_cache(&name, &cache.name) {
-            if <D::Value>::match_cache(&value, &cache.value) {
-                if important.match_cache(&cache.important) {
+        if D::Name::match_cache(&name, &state_name!(cache)) {
+            if D::Value::match_cache(&value, &state_value!(cache)) {
+                if important.match_cache(&state_important!(cache)) {
                     // all cache matched
                     // doesn't nothing
                 } else {
-                    StyleWithAllReady::<_, D::Name, D::Value, D::Important> {
-                        style,
-                        name: &cache.name,
-                        value: &cache.value,
-                        important: &important,
-                    }
-                    .update();
-                    important.update_into_cache(&mut cache.important);
+                    ((), ()) = D::Name::into_render(
+                        name,
+                        StyleWithNothing {
+                            style,
+                            important: UpdateIntoCache(important, &mut state_important!(cache)),
+                            value: IntoRender(value),
+                        },
+                    )
                 }
             } else {
-                <D::Value>::into_cacheable(value).update_into_static_str_cache(&mut cache.value);
-
-                StyleWithAllReady::<_, D::Name, D::Value, D::Important> {
-                    style,
-                    name: &cache.name,
-                    value: &cache.value,
-                    important: &important,
+                if important.match_cache(&state_important!(cache)) {
+                    ((), ()) = D::Name::into_render(
+                        name,
+                        StyleWithNothing {
+                            style,
+                            important: IntoRender(important),
+                            value: UpdateIntoCache(value, &mut state_value!(cache)),
+                        },
+                    );
+                } else {
+                    ((), ()) = D::Name::into_render(
+                        name,
+                        StyleWithNothing {
+                            style,
+                            important: UpdateIntoCache(important, &mut state_important!(cache)),
+                            value: UpdateIntoCache(value, &mut state_value!(cache)),
+                        },
+                    );
                 }
-                .update();
-                important.update_into_cache(&mut cache.important);
             }
         } else {
-            <D::Name>::into_cacheable(name).update_into_static_str_cache(&mut cache.name);
-            <D::Value>::into_cacheable(value).update_into_static_str_cache(&mut cache.value);
-
-            <D::Name>::update_style(
-                &cache.name,
-                StyleWithValueAndImportantReady::<_, D::Value, D::Important> {
-                    style,
-                    value: &cache.value,
-                    important: &important,
-                },
-            );
-
-            important.update_into_cache(&mut cache.important);
+            if D::Value::match_cache(&value, &state_value!(cache)) {
+                if important.match_cache(&state_important!(cache)) {
+                    // all cache matched
+                    // doesn't nothing
+                } else {
+                    ((), ()) = D::Name::update_into_cache_and_render(
+                        name,
+                        &mut state_name!(cache),
+                        StyleWithNothing {
+                            style,
+                            important: UpdateIntoCache(important, &mut state_important!(cache)),
+                            value: IntoRender(value),
+                        },
+                    )
+                }
+            } else {
+                if important.match_cache(&state_important!(cache)) {
+                    ((), ()) = D::Name::update_into_cache_and_render(
+                        name,
+                        &mut state_name!(cache),
+                        StyleWithNothing {
+                            style,
+                            important: IntoRender(important),
+                            value: UpdateIntoCache(value, &mut state_value!(cache)),
+                        },
+                    );
+                } else {
+                    ((), ()) = D::Name::update_into_cache_and_render(
+                        name,
+                        &mut state_name!(cache),
+                        StyleWithNothing {
+                            style,
+                            important: UpdateIntoCache(important, &mut state_important!(cache)),
+                            value: UpdateIntoCache(value, &mut state_value!(cache)),
+                        },
+                    );
+                }
+            }
         }
+    }
+}
+
+struct StyleWithNothing<'a, S, V, I> {
+    style: &'a mut S,
+    important: I,
+    value: V,
+}
+
+struct UpdateIntoCache<'a, T, Cache>(T, &'a mut Cache);
+struct IntoRender<T>(T);
+
+trait ImplValue {
+    type ImplCache;
+
+    fn impl_into_cache_and_render<Out>(
+        this: Self,
+        style: impl UpdateStyleWithDeclarationValue<Output = Out>,
+    ) -> (Self::ImplCache, Out);
+}
+
+impl<T: IntoCsrDeclarationValue> ImplValue for T {
+    type ImplCache = T::Cache;
+
+    fn impl_into_cache_and_render<Out>(
+        this: Self,
+        style: impl UpdateStyleWithDeclarationValue<Output = Out>,
+    ) -> (Self::ImplCache, Out) {
+        T::into_cache_and_render(this, style)
+    }
+}
+
+impl<T: IntoCsrDeclarationValue> ImplValue for UpdateIntoCache<'_, T, T::Cache> {
+    type ImplCache = ();
+
+    fn impl_into_cache_and_render<Out>(
+        this: Self,
+        style: impl UpdateStyleWithDeclarationValue<Output = Out>,
+    ) -> (Self::ImplCache, Out) {
+        ((), T::update_into_cache_and_render(this.0, style, this.1))
+    }
+}
+
+impl<T: IntoCsrDeclarationValue> ImplValue for IntoRender<T> {
+    type ImplCache = ();
+
+    fn impl_into_cache_and_render<Out>(
+        this: Self,
+        style: impl UpdateStyleWithDeclarationValue<Output = Out>,
+    ) -> (Self::ImplCache, Out) {
+        ((), T::into_render(this.0, style))
+    }
+}
+
+trait ImplImportant {
+    type ImplCache;
+
+    fn impl_into_cache_and_render(
+        this: Self,
+        style: impl UpdateStyleWithDeclarationImportant,
+    ) -> Self::ImplCache;
+}
+
+impl<T: IntoCsrDeclarationImportant> ImplImportant for T {
+    type ImplCache = T::StaticCache;
+
+    fn impl_into_cache_and_render(
+        this: Self,
+        style: impl UpdateStyleWithDeclarationImportant,
+    ) -> Self::ImplCache {
+        this.update_style(style);
+        T::into_static_cache(this)
+    }
+}
+
+impl<T: IntoCsrDeclarationImportant> ImplImportant for UpdateIntoCache<'_, T, T::StaticCache> {
+    type ImplCache = ();
+
+    fn impl_into_cache_and_render(
+        this: Self,
+        style: impl UpdateStyleWithDeclarationImportant,
+    ) -> Self::ImplCache {
+        this.0.update_style(style);
+        T::update_into_cache(this.0, this.1)
+    }
+}
+
+impl<T: IntoCsrDeclarationImportant> ImplImportant for IntoRender<T> {
+    type ImplCache = ();
+
+    fn impl_into_cache_and_render(
+        this: Self,
+        style: impl UpdateStyleWithDeclarationImportant,
+    ) -> Self::ImplCache {
+        T::update_style(&this.0, style)
+    }
+}
+
+impl<S: CssStyleDeclaration, V: ImplValue, I: ImplImportant> UpdateStyleWithDeclarationName
+    for StyleWithNothing<'_, S, V, I>
+{
+    type Output = (V::ImplCache, I::ImplCache);
+    fn update_style_with_declaration_name(self, name: DeclarationName<&str>) -> Self::Output {
+        V::impl_into_cache_and_render(
+            self.value,
+            StyleWithNameProvided {
+                style: self.style,
+                important: self.important,
+                name_provided: name,
+            },
+        )
+    }
+
+    fn update_style_with_declaration_name_str(self, name: &str) -> Self::Output {
+        V::impl_into_cache_and_render(
+            self.value,
+            StyleWithNameProvided {
+                style: self.style,
+                important: self.important,
+                name_provided: name,
+            },
+        )
     }
 }
 
@@ -198,113 +360,41 @@ impl<S: CssStyleDeclaration> UpdateStyleWithDeclarationImportant
     }
 }
 
-struct StyleWithNameProvided<'a, S: CssStyleDeclaration, N, I: CsrDeclarationImportant> {
+struct StyleWithNameProvided<'a, S, N, I> {
     style: &'a mut S,
-    name: N,
-    important: &'a I,
+    important: I,
+    name_provided: N,
 }
 
-impl<'a, S: CssStyleDeclaration, N, I: CsrDeclarationImportant> UpdateStyleWithDeclarationValue
+impl<'a, S: CssStyleDeclaration, N, I: ImplImportant> UpdateStyleWithDeclarationValue
     for StyleWithNameProvided<'a, S, N, I>
 where
+    for<'v> StyleWithNameValueProvided<'a, S, N, &'v str>: UpdateStyleWithDeclarationImportant,
     for<'v> StyleWithNameValueProvided<'a, S, N, DeclarationValue<&'v str>>:
         UpdateStyleWithDeclarationImportant,
-    for<'v> StyleWithNameValueProvided<'a, S, N, &'v str>: UpdateStyleWithDeclarationImportant,
 {
-    fn update_style_with_declaration_value(self, value: DeclarationValue<&str>) {
-        I::update_style(
+    type Output = I::ImplCache;
+
+    fn update_style_with_declaration_value(self, value: DeclarationValue<&str>) -> Self::Output {
+        I::impl_into_cache_and_render(
             self.important,
             StyleWithNameValueProvided {
                 style: self.style,
-                name: self.name,
+                name: self.name_provided,
                 value,
             },
         )
     }
 
-    fn update_style_with_declaration_value_str(self, value: &str) {
-        I::update_style(
+    fn update_style_with_declaration_value_str(self, value: &str) -> Self::Output {
+        I::impl_into_cache_and_render(
             self.important,
             StyleWithNameValueProvided {
                 style: self.style,
-                name: self.name,
+                name: self.name_provided,
                 value,
             },
         )
-    }
-}
-
-struct StyleWithValueAndImportantReady<
-    'a,
-    S: CssStyleDeclaration,
-    V: CsrDeclarationValue,
-    I: CsrDeclarationImportant,
-> {
-    style: &'a mut S,
-    value: &'a V::StaticCache,
-    important: &'a I,
-}
-
-impl<'a, S: CssStyleDeclaration, V: CsrDeclarationValue, I: CsrDeclarationImportant>
-    UpdateStyleWithDeclarationName for StyleWithValueAndImportantReady<'a, S, V, I>
-where
-    for<'n> StyleWithNameProvided<'a, S, DeclarationName<&'n str>, I>:
-        UpdateStyleWithDeclarationValue,
-    for<'n> StyleWithNameProvided<'a, S, &'n str, I>: UpdateStyleWithDeclarationValue,
-{
-    fn update_style_with_declaration_name(self, name: DeclarationName<&str>) {
-        V::update_style(
-            self.value,
-            StyleWithNameProvided {
-                style: self.style,
-                name,
-                important: self.important,
-            },
-        )
-    }
-
-    fn update_style_with_declaration_name_str(self, name: &str) {
-        V::update_style(
-            self.value,
-            StyleWithNameProvided {
-                style: self.style,
-                name,
-                important: self.important,
-            },
-        )
-    }
-}
-
-struct StyleWithAllReady<
-    'a,
-    S: CssStyleDeclaration,
-    N: CsrDeclarationName,
-    V: CsrDeclarationValue,
-    I: CsrDeclarationImportant,
-> {
-    style: &'a mut S,
-    name: &'a N::StaticCache,
-    value: &'a V::StaticCache,
-    important: &'a I,
-}
-
-impl<
-        'a,
-        S: CssStyleDeclaration,
-        N: CsrDeclarationName,
-        V: CsrDeclarationValue,
-        I: CsrDeclarationImportant,
-    > StyleWithAllReady<'a, S, N, V, I>
-{
-    fn update(self) {
-        N::update_style(
-            self.name,
-            StyleWithValueAndImportantReady::<S, V, I> {
-                style: self.style,
-                value: self.value,
-                important: self.important,
-            },
-        );
     }
 }
 

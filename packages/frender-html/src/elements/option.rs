@@ -1,11 +1,11 @@
 use std::{pin::Pin, task::Poll};
 
-use frender_common::reactive_value::RenderInitPinned;
 use frender_dom::csr::{
     behaviors::{NodeRenderSelf, NodeWithRenderContextAfterSelf as _},
     render::{Render, RenderContext},
     StateUnmount as _, UiHandle as _, UnmountedUiHandle as _,
 };
+use frender_reactive_value::RenderInitPinned;
 
 use crate::{
     csr::element::{self, CsrElement, HtmlRenderContext, PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
