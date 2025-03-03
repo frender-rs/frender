@@ -1,3 +1,16 @@
+macro_rules! unwrap_brace_concat {
+    (
+        {
+            $({$($content:tt)*})*
+        } then $commands:tt
+    ) => {
+        ::frender_common::expand! {
+            {$($($content)*)*}
+            do $commands
+        }
+    };
+}
+
 macro_rules! run_command_unbraced {
     (
         $Props:ident
@@ -10,7 +23,7 @@ macro_rules! run_command_unbraced {
                 append {
                     then $commands
                 }
-                wrap {} prepend { crate::macros::unwrap_brace_concat! }
+                wrap {} prepend { crate::macros::define_props_macro::unwrap_brace_concat! }
             }
         }
     };
@@ -426,4 +439,4 @@ macro_rules! props_macros {
     };
 }
 
-pub(crate) use {after_initial_define_unfinished, check_is_ancestor_of_any, define, define_unfinished, for_all_main_and_other_ancestors, props_macros, record, run_command_unbraced};
+pub(crate) use {after_initial_define_unfinished, check_is_ancestor_of_any, define, define_unfinished, for_all_main_and_other_ancestors, props_macros, record, run_command_unbraced, unwrap_brace_concat};

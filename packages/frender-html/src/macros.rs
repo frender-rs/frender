@@ -3,23 +3,6 @@ macro_rules! define_nothing {
     ($($t:tt)*) => {};
 }
 
-macro_rules! define_behavior_fn_update_with {
-    (
-        update_with($set_attribute_ident:ident $(, $(web_sys_name = $web_sys_name:ident $(,)?)?)? )
-        value($value:ident)
-        type($maybe_ty:ty)
-    ) => {
-        fn $set_attribute_ident(&mut self, renderer: &mut Renderer, $value: $maybe_ty);
-    };
-    (
-        update_with($set_attribute_ident:ident, custom_type!($custom_type:ty), impl_with! $impl_with:tt $(,)?)
-        value($value:ident)
-        type($maybe_ty:ty)
-    ) => {
-        fn $set_attribute_ident(&mut self, renderer: &mut Renderer, $value: $custom_type);
-    };
-}
-
 macro_rules! impl_behavior_fn_update_with {
     (
         update_with($set_attribute_ident:ident $(, $(web_sys_name = $web_sys_name:ident $(,)?)?)? )
@@ -60,30 +43,6 @@ macro_rules! impl_behavior_fn_update_with {
     };
 }
 
-macro_rules! define_behavior_fn {
-    ($fn_name:ident ($value:ident : event![
-        $event_trait_name:ident,
-        $event_type_name:literal,
-        $event_type_ident:ident,
-        $event_type_listener_ident:ident $(,)?
-    ]);) => {
-    };
-    ($fn_name:ident ($value:ident : attr_value![$maybe_ty:ty]) {
-        $(alias! $alias:tt;)?
-        $(attr_name! $attr_name:tt;)?
-        $(update_with! $update_with:tt;)?
-    }) => {
-        $(
-            crate::macros::define_behavior_fn_update_with! {
-                update_with $update_with
-                value($value)
-                type($maybe_ty)
-            }
-        )?
-    };
-    ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt) => {};
-}
-
 macro_rules! impl_behavior_fn {
     ($fn_name:ident ($value:ident : event![
         $event_trait_name:ident,
@@ -109,61 +68,13 @@ macro_rules! impl_behavior_fn {
     ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt $trait_name:tt) => {};
 }
 
-macro_rules! behaviors {
-    (expand_item $expand_item:tt) => {
-        crate::macros::expand_item_and_prepend_expanded! {
-            $expand_item
-            {
-                use frender_dom::csr::OnEvent;
+#[cfg(all(feature = "macros_not_expanded", feature = "csr"))]
+pub(crate) mod behaviors;
+#[cfg(all(feature = "macros_not_expanded", feature = "csr"))]
+pub(crate) use behaviors::behaviors;
 
-                use super::{*, event_types};
-            }
-        }
-    };
-    (
-        extends($($extends:ident)*)
-        $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
-        vis($vis:vis)
-        trait_name($trait_name:ident)
-        $(trait_bounds($($trait_bounds:tt)*))?
-        $(define $define:tt)?
-        // $(define(
-        //     Props: $Props:ident
-        //     $(, components: ($($components:ident),* $(,)?))?
-        //     $(,)?
-        // ))?
-        $(verbatim_trait_items($($verbatim_trait_items:tt)*))?
-        $(impl_for_web(
-            $(only_for_types!($($impl_for_web_only_for_types:ty),* $(,)?);)?
-            $(verbatim_trait_items!($($verbatim_trait_items_impl_web:tt)*);)?
-        ))?
-        fns($(
-            $(#$fn_attr:tt)*
-            fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
-        )*)
-    ) => {
-        super::event_types_macros::$trait_name! {
-            args { OnEvent Renderer }
-            do {
-                prepend {
-                    $vis trait $trait_name<Renderer: ?Sized> :
-                    $($extends<Renderer> +)*
-                    $($($($special_super_traits<Renderer> +)+)?)?
-                }
-                append {
-                    $($($trait_bounds)*)?
-                    {
-                        $($($verbatim_trait_items)*)?
-
-                        $(crate::macros::define_behavior_fn!{
-                            $fn_name $fn_args $fn_body_or_semi
-                        })*
-                    }
-                }
-            }
-        }
-    };
-}
+#[cfg(not(all(feature = "macros_not_expanded", feature = "csr")))]
+pub(crate) use define_nothing as behaviors;
 
 macro_rules! imp_element_proxy_attrs {
     (expand_item $expand_item:tt) => {
@@ -757,103 +668,13 @@ macro_rules! impl_OnEventType {
     ($fn_name:ident $($fn_rest:tt)*) => {};
 }
 
-macro_rules! prop_markers {
-    (expand_item {
-        $expand_item:tt
-        {$($item_body_expanded:tt)*}
-    }) => {
-        crate::macros::expand_item_simple! {
-            $expand_item
-            {
-                #![allow(non_snake_case)]
-                #![allow(non_camel_case_types)]
-                #![allow(unused_imports)]
+#[cfg(feature = "macros_not_expanded")]
+pub(crate) mod prop_markers;
+#[cfg(feature = "macros_not_expanded")]
+pub(crate) use prop_markers::prop_markers;
 
-                use crate::intrinsic::{AllowAttributeName, Intrinsic, PropertyValue};
-
-                $($item_body_expanded)*
-
-                crate::macros::define_conflicted_names! { $expand_item }
-            }
-        }
-    };
-    (
-        extends($($extends:ident)*)
-        $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
-        vis($vis:vis)
-        trait_name($trait_name:ident)
-        $(trait_bounds $trait_bounds:tt)?
-        $(define $define:tt)?
-        // $(define(
-        //     Props: $Props:ident
-        //     $(, components: ($($components:ident),* $(,)?))?
-        //     $(,)?
-        // ))?
-        $(verbatim_trait_items($($verbatim_trait_items:tt)*))?
-        $(impl_for_web(
-            $(only_for_types!($($impl_for_web_only_for_types:ty),* $(,)?);)?
-            $(verbatim_trait_items!($($verbatim_trait_items_impl_web:tt)*);)?
-        ))?
-        fns($(
-            $(#$fn_attr:tt)*
-            fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
-        )*)
-    ) => {
-        $vis mod $trait_name {
-            ::frender_common::expand! {
-                while (
-                    $({$extends})*
-                    $($($({$special_super_traits})+)?)?
-                ) {
-                    prepend { pub use super:: }
-                    append { ::*; }
-                }
-            }
-            $(
-                pub enum $fn_name {}
-            )*
-        }
-    };
-}
-
-macro_rules! define_conflicted_names {
-    ((
-        $(#$item_attrs:tt)*
-        $item_vis:vis mod $item_name:ident {
-            $mod_vis:vis mod $conflicted_names:ident {
-                $(#!$mod_attrs:tt)*
-
-                $(
-                    $vis:vis enum $conflicted_name:ident {}
-                )*
-            }
-        }
-    )) => {
-        $(
-            impl<M: AllowAttributeName<self::$conflicted_names::$conflicted_name>, C, A, P> Intrinsic<M, C, A, P> {
-                $vis fn $conflicted_name<T: PropertyValue<M::AttributeMarker>>(
-                    self,
-                    value: T,
-                ) -> Intrinsic<M, C, (A, T::Property), P> {
-                    Self::with_attribute_appended(self, T::wrapped_into_property(value))
-                }
-            }
-        )*
-
-        macro_rules! expand_if_conflicted_name_or_else {
-            $(
-                ($conflicted_name $_if:tt $_else:tt) => {
-                    frender_common::expand! {$_if}
-                };
-            )*
-            ($not_conflicted_name:ident $_if:tt $_else:tt) => {
-                frender_common::expand! {$_else}
-            };
-        }
-
-        pub(super) use expand_if_conflicted_name_or_else;
-    };
-}
+#[cfg(not(feature = "macros_not_expanded"))]
+pub(crate) use define_nothing as prop_markers;
 
 macro_rules! impl_HasConstAttrName {
     (
@@ -1465,25 +1286,12 @@ macro_rules! event_types_macros {
     };
 }
 
-macro_rules! unwrap_brace_concat {
-    (
-        {
-            $({$($content:tt)*})*
-        } then $commands:tt
-    ) => {
-        ::frender_common::expand! {
-            {$($($content)*)*}
-            do $commands
-        }
-    };
-}
-
-#[cfg(any(feature = "macros_not_expanded", test))]
+#[cfg(all(feature = "components", feature = "macros_not_expanded"))]
 pub(crate) mod define_props_macro;
-#[cfg(feature = "macros_not_expanded")]
+#[cfg(all(feature = "components", feature = "macros_not_expanded"))]
 pub(crate) use define_props_macro::props_macros;
 
-#[cfg(not(feature = "macros_not_expanded"))]
+#[cfg(not(all(feature = "components", feature = "macros_not_expanded")))]
 pub(crate) use define_nothing as props_macros;
 
 #[cfg(feature = "macros_not_expanded")]
@@ -1564,27 +1372,6 @@ macro_rules! components {
     };
 }
 
-/// `children` is excluded
-macro_rules! extract_attr_builder_fn_names {
-    ({children $fn_body_or_semi:tt} do $commands:tt) => {
-        $crate::expand! { {} do $commands }
-    };
-    ({$fn_name:ident ;} do $commands:tt) => {
-        $crate::expand! { { {$fn_name} } do $commands }
-    };
-    ({$fn_name:ident {
-        alias!($($alias:ident),* $(,)?);
-        $($other:ident ! $other_macro:tt;)*
-    }} do $commands:tt) => {
-        $crate::expand! { { {$fn_name} $({$alias})* } do $commands }
-    };
-    ({$fn_name:ident {
-        $($other:ident ! $other_macro:tt;)*
-    }} do $commands:tt) => {
-        $crate::expand! { { {$fn_name} } do $commands }
-    };
-}
-
 macro_rules! parse_fn_args_as_bounds {
     (($value:ident : event![
         $event_trait_name:ident,
@@ -1641,85 +1428,6 @@ macro_rules! parse_fn_args_as_bounds {
     };
     ($fn_args:tt do $commands:tt) => {
         compile_error! { stringify!($fn_args) }
-    };
-}
-
-macro_rules! parse_fn_args_as_whether_pinned_state {
-    (($value:ident : event![
-        $event_trait_name:ident,
-        $event_type_name:literal,
-        $event_type_ident:ident,
-        $event_type_listener_ident:ident $(,)?
-    ]) $yes:tt $no:tt $commands:tt) => {
-        ::frender_common::expand! {
-            $yes do $commands
-        }
-    };
-    ($fn_args:tt $yes:tt $no:tt $commands:tt) => {
-        ::frender_common::expand! {
-            $no do $commands
-        }
-    };
-}
-
-macro_rules! extract_only_children_or {
-    ($t:tt $do:tt $or:tt) => {
-        crate::macros::extract_only_children_or! {
-            @ $t
-            []
-            { $do $or }
-        }
-    };
-    (@{ { children $children:tt } $($t:tt)* } [$($resolved_children:tt)*] $do_or:tt) => {
-        crate::macros::extract_only_children_or! {
-            @{$($t)*}
-            [$($resolved_children)* $children]
-            $do_or
-        }
-    };
-    (@{ { $other_name:ident $other:tt } { children $children:tt } $($t:tt)* } [$($resolved_children:tt)*] $do_or:tt) => {
-        crate::macros::extract_only_children_or! {
-            @{$($t)*}
-            [$($resolved_children)* $children]
-            $do_or
-        }
-    };
-    (@{ { $other_name:ident $other:tt } { $other_name1:ident $other1:tt } { children $children:tt } $($t:tt)* } [$($resolved_children:tt)*] $do_or:tt) => {
-        crate::macros::extract_only_children_or! {
-            @{$($t)*}
-            [$($resolved_children)* $children]
-            $do_or
-        }
-    };
-    (@{ { $other_name:ident $other:tt } { $other_name1:ident $other1:tt } { $other_name2:ident $other2:tt } $($t:tt)* } $resolved_children:tt $do_or:tt) => {
-        crate::macros::extract_only_children_or! {
-            @{$($t)*}
-            $resolved_children
-            $do_or
-        }
-    };
-    (@{ { $other_name:ident $other:tt } { $other_name1:ident $other1:tt } $($t:tt)* } $resolved_children:tt $do_or:tt) => {
-        crate::macros::extract_only_children_or! {
-            @{$($t)*}
-            $resolved_children
-            $do_or
-        }
-    };
-    (@{ { $other_name:ident $other:tt } $($t:tt)* } $resolved_children:tt $do_or:tt) => {
-        crate::macros::extract_only_children_or! {
-            @{$($t)*}
-            $resolved_children
-            $do_or
-        }
-    };
-    (@{} [] { $do:tt $or:tt }) => {
-        $crate::expand! $or
-    };
-    (@{} [$children:tt] { $do:tt $or:tt }) => {
-        $crate::expand! { $children do $do }
-    };
-    (@{} $more_than_one_children:tt { $do:tt $or:tt }) => {
-        ::core::compile_error! { "More than one `fn children` found in the same level" }
     };
 }
 
@@ -1823,11 +1531,10 @@ macro_rules! expand_item_and_prepend_expanded {
 }
 
 pub(crate) use {
-    behavior_type_traits, behaviors, behaviors_prelude, components, def_intrinsic_component_props, define_behavior_fn, define_behavior_fn_update_with, define_conflicted_names, define_item_and_traverse_traits,
-    dom_api_value_from_value, event_type, event_types, event_types_macros, expand_item_and_prepend_expanded, expand_item_simple, expand_nested_traits, extract_attr_builder_fn_names, extract_only_children_or,
-    impl_BehaviorTypeTrait, impl_HasConstAttrName, impl_OnEventType, impl_attr_value_dom_api_for_prop_marker, impl_attr_value_for_prop_marker, impl_attribute, impl_behavior_fn, impl_behavior_fn_update_with,
-    on_event_implementations, parse_fn_args_as_bounds, parse_fn_args_as_whether_pinned_state, prop_markers, props, props_implementations, tag_and_props_markers, tag_custom_content_model, tag_implementations,
-    unwrap_brace_concat, DomApiValue_from_value_kind, RenderHtml,
+    behavior_type_traits, behaviors_prelude, components, def_intrinsic_component_props, define_item_and_traverse_traits, dom_api_value_from_value, event_type, event_types, event_types_macros,
+    expand_item_and_prepend_expanded, expand_item_simple, expand_nested_traits, impl_BehaviorTypeTrait, impl_HasConstAttrName, impl_OnEventType, impl_attr_value_dom_api_for_prop_marker, impl_attr_value_for_prop_marker,
+    impl_attribute, impl_behavior_fn, impl_behavior_fn_update_with, on_event_implementations, parse_fn_args_as_bounds, props, props_implementations, tag_and_props_markers, tag_custom_content_model, tag_implementations,
+    DomApiValue_from_value_kind, RenderHtml,
 };
 
 pub(crate) mod event_names;

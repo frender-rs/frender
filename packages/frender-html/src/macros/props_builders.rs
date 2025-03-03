@@ -1,3 +1,103 @@
+macro_rules! parse_fn_args_as_whether_pinned_state {
+    (($value:ident : event![
+        $event_trait_name:ident,
+        $event_type_name:literal,
+        $event_type_ident:ident,
+        $event_type_listener_ident:ident $(,)?
+    ]) $yes:tt $no:tt $commands:tt) => {
+        ::frender_common::expand! {
+            $yes do $commands
+        }
+    };
+    ($fn_args:tt $yes:tt $no:tt $commands:tt) => {
+        ::frender_common::expand! {
+            $no do $commands
+        }
+    };
+}
+
+/// `children` is excluded
+macro_rules! extract_attr_builder_fn_names {
+    ({children $fn_body_or_semi:tt} do $commands:tt) => {
+        $crate::expand! { {} do $commands }
+    };
+    ({$fn_name:ident ;} do $commands:tt) => {
+        $crate::expand! { { {$fn_name} } do $commands }
+    };
+    ({$fn_name:ident {
+        alias!($($alias:ident),* $(,)?);
+        $($other:ident ! $other_macro:tt;)*
+    }} do $commands:tt) => {
+        $crate::expand! { { {$fn_name} $({$alias})* } do $commands }
+    };
+    ({$fn_name:ident {
+        $($other:ident ! $other_macro:tt;)*
+    }} do $commands:tt) => {
+        $crate::expand! { { {$fn_name} } do $commands }
+    };
+}
+
+macro_rules! extract_only_children_or {
+    ($t:tt $do:tt $or:tt) => {
+        crate::macros::props_builders::extract_only_children_or! {
+            @ $t
+            []
+            { $do $or }
+        }
+    };
+    (@{ { children $children:tt } $($t:tt)* } [$($resolved_children:tt)*] $do_or:tt) => {
+        crate::macros::props_builders::extract_only_children_or! {
+            @{$($t)*}
+            [$($resolved_children)* $children]
+            $do_or
+        }
+    };
+    (@{ { $other_name:ident $other:tt } { children $children:tt } $($t:tt)* } [$($resolved_children:tt)*] $do_or:tt) => {
+        crate::macros::props_builders::extract_only_children_or! {
+            @{$($t)*}
+            [$($resolved_children)* $children]
+            $do_or
+        }
+    };
+    (@{ { $other_name:ident $other:tt } { $other_name1:ident $other1:tt } { children $children:tt } $($t:tt)* } [$($resolved_children:tt)*] $do_or:tt) => {
+        crate::macros::props_builders::extract_only_children_or! {
+            @{$($t)*}
+            [$($resolved_children)* $children]
+            $do_or
+        }
+    };
+    (@{ { $other_name:ident $other:tt } { $other_name1:ident $other1:tt } { $other_name2:ident $other2:tt } $($t:tt)* } $resolved_children:tt $do_or:tt) => {
+        crate::macros::props_builders::extract_only_children_or! {
+            @{$($t)*}
+            $resolved_children
+            $do_or
+        }
+    };
+    (@{ { $other_name:ident $other:tt } { $other_name1:ident $other1:tt } $($t:tt)* } $resolved_children:tt $do_or:tt) => {
+        crate::macros::props_builders::extract_only_children_or! {
+            @{$($t)*}
+            $resolved_children
+            $do_or
+        }
+    };
+    (@{ { $other_name:ident $other:tt } $($t:tt)* } $resolved_children:tt $do_or:tt) => {
+        crate::macros::props_builders::extract_only_children_or! {
+            @{$($t)*}
+            $resolved_children
+            $do_or
+        }
+    };
+    (@{} [] { $do:tt $or:tt }) => {
+        $crate::expand! $or
+    };
+    (@{} [$children:tt] { $do:tt $or:tt }) => {
+        $crate::expand! { $children do $do }
+    };
+    (@{} $more_than_one_children:tt { $do:tt $or:tt }) => {
+        ::core::compile_error! { "More than one `fn children` found in the same level" }
+    };
+}
+
 macro_rules! allow_children {
     (
         for_marker! { $marker:ty }
@@ -29,7 +129,7 @@ macro_rules! allow_prop_ignoring_children {
             }
         } {}}
 
-        crate::macros::parse_fn_args_as_whether_pinned_state! { $fn_args {
+        crate::macros::props_builders::parse_fn_args_as_whether_pinned_state! { $fn_args {
             AllowAttributeWithPinnedState
         } {
             AllowAttribute
@@ -100,7 +200,7 @@ macro_rules! props_builders {
         )*)
     ) => {
         // allow children
-        crate::macros::extract_only_children_or! {
+        crate::macros::props_builders::extract_only_children_or! {
             {$(
                 {
                     $fn_name {
@@ -168,7 +268,7 @@ macro_rules! props_builders {
             $(
                 super::prop_markers::expand_if_conflicted_name_or_else! { $fn_name {} {
                     // $fn_name is not a conflicted name
-                    crate::macros::parse_fn_args_as_whether_pinned_state! { $fn_args {
+                    crate::macros::props_builders::parse_fn_args_as_whether_pinned_state! { $fn_args {
                         AllowAttributeWithPinnedState
                     } {
                         AllowAttribute
@@ -183,12 +283,12 @@ macro_rules! props_builders {
                                     do {
                                         prepend( <V: )
                                         append(
-                                            >(self, value: V) -> $crate::macros::parse_fn_args_as_whether_pinned_state![ $fn_args {
+                                            >(self, value: V) -> crate::macros::props_builders::parse_fn_args_as_whether_pinned_state![ $fn_args {
                                                 Intrinsic<M, C, A, (P, props::$fn_name<V>)>
                                             } {
                                                 Intrinsic<M, C, (A, props::$fn_name<V>), P>
                                             } {} ] {
-                                                crate::macros::parse_fn_args_as_whether_pinned_state!( $fn_args {
+                                                crate::macros::props_builders::parse_fn_args_as_whether_pinned_state!( $fn_args {
                                                     Self::with_attribute_with_pinned_state_appended
                                                 } {
                                                     Self::with_attribute_appended
@@ -206,14 +306,14 @@ macro_rules! props_builders {
                                             )
                                             append
                                         )
-                                        // $crate::extract_attr_builder_fn_names! { {$fn_name $fn_body_or_semi} do { for_each {...} } }
+                                        // extract_attr_builder_fn_names! { {$fn_name $fn_body_or_semi} do { for_each {...} } }
                                         wrap {}
                                         prepend( for_each )
-                                        // $crate::extract_attr_builder_fn_names! { {$fn_name $fn_body_or_semi} do {...} }
+                                        // extract_attr_builder_fn_names! { {$fn_name $fn_body_or_semi} do {...} }
                                         wrap {}
                                         prepend( {$fn_name $fn_body_or_semi} do )
-                                        // $crate::extract_attr_builder_fn_names! { ... }
-                                        wrap {} prepend( crate::macros::extract_attr_builder_fn_names! )
+                                        // extract_attr_builder_fn_names! { ... }
+                                        wrap {} prepend( crate::macros::props_builders::extract_attr_builder_fn_names! )
                                     }
                                 }
                             }
@@ -225,4 +325,7 @@ macro_rules! props_builders {
     };
 }
 
-pub(crate) use {allow_children, allow_prop_ignoring_children, allow_props_of_ancestor_ignoring_children_if_not_ancestor_of, props_builders};
+pub(crate) use {
+    allow_children, allow_prop_ignoring_children, allow_props_of_ancestor_ignoring_children_if_not_ancestor_of, extract_attr_builder_fn_names, extract_only_children_or, parse_fn_args_as_whether_pinned_state,
+    props_builders,
+};

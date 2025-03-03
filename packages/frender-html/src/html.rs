@@ -134,7 +134,7 @@ crate::macros::def_intrinsic_component_props!(
 
         #[props_macros]
         #[cfg(feature = "components")]
-        #[cfg(all(feature = "macros_not_expanded"))] // wrap any to prevent auto expanding by frender-html-expand
+        #[cfg(all(feature = "macros_not_expanded"))] // wrap all to prevent auto expanding by frender-html-expand
         mod props_macros;
 
         #[imp_element_proxy_attrs]
