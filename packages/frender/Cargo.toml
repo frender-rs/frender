@@ -35,6 +35,7 @@ frender-ui-handles = { version = "0.1.0", path = "../frender-ui-handles", featur
 ], optional = true }
 frender-fn-traits = { version = "0.1.0", path = "../frender-fn-traits" }
 frender-to-element = { version = "0.1.0", path = "../frender-to-element", optional = true }
+frender-memo = { version = "0.1.0", path = "../frender-memo", optional = true }
 
 [dependencies.frender-hook-element]
 path = "../frender-hook-element"
@@ -88,6 +89,7 @@ ssr = [
     "frender-keyed-elements?/ssr",
     "frender-html/ssr",
     "frender-element/ssr",
+    "frender-memo?/ssr",
 ]
 csr = [
     #
@@ -96,6 +98,8 @@ csr = [
     "frender-csr-web?/csr",
     "frender-html/csr",
     "frender-element/csr",
+    "frender-memo?/csr",
+    "frender-memo?/experimental",
     "dep:frender-ui-handles",
 ]
 RenderWith = ["dep:frender-render-with"]
@@ -104,5 +108,5 @@ ToElement = ["dep:frender-to-element"]
 context = ["dep:frender-context"]
 hooks = ["dep:hooks", "frender-context?/hooks"]
 SyncedCollection = []
-Memo = []
+Memo = ["dep:frender-memo"]
 frender-ui-handles = ["dep:frender-ui-handles"]

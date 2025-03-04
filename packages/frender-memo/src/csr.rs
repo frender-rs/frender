@@ -2,21 +2,57 @@ use std::marker::PhantomData;
 use std::pin::Pin;
 use std::task::Poll;
 
-use frender_html::{
-    csr::{
-        experimental::{
-            self, HtmlRenderContext, PinnedRenderStateKind, PinnedRenderStateKindPollRender,
-            PinnedStateOfKind, PinnedUiHandleOfKind, RenderHtml, RenderInitPinned,
-            UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender,
-        },
-        CsrElement, RenderStateKind,
+use frender_csr::{
+    CsrElement, RenderStateKind, StateUnmount, UnmountedUiHandle as _,
+    experimental::{
+        self, HtmlRenderContext, PinnedRenderStateKind, PinnedRenderStateKindPollRender,
+        PinnedStateOfKind, PinnedUiHandleOfKind, RenderHtml, RenderInitPinned,
+        UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender,
     },
-    dom::csr::{StateUnmount, UnmountedUiHandle as _},
+    proxy_csr_element_without_pinned_render_init,
 };
 
-use crate::fn_traits::{FnOnce1, FnOnce2};
+use frender_fn_traits::{FnOnce1, FnOnce2};
 
 use super::{Memo, MemoAndProvideFirstArgument};
+
+impl<F, Dep> Memo<F, Dep> {
+    fn map_changed_memo<Out>(
+        self,
+        memoed_dep: &mut Dep,
+        ne: impl FnOnce(&Dep, &Dep) -> bool,
+        run: impl FnOnce(F, &mut Dep) -> Out,
+    ) -> Option<Out> {
+        let Self(f, dep) = self;
+
+        let changed = ne(memoed_dep, &dep);
+
+        *memoed_dep = dep; // TODO: should we update memoed dep even if the new dep eq the memoed dep?
+
+        changed.then(|| run(f, memoed_dep))
+    }
+    // The third argument of `run` is `new_dep == memoed_dep`.
+    // `true` means new dep equals to the memoed dep.
+    fn map_memoed<R>(
+        self,
+        memoed_dep: &mut Dep,
+        eq: impl FnOnce(&Dep, &Dep) -> bool,
+        run: impl FnOnce(F, &mut Dep, bool) -> R,
+    ) -> R {
+        let Self(f, dep) = self;
+
+        let dep_eq_memoed_dep;
+        if eq(memoed_dep, &dep) {
+            *memoed_dep = dep; // TODO: should we update memoed dep even if the new dep eq the memoed dep?
+            dep_eq_memoed_dep = true;
+        } else {
+            *memoed_dep = dep;
+            dep_eq_memoed_dep = false;
+        }
+
+        run(f, memoed_dep, dep_eq_memoed_dep)
+    }
+}
 
 pin_project_lite::pin_project!(
     #[derive(Debug)]
@@ -81,7 +117,7 @@ impl<S: StateUnmount, NRS> StateUnmount for PinnedState<S, NRS> {
 }
 
 impl<S, NRS> PinnedState<S, NRS> {
-    pub(crate) fn project_state(self: Pin<&mut Self>) -> CompoundState<Pin<&mut S>, &mut NRS> {
+    pub fn project_state(self: Pin<&mut Self>) -> CompoundState<Pin<&mut S>, &mut NRS> {
         let this = self.project();
         CompoundState {
             reactive: this.reactive.as_pin_mut().unwrap(),
@@ -111,12 +147,11 @@ impl<K: PinnedRenderStateKindPollRender, Dep> PinnedRenderStateKindPollRender fo
 pub struct RenderInit<F>(F);
 
 impl<
-        F: for<'a> FnOnce1<&'a Dep, Output: CsrElement<RenderStateKind = K>>,
-        Dep,
-        K: PinnedRenderStateKind,
-        Ctx: ?Sized + HtmlRenderContext,
-    > RenderInitPinned<&mut Ctx, PinnedState<K::PinnedState<Ctx::Renderer>, Dep>>
-    for RenderInit<F>
+    F: for<'a> FnOnce1<&'a Dep, Output: CsrElement<RenderStateKind = K>>,
+    Dep,
+    K: PinnedRenderStateKind,
+    Ctx: ?Sized + HtmlRenderContext,
+> RenderInitPinned<&mut Ctx, PinnedState<K::PinnedState<Ctx::Renderer>, Dep>> for RenderInit<F>
 {
     type Output = K::PinnedUiHandle<Ctx::Renderer>;
 
@@ -138,10 +173,10 @@ impl<
 }
 
 impl<
-        F: for<'a> FnOnce1<&'a Dep, Output: CsrElement<RenderStateKind = K>>,
-        Dep: PartialEq,
-        K: RenderStateKind,
-    > CsrElement for Memo<F, Dep>
+    F: for<'a> FnOnce1<&'a Dep, Output: CsrElement<RenderStateKind = K>>,
+    Dep: PartialEq,
+    K: RenderStateKind,
+> CsrElement for Memo<F, Dep>
 {
     type RenderStateKind = Kind<K, Dep>;
     type PinnedRenderInit<R: ?Sized + RenderHtml> = RenderInit<F>;
@@ -290,12 +325,12 @@ impl<F, A> RenderInitProvideFirstArgument<F, A> {
 }
 
 impl<
-        F: for<'a> FnOnce2<A, &'a Dep, Output: CsrElement<RenderStateKind = K>>,
-        A,
-        Dep,
-        K: PinnedRenderStateKind,
-        Ctx: ?Sized + HtmlRenderContext,
-    > RenderInitPinned<&mut Ctx, PinnedState<K::PinnedState<Ctx::Renderer>, Dep>>
+    F: for<'a> FnOnce2<A, &'a Dep, Output: CsrElement<RenderStateKind = K>>,
+    A,
+    Dep,
+    K: PinnedRenderStateKind,
+    Ctx: ?Sized + HtmlRenderContext,
+> RenderInitPinned<&mut Ctx, PinnedState<K::PinnedState<Ctx::Renderer>, Dep>>
     for RenderInitProvideFirstArgument<F, A>
 {
     type Output = K::PinnedUiHandle<Ctx::Renderer>;
@@ -310,11 +345,11 @@ impl<
 }
 
 impl<
-        F: for<'a> FnOnce2<A, &'a Dep, Output: CsrElement<RenderStateKind = K>>,
-        A,
-        Dep: PartialEq,
-        K: RenderStateKind,
-    > CsrElement for MemoAndProvideFirstArgument<F, A, Dep>
+    F: for<'a> FnOnce2<A, &'a Dep, Output: CsrElement<RenderStateKind = K>>,
+    A,
+    Dep: PartialEq,
+    K: RenderStateKind,
+> CsrElement for MemoAndProvideFirstArgument<F, A, Dep>
 {
     type RenderStateKind = Kind<K, Dep>;
     type PinnedRenderInit<R: ?Sized + RenderHtml> = RenderInitProvideFirstArgument<F, A>;
@@ -338,5 +373,5 @@ impl<
         )
     }
 
-    frender_html::proxy_csr_element_without_pinned_render_init!(|this| this.into_memo());
+    proxy_csr_element_without_pinned_render_init!(|this| this.into_memo());
 }

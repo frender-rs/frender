@@ -893,6 +893,7 @@ dependencies = [
  "frender-html",
  "frender-keyed-elements",
  "frender-macros",
+ "frender-memo",
  "frender-reactive-value",
  "frender-render-with",
  "frender-ssr",
@@ -1161,6 +1162,16 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.60",
+]
+
+[[package]]
+name = "frender-memo"
+version = "0.1.0"
+dependencies = [
+ "frender-csr",
+ "frender-fn-traits",
+ "frender-ssr",
+ "pin-project-lite",
 ]
 
 [[package]]
@@ -2726,9 +2737,9 @@ dependencies = [
 
 [[package]]
 name = "pin-project-lite"
-version = "0.2.14"
+version = "0.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bda66fc9667c18cb2758a2ac84d1167245054bcf85d5d1aaa6923f45801bdd02"
+checksum = "3b3cff922bd51709b605d9ead9aa71031d81447142d828eb4a6eba76fe619f9b"
 
 [[package]]
 name = "pin-utils"

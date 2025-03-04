@@ -1,0 +1,20 @@
+[package]
+name = "frender-memo"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+frender-fn-traits = { version = "0.1.0", path = "../frender-fn-traits" }
+# csr
+frender-csr = { version = "0.1.0", path = "../frender-csr", optional = true, features = [
+    "experimental",
+] }
+pin-project-lite = { version = "0.2.16", optional = true }
+# ssr
+frender-ssr = { version = "0.1.0", path = "../frender-ssr", optional = true }
+
+[features]
+csr = ["dep:frender-csr", "dep:pin-project-lite"]
+ssr = ["dep:frender-ssr"]
+pin-project-lite = ["dep:pin-project-lite"]
+experimental = []

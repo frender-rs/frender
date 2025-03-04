@@ -15,10 +15,10 @@ impl<F, Dep> MemoCallWithRef<F, Dep> {
 }
 
 mod csr {
-    use crate::{memo::csr::Kind, Memo};
     use frender_html::csr::{CsrElement, RenderStateKind};
+    use frender_memo::{csr_experimental::Kind, Memo, MemoAndProvideFirstArgument};
 
-    use crate::{fn_traits::FnMut2, memo::MemoAndProvideFirstArgument};
+    use crate::fn_traits::FnMut2;
 
     use super::{
         super::{AsMutCsrElementWithValue, IntoAsMutCsrElementWithValue},

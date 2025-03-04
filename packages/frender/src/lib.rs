@@ -87,9 +87,7 @@ pub mod style {
 pub use frender_style::style::comma_separated as style;
 
 #[cfg(feature = "Memo")]
-pub mod memo;
-#[cfg(feature = "Memo")]
-pub use memo::Memo;
+pub use frender_memo::Memo;
 
 #[cfg(all(feature = "web"))]
 pub use frender_csr_web::mount::GetDomElement;
