@@ -888,6 +888,7 @@ dependencies = [
  "frender-dom-tokens",
  "frender-element",
  "frender-events",
+ "frender-fn-traits",
  "frender-hook-element",
  "frender-html",
  "frender-keyed-elements",
@@ -896,6 +897,7 @@ dependencies = [
  "frender-render-with",
  "frender-ssr",
  "frender-style",
+ "frender-to-element",
  "frender-ui-handles",
  "futures-lite 2.3.0",
  "hooks",
@@ -1043,6 +1045,10 @@ dependencies = [
  "wasm-bindgen",
  "web-sys",
 ]
+
+[[package]]
+name = "frender-fn-traits"
+version = "0.1.0"
 
 [[package]]
 name = "frender-form-control"
@@ -1226,6 +1232,16 @@ dependencies = [
  "frender-macro-rules",
  "frender-reactive-value",
  "indexmap 2.2.6",
+]
+
+[[package]]
+name = "frender-to-element"
+version = "0.1.0"
+dependencies = [
+ "frender-element",
+ "frender-fn-traits",
+ "frender-macro-rules",
+ "frender-reactive-value",
 ]
 
 [[package]]

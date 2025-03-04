@@ -33,6 +33,8 @@ frender-reactive-value = { version = "0.1.0", path = "../frender-reactive-value"
 frender-ui-handles = { version = "0.1.0", path = "../frender-ui-handles", features = [
     "CursorPlaceholdersSurrounded",
 ], optional = true }
+frender-fn-traits = { version = "0.1.0", path = "../frender-fn-traits" }
+frender-to-element = { version = "0.1.0", path = "../frender-to-element", optional = true }
 
 [dependencies.frender-hook-element]
 path = "../frender-hook-element"
@@ -98,7 +100,7 @@ csr = [
 ]
 RenderWith = ["dep:frender-render-with"]
 KeyedElements = ["dep:frender-keyed-elements"]
-ToElement = []
+ToElement = ["dep:frender-to-element"]
 context = ["dep:frender-context"]
 hooks = ["dep:hooks", "frender-context?/hooks"]
 SyncedCollection = []

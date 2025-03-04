@@ -1,0 +1,12 @@
+[package]
+name = "frender-to-element"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+frender-fn-traits = { version = "0.1.0", path = "../frender-fn-traits" }
+frender-macro-rules = { version = "0.1.0", path = "../frender-macro-rules" }
+frender-reactive-value = { version = "0.1.0", path = "../frender-reactive-value" }
+
+[dev-dependencies]
+frender-element = { path = "../frender-element" }

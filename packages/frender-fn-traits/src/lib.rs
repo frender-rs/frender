@@ -23,6 +23,5 @@ impl<F: ?Sized + FnOnce(Arg0, Arg1) -> Out, Arg0, Arg1, Out> FnOnce2<Arg0, Arg1>
 pub trait FnMut2<Arg0, Arg1>: FnOnce2<Arg0, Arg1> + FnMut(Arg0, Arg1) -> Self::Output_ {}
 impl<F: ?Sized + FnMut(Arg0, Arg1) -> Out, Arg0, Arg1, Out> FnMut2<Arg0, Arg1> for F {}
 
-#[allow(dead_code)]
 pub trait Fn2<Arg0, Arg1>: FnMut2<Arg0, Arg1> + Fn(Arg0, Arg1) -> Self::Output_ {}
 impl<F: ?Sized + Fn(Arg0, Arg1) -> Out, Arg0, Arg1, Out> Fn2<Arg0, Arg1> for F {}

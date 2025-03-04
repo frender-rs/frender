@@ -5,12 +5,10 @@ pub mod hooks_ext;
 
 pub mod elements;
 
-mod fn_traits;
+use frender_fn_traits as fn_traits; // TODO: refactor
 
 #[cfg(feature = "ToElement")]
-mod to_element;
-#[cfg(feature = "ToElement")]
-pub use to_element::{RefToElementWithFn, ToElement, ToElementWithFn};
+pub use frender_to_element::{RefToElementWithFn, ToElement, ToElementWithFn};
 
 #[cfg(feature = "SyncedCollection")]
 pub use elements::synced_collection::{SyncedCollection, SyncedVec};
