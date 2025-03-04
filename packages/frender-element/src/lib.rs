@@ -1,7 +1,7 @@
 #![cfg(all(feature = "csr", feature = "ssr"))]
 
-use frender_csr::CsrElement;
-use frender_ssr::SsrElement;
+pub use frender_csr::CsrElement;
+pub use frender_ssr::SsrElement;
 
 pub trait Element: SsrElement + CsrElement {}
 
