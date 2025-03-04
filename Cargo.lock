@@ -896,6 +896,7 @@ dependencies = [
  "frender-render-with",
  "frender-ssr",
  "frender-style",
+ "frender-ui-handles",
  "futures-lite 2.3.0",
  "hooks",
  "js-sys",
@@ -1087,6 +1088,7 @@ dependencies = [
  "frender-reactive-value",
  "frender-ssr",
  "frender-style",
+ "frender-ui-handles",
  "gloo-events 0.2.0",
  "js-sys",
  "pin-project-lite",
@@ -1121,6 +1123,7 @@ dependencies = [
  "frender-html-components",
  "frender-ssr",
  "frender-test",
+ "frender-ui-handles",
  "indexmap 2.2.6",
 ]
 
@@ -1223,6 +1226,13 @@ dependencies = [
  "frender-macro-rules",
  "frender-reactive-value",
  "indexmap 2.2.6",
+]
+
+[[package]]
+name = "frender-ui-handles"
+version = "0.1.0"
+dependencies = [
+ "frender-dom",
 ]
 
 [[package]]

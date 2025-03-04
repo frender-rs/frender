@@ -1,8 +1,8 @@
 use frender_dom::Empty;
 
 use crate::{
-    known_provide_str::KnownProvideStr,
-    values::UncontrolledWithDefaultValue, MaybeProvideFormControlValue,
+    known_provide_str::KnownProvideStr, values::UncontrolledWithDefaultValue,
+    MaybeProvideFormControlValue,
 };
 
 use super::InputValue;

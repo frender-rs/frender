@@ -2,7 +2,7 @@ use frender_html::form_control::{input::CsrInputChecked, KindOfChecked};
 use hooks::Signal;
 
 use crate::hooks_ext::form_control::{
-    FromFormControlValue, ToProvideFormControlValue, SignalIntoControlledValue,
+    FromFormControlValue, SignalIntoControlledValue, ToProvideFormControlValue,
 };
 
 impl<S> CsrInputChecked for SignalIntoControlledValue<S>

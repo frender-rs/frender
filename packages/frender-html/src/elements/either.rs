@@ -6,12 +6,12 @@ use frender_dom::csr::{
     StateUnmount, UiHandle as _, UnmountedUiHandle as _,
 };
 use frender_reactive_value::RenderInitPinned;
+use frender_ui_handles::EitherUiHandle;
 use pin_project_lite::pin_project;
 
 use crate::{
     csr::element::{self, CsrElement, HtmlRenderContext, PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
     html::RenderHtml,
-    ui_handles::EitherUiHandle,
 };
 
 pub use frender_common::either::EitherElement;

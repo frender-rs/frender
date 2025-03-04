@@ -15,8 +15,8 @@ use frender_html::{
     },
     csr::{CsrElement, RenderStateKind},
     dom::csr::StateUnmount,
-    ui_handles::CursorPlaceholdersSurrounded,
 };
+use frender_ui_handles::CursorPlaceholdersSurrounded;
 
 use hooks::{HookUnmount, ShareValue, Signal, SignalHook};
 use pin_project_lite::pin_project;

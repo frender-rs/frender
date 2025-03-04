@@ -9,6 +9,9 @@ frender-csr = { version = "0.1.0", path = "../frender-csr", optional = true, fea
     "experimental",
 ] }
 frender-ssr = { version = "0.1.0", path = "../frender-ssr", default-features = false, optional = true }
+frender-ui-handles = { version = "0.1.0", path = "../frender-ui-handles", features = [
+    "CursorPlaceholdersSurrounded",
+], optional = true }
 indexmap = { version = "2.2.6", optional = true }
 
 [dev-dependencies]
@@ -17,4 +20,5 @@ frender-html-components = { version = "0.1.0", path = "../frender-html-component
 
 [features]
 ssr = ["dep:async-str-iter", "dep:frender-ssr"]
-csr = ["dep:frender-csr", "dep:indexmap"]
+csr = ["dep:frender-csr", "dep:indexmap", "dep:frender-ui-handles"]
+frender-ui-handles = ["dep:frender-ui-handles"]

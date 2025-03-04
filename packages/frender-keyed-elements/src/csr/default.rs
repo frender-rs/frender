@@ -34,9 +34,9 @@ use frender_csr::{
         UnpinnedRenderStateKindPollRender,
     },
     render::{RenderContext, RenderWithContext},
-    ui_handles::CursorPlaceholdersSurrounded,
     CsrElement, StateUnmount, UiHandle, UnmountedUiHandle,
 };
+use frender_ui_handles::CursorPlaceholdersSurrounded;
 
 use crate::{DefaultAlgorithm, Keyed};
 

@@ -1,11 +1,13 @@
-use frender_dom::csr::{render::RenderWithContext, UiHandle, UnmountedUiHandle};
+use frender_dom::csr::{UiHandle, UnmountedUiHandle, render::RenderWithContext};
 
 pub enum EitherUiHandle<A, B> {
     A(A),
     B(B),
 }
 
-impl<A: UnmountedUiHandle<R>, B: UnmountedUiHandle<R>, R: ?Sized> UnmountedUiHandle<R> for EitherUiHandle<A, B> {
+impl<A: UnmountedUiHandle<R>, B: UnmountedUiHandle<R>, R: ?Sized> UnmountedUiHandle<R>
+    for EitherUiHandle<A, B>
+{
     type Mounted = EitherUiHandle<A::Mounted, B::Mounted>;
 
     fn mount(self, render_context: &mut <R>::RenderContext<'_>) -> Self::Mounted

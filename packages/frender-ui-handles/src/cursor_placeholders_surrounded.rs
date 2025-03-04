@@ -1,7 +1,7 @@
 use frender_dom::csr::{
+    UiHandle, UnmountedUiHandle,
     behaviors::{NodeRenderSelf, NodeWithRenderContextAfterSelf},
     render::RenderWithContext,
-    UiHandle, UnmountedUiHandle,
 };
 
 pub struct CursorPlaceholdersSurrounded<C, UH> {
@@ -83,7 +83,10 @@ impl<C, UH> CursorPlaceholdersSurrounded<C, UH> {
     where
         C: UiHandle<R>,
     {
-        let Self { cursor_placeholders: [a, b], ui_handle } = self;
+        let Self {
+            cursor_placeholders: [a, b],
+            ui_handle,
+        } = self;
         a.check_and_move_cursor(render_context);
         let out = f(ui_handle, render_context);
         b.check_and_move_cursor(render_context);
@@ -101,7 +104,10 @@ impl<C, UH> CursorPlaceholdersSurrounded<C, UH> {
     where
         C: UiHandle<R> + NodeWithRenderContextAfterSelf<R>,
     {
-        let Self { cursor_placeholders: [a, b], ui_handle } = self;
+        let Self {
+            cursor_placeholders: [a, b],
+            ui_handle,
+        } = self;
 
         let out = a.with_render_context_after_self(renderer, |render_context| {
             let out = f(ui_handle, render_context);
@@ -163,7 +169,9 @@ impl<C, UH> CursorPlaceholdersSurrounded<C, UH> {
     }
 }
 
-impl<C: UnmountedUiHandle<R>, UH: UnmountedUiHandle<R>, R: ?Sized> UnmountedUiHandle<R> for CursorPlaceholdersSurrounded<C, UH> {
+impl<C: UnmountedUiHandle<R>, UH: UnmountedUiHandle<R>, R: ?Sized> UnmountedUiHandle<R>
+    for CursorPlaceholdersSurrounded<C, UH>
+{
     type Mounted = CursorPlaceholdersSurrounded<C::Mounted, UH::Mounted>;
 
     fn mount(self, render_context: &mut <R>::RenderContext<'_>) -> Self::Mounted
@@ -185,7 +193,9 @@ impl<C: UnmountedUiHandle<R>, UH: UnmountedUiHandle<R>, R: ?Sized> UnmountedUiHa
     }
 }
 
-impl<C: UiHandle<R>, UH: UiHandle<R>, R: ?Sized> UiHandle<R> for CursorPlaceholdersSurrounded<C, UH> {
+impl<C: UiHandle<R>, UH: UiHandle<R>, R: ?Sized> UiHandle<R>
+    for CursorPlaceholdersSurrounded<C, UH>
+{
     type Unmounted = CursorPlaceholdersSurrounded<C::Unmounted, UH::Unmounted>;
 
     fn unmount(self, renderer: &mut R) -> Self::Unmounted {

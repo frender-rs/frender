@@ -27,6 +27,9 @@ frender-form-control = { version = "0.1.0", path = "../frender-form-control", fe
 arrayvec = { version = "0.7.6", default-features = false }
 ref-cast = { version = "1.0.23", optional = true }
 frender-reactive-value = { version = "0.1.0", path = "../frender-reactive-value" }
+frender-ui-handles = { version = "0.1.0", path = "../frender-ui-handles", features = [
+    "EitherUiHandle",
+], optional = true }
 
 [dependencies.web-sys]
 version = "0.3.60"
@@ -113,6 +116,7 @@ csr = [
     "frender-dom/csr",
     "frender-form-control/csr",
     "frender-style/csr",
+    "dep:frender-ui-handles",
 ]
 ssr = [
     "dep:frender-ssr",
@@ -144,3 +148,4 @@ ElementProxyAttrs = ["dep:ref-cast"]
 chrono = ["frender-form-control/chrono"]
 # Also requires csr
 experimental = []
+frender-ui-handles = ["dep:frender-ui-handles"]

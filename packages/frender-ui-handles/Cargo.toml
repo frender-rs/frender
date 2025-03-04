@@ -1,0 +1,12 @@
+[package]
+name = "frender-ui-handles"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+frender-dom = { version = "0.1.0", path = "../frender-dom", features = ["csr"] }
+
+[features]
+CursorPlaceholdersSurrounded = []
+EitherUiHandle = []
+UiHandleMaybe = []

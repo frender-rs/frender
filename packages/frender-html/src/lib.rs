@@ -22,10 +22,6 @@ pub mod element_proxy_attrs;
 #[cfg(feature = "ElementProxyAttrs")]
 pub use element_proxy_attrs::ElementProxyAttrs;
 
-// TODO: move to frender-dom or separate crates
-#[cfg(feature = "csr")]
-pub mod ui_handles;
-
 #[cfg(feature = "csr")]
 mod elements;
 
@@ -86,10 +82,5 @@ pub mod csr {
 
     pub mod render {
         pub use frender_dom::csr::render::{RenderContext, RenderWithContext};
-    }
-
-    // TODO: move to frender-dom or separate crates
-    pub mod ui_handles {
-        pub use crate::ui_handles::CursorPlaceholdersSurrounded;
     }
 }
