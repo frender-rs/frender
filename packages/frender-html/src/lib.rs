@@ -59,6 +59,8 @@ mod utils;
 
 #[cfg(feature = "csr")]
 pub mod csr {
+    pub use crate::{proxy_csr_element, proxy_csr_element_render_update, proxy_csr_element_without_pinned_render_init};
+
     pub(crate) mod behavior_type;
     pub(crate) mod component;
 
