@@ -27,7 +27,6 @@ frender-element = { version = "0.1.0", path = "../frender-element", default-feat
 frender-style = { version = "0.1.0", path = "../frender-style" }
 frender-dom-tokens = { version = "0.1.0", path = "../frender-dom-tokens" }
 frender-reactive-value = { version = "0.1.0", path = "../frender-reactive-value" }
-frender-fn-traits = { version = "0.1.0", path = "../frender-fn-traits" }
 frender-to-element = { version = "0.1.0", path = "../frender-to-element", optional = true }
 frender-memo = { version = "0.1.0", path = "../frender-memo", optional = true }
 frender-hooks-ext = { version = "0.1.0", path = "../frender-hooks-ext", optional = true }

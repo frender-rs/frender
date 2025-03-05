@@ -888,7 +888,6 @@ dependencies = [
  "frender-dom-tokens",
  "frender-element",
  "frender-events",
- "frender-fn-traits",
  "frender-hook-element",
  "frender-hooks-ext",
  "frender-html",

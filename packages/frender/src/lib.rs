@@ -5,8 +5,6 @@ pub mod hooks_ext;
 
 pub mod elements;
 
-use frender_fn_traits as fn_traits; // TODO: refactor
-
 #[cfg(feature = "ToElement")]
 pub use frender_to_element::{RefToElementWithFn, ToElement, ToElementWithFn};
 
