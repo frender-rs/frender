@@ -1,7 +1,7 @@
 [package]
 name = "frender-to-element"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
 frender-fn-traits = { version = "0.1.0", path = "../frender-fn-traits" }
