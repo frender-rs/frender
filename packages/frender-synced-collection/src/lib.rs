@@ -353,11 +353,6 @@ impl<Items: FromIterator<A>, A> FromIterator<A> for SyncedCollection<Items> {
 
 pub type SyncedVec<E> = SyncedCollection<Vec<E>>;
 
-#[allow(non_snake_case)]
-pub fn SyncedVec<E>(elements: Vec<E>) -> SyncedVec<E> {
-    SyncedCollection::new(elements)
-}
-
 impl<ES> SyncedCollection<ES>
 where
     for<'a> &'a ES: IntoIterator,
