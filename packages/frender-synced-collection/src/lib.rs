@@ -8,7 +8,7 @@ use std::{
     rc::{Rc, Weak},
 };
 
-use crate::fn_traits::FnMut1;
+use frender_fn_traits::FnMut1;
 
 pub mod drain;
 pub mod splice;

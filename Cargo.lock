@@ -1253,6 +1253,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "frender-synced-collection"
+version = "0.1.0"
+dependencies = [
+ "async-str-iter",
+ "frender-csr",
+ "frender-fn-traits",
+ "frender-ssr",
+ "frender-to-element",
+]
+
+[[package]]
 name = "frender-test"
 version = "0.1.0"
 dependencies = [

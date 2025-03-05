@@ -1,0 +1,21 @@
+[package]
+name = "frender-synced-collection"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+frender-fn-traits = { version = "0.1.0", path = "../frender-fn-traits" }
+# optional
+frender-to-element = { version = "0.1.0", path = "../frender-to-element", optional = true }
+# csr
+frender-csr = { version = "0.1.0", path = "../frender-csr", optional = true, features = [
+    "experimental",
+] }
+# ssr
+async-str-iter = { version = "0.1.0", path = "../async-str-iter", optional = true }
+frender-ssr = { version = "0.1.0", path = "../frender-ssr", optional = true }
+
+[features]
+csr = ["dep:frender-csr"]
+ssr = ["dep:async-str-iter", "dep:frender-ssr"]
+ToElement = ["dep:frender-to-element"]

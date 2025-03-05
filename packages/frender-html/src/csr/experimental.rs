@@ -21,3 +21,7 @@ pub mod render {
 pub mod event_listener {
     pub use frender_dom::csr::{PinnedRegisterUpdate, RegisterUpdate};
 }
+
+pub mod behaviors {
+    pub use frender_dom::csr::behaviors::{NodeRenderSelf, NodeWithRenderContextAfterSelf};
+}

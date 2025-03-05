@@ -1,4 +1,4 @@
-use crate::ToElement;
+use frender_to_element::ToElement;
 
 use super::{
     super::SyncedCollection, MapItemToElement, MapItemWithToElement, SyncedCollectionToElement,

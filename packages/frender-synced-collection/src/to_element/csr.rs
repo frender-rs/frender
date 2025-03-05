@@ -1,20 +1,17 @@
 use std::{cell::RefCell, marker::PhantomData, pin::Pin, rc::Rc};
 
-use frender_html::{
-    csr::experimental::{
+use frender_csr::{
+    CsrElement, UiHandle, UnmountedUiHandle,
+    experimental::{
         self, HtmlRenderContext, PinnedRenderStateKind, PinnedRenderStateKindPollRender,
         PinnedStateOfKind, RenderHtml, RenderInitPinned, UnpinnedRenderStateKind,
         UnpinnedRenderStateKindPollRender, UnpinnedStateOfKind, UnpinnedUiHandleOfKind,
-    },
-    csr::CsrElement,
-    dom::csr::{
         behaviors::{NodeRenderSelf, NodeWithRenderContextAfterSelf as _},
-        render::RenderContext as _,
-        UiHandle, UnmountedUiHandle,
     },
+    render::RenderContext as _,
 };
 
-use crate::elements::synced_collection::{
+use crate::{
     state::{PinnedStates, ReactiveStates, UiHandles},
     weak_vec1::{Key, RcWithKey},
 };
