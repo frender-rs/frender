@@ -31,6 +31,7 @@ frender-fn-traits = { version = "0.1.0", path = "../frender-fn-traits" }
 frender-to-element = { version = "0.1.0", path = "../frender-to-element", optional = true }
 frender-memo = { version = "0.1.0", path = "../frender-memo", optional = true }
 frender-hooks-ext = { version = "0.1.0", path = "../frender-hooks-ext", optional = true }
+frender-synced-collection = { version = "0.1.0", path = "../frender-synced-collection", optional = true }
 
 [dependencies.frender-hook-element]
 path = "../frender-hook-element"
@@ -87,6 +88,7 @@ ssr = [
     "frender-element/ssr",
     "frender-memo?/ssr",
     "frender-hooks-ext?/ssr",
+    "frender-synced-collection?/ssr",
 ]
 csr = [
     #
@@ -98,12 +100,17 @@ csr = [
     "frender-memo?/csr",
     "frender-memo?/experimental",
     "frender-hooks-ext?/csr",
+    "frender-synced-collection?/csr",
 ]
 RenderWith = ["dep:frender-render-with"]
 KeyedElements = ["dep:frender-keyed-elements"]
-ToElement = ["dep:frender-to-element", "frender-hooks-ext?/ToElement"]
+ToElement = [
+    "dep:frender-to-element",
+    "frender-hooks-ext?/ToElement",
+    "frender-synced-collection?/ToElement",
+]
 context = ["dep:frender-context"]
 hooks = ["frender-context?/hooks", "hooks_ext"]
 hooks_ext = ["dep:frender-hooks-ext"]
-SyncedCollection = []
+SyncedCollection = ["dep:frender-synced-collection"]
 Memo = ["dep:frender-memo"]

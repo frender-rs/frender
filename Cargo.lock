@@ -899,6 +899,7 @@ dependencies = [
  "frender-render-with",
  "frender-ssr",
  "frender-style",
+ "frender-synced-collection",
  "frender-to-element",
  "futures-lite 2.3.0",
  "js-sys",
