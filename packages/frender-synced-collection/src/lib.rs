@@ -1,11 +1,8 @@
 pub use to_element::SyncedCollectionToElement;
 
-use weak_vec1::RcWithKey;
-
 use std::{
     cell::RefCell,
     ops::{Deref, Index, IndexMut},
-    rc::{Rc, Weak},
 };
 
 use frender_fn_traits::FnMut1;
@@ -14,10 +11,6 @@ pub mod drain;
 pub mod splice;
 
 mod weak_vec1;
-
-mod state;
-
-mod render_states;
 
 mod to_element;
 
@@ -52,22 +45,7 @@ impl StatesCommon for AllStates {
     }
 }
 
-fn weak_is_of_rc<T: ?Sized, U: ?Sized>(weak: &Weak<T>, rc: &Rc<U>) -> bool {
-    std::ptr::addr_eq(Weak::as_ptr(weak), Rc::as_ptr(rc))
-}
-
 impl AllStates {
-    fn put_rc_states_with_old_key_hint<S: States + 'static>(
-        &mut self,
-        old_key_hint: weak_vec1::Key,
-        rc: &Rc<RefCell<S>>,
-    ) -> weak_vec1::Key {
-        self.0
-            .put_into_old_available_or_append(old_key_hint, rc, weak_is_of_rc, |rc| {
-                Rc::downgrade(rc) as _
-            })
-    }
-
     fn for_each_alive_mut(&mut self, mut f: impl FnMut(&mut dyn States)) {
         self.0.for_each_alive(|rc| f(&mut *rc.borrow_mut()))
     }

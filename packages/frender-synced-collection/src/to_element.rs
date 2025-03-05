@@ -2,7 +2,9 @@ use std::cell::RefCell;
 
 use super::AllStates;
 
+#[cfg(feature = "csr")]
 mod csr;
+#[cfg(feature = "ssr")]
 mod ssr;
 #[cfg(feature = "ToElement")]
 mod with_to_element;
@@ -27,6 +29,7 @@ where
 #[derive(Debug, Clone, Copy)]
 pub struct MapItemWithToElement;
 
+#[cfg_attr(not(any(feature = "csr", feature = "ssr",)), allow(dead_code))] // fields are not used
 pub struct SyncedCollectionToElement<
     'a,
     ES: Iterator,

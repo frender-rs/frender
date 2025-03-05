@@ -12,6 +12,7 @@ where
     >;
 
     fn into_html_children(mut self) -> Self::HtmlChildren {
+        let _ = self.all_states; // use this field to avoid warnings
         let children = self
             .items
             .map(|el| self.f.map_item_to_element(el).into_html_children())

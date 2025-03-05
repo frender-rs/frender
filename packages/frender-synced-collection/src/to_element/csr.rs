@@ -1,3 +1,4 @@
+use std::rc::Weak;
 use std::{cell::RefCell, marker::PhantomData, pin::Pin, rc::Rc};
 
 use frender_csr::{
@@ -11,18 +12,118 @@ use frender_csr::{
     render::RenderContext as _,
 };
 
-use crate::{
-    state::{PinnedStates, ReactiveStates, UiHandles},
-    weak_vec1::{Key, RcWithKey},
+use crate::weak_vec1::WeakVec1;
+
+use self::{
+    render_states::MountState,
+    state::{PinnedStates, ReactiveStates, State, StatesOfKind, UiHandles, UnmountedUiHandles},
 };
 
-use super::{
-    super::{
-        render_states::MountState,
-        state::{State, StatesOfKind, UnmountedUiHandles},
-    },
-    MapItemToElement, SyncedCollectionToElement,
-};
+use super::super::{AllStates, States};
+use super::{MapItemToElement, SyncedCollectionToElement};
+
+mod render_states;
+mod state;
+
+fn weak_is_of_rc<T: ?Sized, U: ?Sized>(weak: &Weak<T>, rc: &Rc<U>) -> bool {
+    std::ptr::addr_eq(Weak::as_ptr(weak), Rc::as_ptr(rc))
+}
+
+impl AllStates {
+    fn put_rc_states_with_old_key_hint<S: States + 'static>(
+        &mut self,
+        old_key_hint: Key,
+        rc: &Rc<RefCell<S>>,
+    ) -> Key {
+        self.0
+            .put_into_old_available_or_append(old_key_hint, rc, weak_is_of_rc, |rc| {
+                Rc::downgrade(rc) as _
+            })
+    }
+}
+
+impl<T: ?Sized> WeakVec1<T> {
+    fn contains<U: ?Sized>(&self, v: &RcWithKey<U>) -> bool {
+        let weak = match v.key {
+            Key::STACK => self.0.as_ref(),
+            Key(i) => self.1.get(i).and_then(Option::as_ref),
+        };
+        weak.map_or(false, |weak| weak_is_of_rc(weak, &v.rc))
+    }
+
+    fn put_into_old_available_or_append<R: ?Sized>(
+        &mut self,
+        old_key: Key,
+        rc: &R,
+        // We require Copy because we can.
+        weak_has_same_addr_of: impl Copy + FnOnce(&Weak<T>, &R) -> bool,
+        to_weak: impl Copy + FnOnce(&R) -> Weak<T>,
+    ) -> Key {
+        let stack = &mut self.0;
+
+        match old_key {
+            Key::STACK => {}
+            Key(index) => match self.1.get_mut(index) {
+                Some(weak) => {
+                    if put_into_available_weak(weak, rc, weak_has_same_addr_of, to_weak) {
+                        return old_key;
+                    }
+                }
+                None => {}
+            },
+        }
+
+        if put_into_available_weak(stack, rc, weak_has_same_addr_of, to_weak) {
+            return Key::STACK;
+        }
+
+        let i = self.1.len();
+        assert_ne!(i, Key::STACK.0);
+        self.1.push(Some(to_weak(rc)));
+        Key(i)
+    }
+}
+
+fn weak_is_empty<T: ?Sized>(v: &Weak<T>) -> bool {
+    v.strong_count() == 0
+}
+
+/// Returns `true` if `v` is available.
+fn put_into_available_weak<T: ?Sized, R: ?Sized>(
+    v: &mut Option<Weak<T>>,
+    rc: &R,
+    weak_has_same_addr_of: impl FnOnce(&Weak<T>, &R) -> bool,
+    to_weak: impl FnOnce(&R) -> Weak<T>,
+) -> bool {
+    match v {
+        None => {}
+        Some(v) if weak_is_empty(v) => {}
+        Some(v) if weak_has_same_addr_of(v, rc) => {
+            // the weak matched the rc so it doesn't need to be updated
+            return true;
+        }
+        _ => {
+            // the weak is alive and doesn't match the rc
+            return false;
+        }
+    }
+
+    *v = Some(to_weak(rc));
+
+    true
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+struct Key(usize);
+
+impl Key {
+    const STACK: Self = Self(usize::MAX);
+}
+
+struct RcWithKey<T: ?Sized> {
+    rc: Rc<T>,
+    key: Key,
+}
 
 enum Never {}
 pub struct Kind<K>(Never, PhantomData<K>);
@@ -180,7 +281,7 @@ where
 
         let cpb = render_context.map_mut_render_context(NodeRenderSelf::render_self);
 
-        let ui_handles = Rc::new(RefCell::new(super::super::state::States::new(ui_handles)));
+        let ui_handles = Rc::new(RefCell::new(self::state::States::new(ui_handles)));
 
         let key = {
             let all_states = &mut *all_states.borrow_mut();
