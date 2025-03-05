@@ -6,7 +6,7 @@ use frender_memo::csr_experimental::{CompoundState, Kind};
 
 use frender_fn_traits::{FnOnce1, FnOnce2};
 
-use super::super::CsrElementRenderUpdate;
+use super::super::super::bound::csr::CsrElementRenderUpdate;
 
 /// As [`CsrElementRenderUpdate`], this type has the same
 /// [`RenderStateKind`] as [`Memo<F, Dep>`].

@@ -17,6 +17,7 @@ cargo test -p frender-style --features web
 . ./scripts/test/frender-dom.sh
 . ./scripts/test/frender-form-control.sh
 . ./scripts/test/frender-html.sh
+. ./scripts/test/frender-hooks-ext.sh
 
 cargo test -p frender-render-with --features csr
 cargo +nightly test -p frender-render-with --features csr,nightly

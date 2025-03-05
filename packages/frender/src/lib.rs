@@ -1,6 +1,6 @@
 // pub use frender_element::Element;
 
-#[cfg(feature = "hooks")]
+#[cfg(feature = "hooks_ext")]
 pub mod hooks_ext;
 
 pub mod elements;
@@ -134,9 +134,8 @@ pub mod prelude {
     #[cfg(feature = "html-components")]
     pub use frender_html::{cs, cs as intrinsic_components};
 
-    #[cfg(feature = "hooks")]
-    #[cfg(feature = "ToElement")]
-    pub use crate::hooks_ext::ShareValueExt;
+    #[cfg(feature = "hooks_ext")]
+    pub use crate::hooks_ext::ShareValueExt as _;
 
     // #[cfg(feature = "csr")]
     // pub use frender_hook_element::frender_csr::{

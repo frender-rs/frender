@@ -1,4 +1,14 @@
-mod memo_phantom;
+use frender_fn_traits::FnMut2;
+
+use super::bound::MapValueToElement;
+
+/// `F: FnMut(&_, &Dep) -> _`
+pub struct WithMemo<F, Dep>(pub F, pub Dep);
+
+impl<F: for<'a, 'b> FnMut2<&'a V, &'b Dep>, Dep, V: ?Sized> MapValueToElement<V>
+    for WithMemo<F, Dep>
+{
+}
 
 pub struct MemoCallWithRef<F, Dep> {
     f: F,
@@ -14,17 +24,21 @@ impl<F, Dep> MemoCallWithRef<F, Dep> {
     }
 }
 
+#[cfg(feature = "csr")]
 mod csr {
     use frender_csr::{CsrElement, RenderStateKind};
-    use frender_memo::{Memo, MemoAndProvideFirstArgument, csr_experimental::Kind};
+    use frender_memo::{MemoAndProvideFirstArgument, csr_experimental::Kind};
 
     use frender_fn_traits::FnMut2;
 
     use super::{
-        super::{AsMutCsrElementWithValue, IntoAsMutCsrElementWithValue},
-        MemoCallWithRef,
-        memo_phantom::MemoPhantomAndProvideFirstArgument,
+        super::bound::csr::{AsMutCsrElementWithValue, MapValueToCsrElement},
+        MemoCallWithRef, WithMemo,
     };
+
+    use self::memo_phantom::MemoPhantomAndProvideFirstArgument;
+
+    mod memo_phantom;
 
     impl<V, F, Dep, K> AsMutCsrElementWithValue<V> for MemoCallWithRef<F, Dep>
     where
@@ -48,7 +62,7 @@ mod csr {
         }
     }
 
-    impl<V, F, Dep, K> IntoAsMutCsrElementWithValue<V> for Memo<F, Dep>
+    impl<V, F, Dep, K> MapValueToCsrElement<V> for WithMemo<F, Dep>
     where
         V: ?Sized,
         F: for<'a, 'b> FnMut2<&'a V, &'b Dep, Output: CsrElement<RenderStateKind = K>>,
@@ -80,14 +94,14 @@ mod csr {
     }
 }
 
+#[cfg(feature = "ssr")]
 mod ssr {
     use frender_fn_traits::FnMut2;
-    use frender_memo::Memo;
     use frender_ssr::{SsrElement, html::assert::HtmlChildren};
 
-    use super::super::IntoHtmlChildrenWithValue;
+    use super::{super::bound::ssr::MapValueToSsrElement, WithMemo};
 
-    impl<V, F, Dep, HC> IntoHtmlChildrenWithValue<V> for Memo<F, Dep>
+    impl<V, F, Dep, HC> MapValueToSsrElement<V> for WithMemo<F, Dep>
     where
         V: ?Sized,
         F: for<'a, 'b> FnMut2<&'a V, &'b Dep, Output: SsrElement<HtmlChildren = HC>>,

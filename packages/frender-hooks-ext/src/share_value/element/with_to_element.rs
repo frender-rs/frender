@@ -1,17 +1,24 @@
+use frender_to_element::ToElement;
+
+use super::bound::MapValueToElement;
+
 #[derive(Debug, Clone, Copy)]
 pub struct WithToElement;
 
+impl<V: ?Sized + ToElement> MapValueToElement<V> for WithToElement {}
+
+#[cfg(feature = "ssr")]
 mod ssr {
     use frender_ssr::{SsrElement, html::assert::HtmlChildren};
 
     use frender_to_element::ToElement;
 
-    use super::{super::IntoHtmlChildrenWithValue, WithToElement};
+    use super::{super::bound::ssr::MapValueToSsrElement, WithToElement};
 
     impl<
         V: ?Sized + for<'a> ToElement<ToElement<'a>: SsrElement<HtmlChildren = HC>>,
         HC: HtmlChildren,
-    > IntoHtmlChildrenWithValue<V> for WithToElement
+    > MapValueToSsrElement<V> for WithToElement
     {
         type HtmlChildrenWithValue = HC;
 
@@ -22,15 +29,15 @@ mod ssr {
     }
 }
 
+#[cfg(feature = "csr")]
 mod csr {
     use frender_csr::{CsrElement, RenderStateKind};
 
     use frender_to_element::ToElement;
 
     use super::{
-        super::{
-            AsMutCsrElementWithValue, IntoAsMutCsrElementWithValue,
-            impl_IntoAsMutCsrElementWithValue_with_Self,
+        super::bound::csr::{
+            AsMutCsrElementWithValue, MapValueToCsrElement, impl_MapValueToCsrElement_with_Self,
         },
         WithToElement,
     };
@@ -55,9 +62,9 @@ mod csr {
     impl<
         V: ?Sized + for<'a> ToElement<ToElement<'a>: CsrElement<RenderStateKind = K>>,
         K: RenderStateKind,
-    > IntoAsMutCsrElementWithValue<V> for WithToElement
+    > MapValueToCsrElement<V> for WithToElement
     {
-        impl_IntoAsMutCsrElementWithValue_with_Self! {
+        impl_MapValueToCsrElement_with_Self! {
             type Value = V;
         }
     }

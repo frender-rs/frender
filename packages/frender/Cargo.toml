@@ -17,9 +17,6 @@ frender-ssr = { version = "0.1.0", path = "../frender-ssr", default-features = f
 pin-project-lite = "0.2.9"
 lazy-pinned = "0.1.0"
 either = { version = "1.8.1", default-features = false, optional = true }
-hooks = { version = "3.0.0-alpha", default-features = false, features = [
-    "Signal",
-], optional = true }
 frender-events = { version = "0.1.0", path = "../frender-events" }
 async-str-iter = { version = "0.1.0", path = "../async-str-iter" }
 frender-csr-web = { version = "0.1.0", path = "../frender-csr-web", optional = true }
@@ -33,6 +30,7 @@ frender-reactive-value = { version = "0.1.0", path = "../frender-reactive-value"
 frender-fn-traits = { version = "0.1.0", path = "../frender-fn-traits" }
 frender-to-element = { version = "0.1.0", path = "../frender-to-element", optional = true }
 frender-memo = { version = "0.1.0", path = "../frender-memo", optional = true }
+frender-hooks-ext = { version = "0.1.0", path = "../frender-hooks-ext", optional = true }
 
 [dependencies.frender-hook-element]
 path = "../frender-hook-element"
@@ -78,6 +76,7 @@ either = [
     "dep:either",
     "frender-ssr/either",
     "frender-html/either",
+    "frender-hooks-ext?/either",
 ]
 web = ["dep:frender-csr-web"]
 spawn = ["frender-csr-web?/spawn"]
@@ -87,6 +86,7 @@ ssr = [
     "frender-html/ssr",
     "frender-element/ssr",
     "frender-memo?/ssr",
+    "frender-hooks-ext?/ssr",
 ]
 csr = [
     #
@@ -97,11 +97,13 @@ csr = [
     "frender-element/csr",
     "frender-memo?/csr",
     "frender-memo?/experimental",
+    "frender-hooks-ext?/csr",
 ]
 RenderWith = ["dep:frender-render-with"]
 KeyedElements = ["dep:frender-keyed-elements"]
-ToElement = ["dep:frender-to-element"]
+ToElement = ["dep:frender-to-element", "frender-hooks-ext?/ToElement"]
 context = ["dep:frender-context"]
-hooks = ["dep:hooks", "frender-context?/hooks"]
+hooks = ["frender-context?/hooks", "hooks_ext"]
+hooks_ext = ["dep:frender-hooks-ext"]
 SyncedCollection = []
 Memo = ["dep:frender-memo"]

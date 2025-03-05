@@ -1,10 +1,8 @@
 use hooks::{ShareValue, ToOwnedShareValue};
 
-use frender_fn_traits::FnMut1;
+use frender_fn_traits::{FnMut1, FnMut2};
 #[cfg(feature = "ToElement")]
 use frender_to_element::ToElement;
-#[cfg(feature = "Memo")]
-use {frender_fn_traits::FnMut2, frender_memo::Memo};
 
 pub mod callback;
 pub mod element;
@@ -89,26 +87,24 @@ pub trait ShareValueExt: ShareValue {
         self.to_owned_share_value().into_element_with_fn(f)
     }
 
-    #[cfg(feature = "Memo")]
     fn into_element_with_memo<F, Dep>(
         self,
         f: F,
         dep: Dep,
-    ) -> element::SignalIntoElement<Self, Memo<F, Dep>>
+    ) -> element::SignalIntoElement<Self, element::WithMemo<F, Dep>>
     where
         Self: Sized,
         F: for<'a, 'b> FnMut2<&'a Self::Value, &'b Dep>,
         Dep: PartialEq,
     {
-        element::SignalIntoElement(self, Memo(f, dep))
+        element::SignalIntoElement(self, element::WithMemo(f, dep))
     }
 
-    #[cfg(feature = "Memo")]
     fn to_element_with_memo<F, Dep>(
         &self,
         f: F,
         dep: Dep,
-    ) -> element::SignalIntoElement<Self::OwnedShareValue, Memo<F, Dep>>
+    ) -> element::SignalIntoElement<Self::OwnedShareValue, element::WithMemo<F, Dep>>
     where
         Self: Sized + ToOwnedShareValue,
         F: for<'a, 'b> FnMut2<&'a Self::Value, &'b Dep>,
