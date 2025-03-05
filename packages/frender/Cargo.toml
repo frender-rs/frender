@@ -68,7 +68,9 @@ default = [
     "KeyedElements",
     "Memo",
 ]
-nightly = ["frender-render-with?/nightly"]
+feature_impl_trait_in_assoc_type = [
+    "frender-render-with?/feature_impl_trait_in_assoc_type",
+]
 html = ["csr"] # TODO: remove
 html-components = ["html", "frender-html/components"]
 either = [

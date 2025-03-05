@@ -20,4 +20,4 @@ cargo test -p frender-style --features web
 . ./scripts/test/frender-hooks-ext.sh
 
 cargo test -p frender-render-with --features csr
-cargo +nightly test -p frender-render-with --features csr,nightly
+cargo +nightly test -p frender-render-with --features csr,feature_impl_trait_in_assoc_type

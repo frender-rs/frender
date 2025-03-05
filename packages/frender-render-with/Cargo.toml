@@ -25,4 +25,4 @@ hooks = { version = "3.0.0-alpha", default-features = false, features = [
 csr = ["dep:frender-csr"]
 
 # Also requires csr
-nightly = []
+feature_impl_trait_in_assoc_type = []

@@ -8,10 +8,10 @@ use frender_csr::{
 pub trait RenderHtml: experimental::RenderHtml {}
 impl<T: ?Sized + experimental::RenderHtml> RenderHtml for T {}
 
-#[cfg(feature = "nightly")]
+#[cfg(feature = "feature_impl_trait_in_assoc_type")]
 mod nightly_impl;
 
-#[cfg(not(feature = "nightly"))]
+#[cfg(not(feature = "feature_impl_trait_in_assoc_type"))]
 mod not_nightly_impl;
 
 /// This struct is a wrapper for render context so that it can only be used with

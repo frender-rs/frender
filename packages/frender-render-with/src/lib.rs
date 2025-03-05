@@ -1,4 +1,7 @@
-#![cfg_attr(feature = "nightly", feature(impl_trait_in_assoc_type))]
+#![cfg_attr(
+    feature = "feature_impl_trait_in_assoc_type",
+    feature(impl_trait_in_assoc_type)
+)]
 
 #[cfg(feature = "csr")]
 pub use self::csr::{
