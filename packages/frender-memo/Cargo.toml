@@ -16,5 +16,4 @@ frender-ssr = { version = "0.1.0", path = "../frender-ssr", optional = true }
 [features]
 csr = ["dep:frender-csr", "dep:pin-project-lite"]
 ssr = ["dep:frender-ssr"]
-pin-project-lite = ["dep:pin-project-lite"]
 experimental = []

@@ -6,15 +6,14 @@ pub use self::with_to_element::WithToElement;
 
 use std::{marker::PhantomData, pin::Pin, task::Poll};
 
-use frender_html::{
-    csr::experimental::{
+use frender_csr::{
+    CsrElement, RenderStateKind, StateUnmount,
+    experimental::{
         self, HtmlRenderContext, PinnedRenderStateKind, PinnedRenderStateKindPollRender,
         PinnedStateOfKind, PinnedUiHandleOfKind, RenderHtml, RenderInitPinned,
         UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender, UnpinnedStateOfKind,
         UnpinnedUiHandleOfKind,
     },
-    csr::{CsrElement, RenderStateKind},
-    dom::csr::StateUnmount,
 };
 use frender_ui_handles::CursorPlaceholdersSurrounded;
 
@@ -115,7 +114,7 @@ macro_rules! impl_IntoAsMutCsrElementWithValue_with_Self {
             (self, ())
         }
 
-        type OwnedPartIntoCsrElement<'a> = <Self as $crate::hooks_ext::element::AsMutCsrElementWithValue<$Value>>::ElementWithValue<'a>
+        type OwnedPartIntoCsrElement<'a> = <Self as $crate::share_value::element::AsMutCsrElementWithValue<$Value>>::ElementWithValue<'a>
         where
             Self: 'a,
             $Value: 'a;
@@ -346,14 +345,14 @@ impl<SH: SignalHook, T, NRS> StateProj<'_, SH, T, NRS> {
         }
 
         impl<
-                Data,
-                FRender: FnMut(&mut Data, Pin<&mut S>, &mut NRS, &V),
-                FPoll: FnMut(&mut Data, Pin<&mut S>, &mut NRS, &mut std::task::Context<'_>) -> Poll<()>,
-                FWarn: FnMut(&mut Data, &str),
-                V: ?Sized,
-                S: ?Sized,
-                NRS: ?Sized,
-            > SignalHookRenderer<V, S, NRS> for Renderer<Data, FRender, FPoll, FWarn>
+            Data,
+            FRender: FnMut(&mut Data, Pin<&mut S>, &mut NRS, &V),
+            FPoll: FnMut(&mut Data, Pin<&mut S>, &mut NRS, &mut std::task::Context<'_>) -> Poll<()>,
+            FWarn: FnMut(&mut Data, &str),
+            V: ?Sized,
+            S: ?Sized,
+            NRS: ?Sized,
+        > SignalHookRenderer<V, S, NRS> for Renderer<Data, FRender, FPoll, FWarn>
         {
             fn render_with_value(
                 &mut self,
@@ -568,7 +567,7 @@ where
     F: IntoAsMutCsrElementWithValue<SH::SignalShareValue>,
 {
     type Output = CursorPlaceholdersSurrounded<
-        <Ctx::Renderer as frender_html::dom::csr::render::Render>::CursorPlaceholder,
+        <Ctx::Renderer as frender_csr::experimental::render::Render>::CursorPlaceholder,
         <KindOfMutElement<F::MutPart, SH::SignalShareValue> as PinnedRenderStateKind>::PinnedUiHandle<
             Ctx::Renderer,
         >,
@@ -602,7 +601,7 @@ where
                 render_context,
                 |render_context| {
                     signal_hook.map(|value| {
-                        use frender_html::csr::render::RenderContext as _;
+                        use frender_csr::render::RenderContext as _;
                         let element = F::owned_part_into_csr_element(mut_part, value, owned_part);
                         let (state_init, render_init) =
                             element.pinned_render_init(render_context.renderer_mut());

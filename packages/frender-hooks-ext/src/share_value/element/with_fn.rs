@@ -1,15 +1,16 @@
 #[derive(Debug, Clone, Copy)]
 pub struct WithFn<F>(pub F);
 
+#[cfg(feature = "csr")]
 mod csr {
-    use frender_html::csr::{CsrElement, RenderStateKind};
+    use frender_csr::{CsrElement, RenderStateKind};
 
-    use crate::fn_traits::{FnMut1, FnOnce1};
+    use frender_fn_traits::{FnMut1, FnOnce1};
 
     use super::{
         super::{
-            impl_IntoAsMutCsrElementWithValue_with_Self, AsMutCsrElementWithValue,
-            IntoAsMutCsrElementWithValue,
+            AsMutCsrElementWithValue, IntoAsMutCsrElementWithValue,
+            impl_IntoAsMutCsrElementWithValue_with_Self,
         },
         WithFn,
     };
@@ -48,10 +49,10 @@ mod csr {
     }
 }
 
+#[cfg(feature = "ssr")]
 mod ssr {
-    use frender_ssr::html::assert::HtmlChildren;
-
-    use crate::{fn_traits::FnMut1, SsrElement};
+    use frender_fn_traits::FnMut1;
+    use frender_ssr::{SsrElement, html::assert::HtmlChildren};
 
     use super::{super::IntoHtmlChildrenWithValue, WithFn};
 

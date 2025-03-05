@@ -1,8 +1,10 @@
 use hooks::{ShareValue, ToOwnedShareValue};
 
-use crate::fn_traits::FnMut1;
+use frender_fn_traits::FnMut1;
+#[cfg(feature = "ToElement")]
+use frender_to_element::ToElement;
 #[cfg(feature = "Memo")]
-use crate::fn_traits::FnMut2;
+use {frender_fn_traits::FnMut2, frender_memo::Memo};
 
 pub mod callback;
 pub mod element;
@@ -52,7 +54,7 @@ pub trait ShareValueExt: ShareValue {
     fn into_element(self) -> element::SignalIntoElement<Self, element::WithToElement>
     where
         Self: Sized,
-        Self::Value: crate::ToElement,
+        Self::Value: ToElement,
     {
         element::SignalIntoElement(self, element::WithToElement)
     }
@@ -63,7 +65,7 @@ pub trait ShareValueExt: ShareValue {
     ) -> element::SignalIntoElement<Self::OwnedShareValue, element::WithToElement>
     where
         Self: Sized + ToOwnedShareValue,
-        Self::Value: crate::ToElement,
+        Self::Value: ToElement,
     {
         self.to_owned_share_value().into_element()
     }
@@ -92,13 +94,13 @@ pub trait ShareValueExt: ShareValue {
         self,
         f: F,
         dep: Dep,
-    ) -> element::SignalIntoElement<Self, crate::Memo<F, Dep>>
+    ) -> element::SignalIntoElement<Self, Memo<F, Dep>>
     where
         Self: Sized,
         F: for<'a, 'b> FnMut2<&'a Self::Value, &'b Dep>,
         Dep: PartialEq,
     {
-        element::SignalIntoElement(self, crate::Memo(f, dep))
+        element::SignalIntoElement(self, Memo(f, dep))
     }
 
     #[cfg(feature = "Memo")]
@@ -106,7 +108,7 @@ pub trait ShareValueExt: ShareValue {
         &self,
         f: F,
         dep: Dep,
-    ) -> element::SignalIntoElement<Self::OwnedShareValue, crate::Memo<F, Dep>>
+    ) -> element::SignalIntoElement<Self::OwnedShareValue, Memo<F, Dep>>
     where
         Self: Sized + ToOwnedShareValue,
         F: for<'a, 'b> FnMut2<&'a Self::Value, &'b Dep>,

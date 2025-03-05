@@ -1,0 +1,41 @@
+[package]
+name = "frender-hooks-ext"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+frender-common = { version = "0.1.0", path = "../frender-common" }
+frender-fn-traits = { version = "0.1.0", path = "../frender-fn-traits" }
+frender-events = { version = "0.1.0", path = "../frender-events" }
+frender-form-control = { version = "0.1.0", path = "../frender-form-control" }
+hooks = { version = "3.0.0-alpha", default-features = false, features = [
+    "Signal",
+] }
+# optional
+frender-memo = { version = "0.1.0", path = "../frender-memo", optional = true }
+frender-to-element = { version = "0.1.0", path = "../frender-to-element", optional = true }
+# csr
+frender-csr = { version = "0.1.0", path = "../frender-csr", optional = true, features = [
+    "experimental",
+] }
+frender-ui-handles = { version = "0.1.0", path = "../frender-ui-handles", features = [
+    "CursorPlaceholdersSurrounded",
+], optional = true }
+pin-project-lite = { version = "0.2.16", optional = true }
+# ssr
+async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-features = false, optional = true }
+frender-ssr = { version = "0.1.0", path = "../frender-ssr", optional = true }
+either = { version = "1.14.0", default-features = false, optional = true }
+
+[features]
+default = ["Memo", "ToElement", "either"] # TODO: remove
+csr = [
+    "dep:frender-csr",
+    "dep:frender-ui-handles",
+    "dep:pin-project-lite",
+    "frender-form-control/csr",
+]
+ssr = ["dep:async-str-iter", "dep:frender-ssr", "frender-form-control/ssr"]
+Memo = ["dep:frender-memo"]
+ToElement = ["dep:frender-to-element"]
+either = ["dep:either"]

@@ -1,8 +1,6 @@
 use std::borrow::Cow;
 
-use frender_html::form_control::{
-    FormControlValueKind, KindOfChecked, KindOfValue, KindOfValueAsNumber,
-};
+use frender_form_control::{FormControlValueKind, KindOfChecked, KindOfValue, KindOfValueAsNumber};
 
 pub trait FromFormControlValue<VK: ?Sized + FormControlValueKind> {
     fn from_form_control_value(v: VK::FormControlValue<'_>) -> Self;

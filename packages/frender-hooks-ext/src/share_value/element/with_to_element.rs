@@ -2,16 +2,16 @@
 pub struct WithToElement;
 
 mod ssr {
-    use frender_ssr::{html::assert::HtmlChildren, SsrElement};
+    use frender_ssr::{SsrElement, html::assert::HtmlChildren};
 
-    use crate::ToElement;
+    use frender_to_element::ToElement;
 
     use super::{super::IntoHtmlChildrenWithValue, WithToElement};
 
     impl<
-            V: ?Sized + for<'a> ToElement<ToElement<'a>: SsrElement<HtmlChildren = HC>>,
-            HC: HtmlChildren,
-        > IntoHtmlChildrenWithValue<V> for WithToElement
+        V: ?Sized + for<'a> ToElement<ToElement<'a>: SsrElement<HtmlChildren = HC>>,
+        HC: HtmlChildren,
+    > IntoHtmlChildrenWithValue<V> for WithToElement
     {
         type HtmlChildrenWithValue = HC;
 
@@ -23,22 +23,22 @@ mod ssr {
 }
 
 mod csr {
-    use frender_html::csr::{CsrElement, RenderStateKind};
+    use frender_csr::{CsrElement, RenderStateKind};
 
-    use crate::ToElement;
+    use frender_to_element::ToElement;
 
     use super::{
         super::{
-            impl_IntoAsMutCsrElementWithValue_with_Self, AsMutCsrElementWithValue,
-            IntoAsMutCsrElementWithValue,
+            AsMutCsrElementWithValue, IntoAsMutCsrElementWithValue,
+            impl_IntoAsMutCsrElementWithValue_with_Self,
         },
         WithToElement,
     };
 
     impl<
-            V: ?Sized + for<'a> ToElement<ToElement<'a>: CsrElement<RenderStateKind = K>>,
-            K: RenderStateKind,
-        > AsMutCsrElementWithValue<V> for WithToElement
+        V: ?Sized + for<'a> ToElement<ToElement<'a>: CsrElement<RenderStateKind = K>>,
+        K: RenderStateKind,
+    > AsMutCsrElementWithValue<V> for WithToElement
     {
         type ElementWithValue<'a>
             = V::ToElement<'a>
@@ -53,9 +53,9 @@ mod csr {
     }
 
     impl<
-            V: ?Sized + for<'a> ToElement<ToElement<'a>: CsrElement<RenderStateKind = K>>,
-            K: RenderStateKind,
-        > IntoAsMutCsrElementWithValue<V> for WithToElement
+        V: ?Sized + for<'a> ToElement<ToElement<'a>: CsrElement<RenderStateKind = K>>,
+        K: RenderStateKind,
+    > IntoAsMutCsrElementWithValue<V> for WithToElement
     {
         impl_IntoAsMutCsrElementWithValue_with_Self! {
             type Value = V;

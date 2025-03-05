@@ -1,9 +1,7 @@
-use frender_html::form_control::input::{InputValueKind, SsrInputValue};
+use frender_form_control::input::{InputValueKind, SsrInputValue};
 use hooks::Signal;
 
-use crate::hooks_ext::form_control::{
-    SignalIntoControlledValue, ToProvideFormControlValueWithKind,
-};
+use super::super::{SignalIntoControlledValue, ToProvideFormControlValueWithKind};
 
 impl<S, FK> SsrInputValue for SignalIntoControlledValue<S>
 where

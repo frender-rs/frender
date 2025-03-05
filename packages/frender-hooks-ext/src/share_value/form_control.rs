@@ -5,13 +5,11 @@ pub use self::{
 
 use std::{marker::PhantomData, pin::Pin, task::Poll};
 
-use frender_html::{
-    dom::csr::{RegisterUpdate, StateUnmount},
-    form_control::{
-        csr::{
-            FormControlElement, FormControlValue, FormControlValueStateKind, HandleFormControlValue,
-        },
-        FormControlValueKind, MaybeProvideFormControlValue, ProvideFormControlValue,
+use frender_csr::{StateUnmount, experimental::event_listener::RegisterUpdate};
+use frender_form_control::{
+    FormControlValueKind, MaybeProvideFormControlValue, ProvideFormControlValue,
+    csr::{
+        FormControlElement, FormControlValue, FormControlValueStateKind, HandleFormControlValue,
     },
 };
 use hooks::{Hook as _, HookPollNextUpdate, HookUnmount, ShareValue, Signal};

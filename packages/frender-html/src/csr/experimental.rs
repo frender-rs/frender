@@ -13,3 +13,11 @@ pub use frender_dom::csr::ProvideRenderContext;
 pub mod kinds {
     pub use crate::csr::kinds::KindUnpinned;
 }
+
+pub mod render {
+    pub use frender_dom::csr::render::Render;
+}
+
+pub mod event_listener {
+    pub use frender_dom::csr::{PinnedRegisterUpdate, RegisterUpdate};
+}

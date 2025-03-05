@@ -15,15 +15,15 @@ impl<F, Dep> MemoCallWithRef<F, Dep> {
 }
 
 mod csr {
-    use frender_html::csr::{CsrElement, RenderStateKind};
-    use frender_memo::{csr_experimental::Kind, Memo, MemoAndProvideFirstArgument};
+    use frender_csr::{CsrElement, RenderStateKind};
+    use frender_memo::{Memo, MemoAndProvideFirstArgument, csr_experimental::Kind};
 
-    use crate::fn_traits::FnMut2;
+    use frender_fn_traits::FnMut2;
 
     use super::{
         super::{AsMutCsrElementWithValue, IntoAsMutCsrElementWithValue},
-        memo_phantom::MemoPhantomAndProvideFirstArgument,
         MemoCallWithRef,
+        memo_phantom::MemoPhantomAndProvideFirstArgument,
     };
 
     impl<V, F, Dep, K> AsMutCsrElementWithValue<V> for MemoCallWithRef<F, Dep>
@@ -81,9 +81,9 @@ mod csr {
 }
 
 mod ssr {
-    use frender_ssr::{html::assert::HtmlChildren, SsrElement};
-
-    use crate::{fn_traits::FnMut2, Memo};
+    use frender_fn_traits::FnMut2;
+    use frender_memo::Memo;
+    use frender_ssr::{SsrElement, html::assert::HtmlChildren};
 
     use super::super::IntoHtmlChildrenWithValue;
 
@@ -97,7 +97,7 @@ mod ssr {
         type HtmlChildrenWithValue = HC;
 
         fn into_html_children_with_value(mut self, value: &V) -> Self::HtmlChildrenWithValue {
-            use crate::SsrElement as _;
+            use frender_ssr::SsrElement as _;
             (self.0)(value, &self.1).into_html_children()
         }
     }

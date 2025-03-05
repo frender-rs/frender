@@ -1,10 +1,10 @@
-use frender_html::csr::{
-    experimental::{self, RenderHtml},
+use frender_csr::{
     RenderStateKind,
+    experimental::{self, RenderHtml},
 };
 use frender_memo::csr_experimental::{CompoundState, Kind};
 
-use crate::fn_traits::{FnOnce1, FnOnce2};
+use frender_fn_traits::{FnOnce1, FnOnce2};
 
 use super::super::CsrElementRenderUpdate;
 
@@ -94,5 +94,5 @@ where
 {
     type RenderStateKind = Kind<K, Dep>;
 
-    frender_html::proxy_csr_element_render_update!(|this| this.into_memo_phantom());
+    frender_csr::proxy_csr_element_render_update!(|this| this.into_memo_phantom());
 }

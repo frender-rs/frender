@@ -1,4 +1,4 @@
-use frender_html::form_control::input::{InputValue, InputValueKind};
+use frender_form_control::input::{InputValue, InputValueKind};
 
 use hooks::Signal;
 

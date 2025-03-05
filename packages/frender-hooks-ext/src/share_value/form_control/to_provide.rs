@@ -1,12 +1,12 @@
 use frender_common::impl_many;
-use frender_html::form_control::{
-    values::EitherFormControlValue, FormControlValueKind, KindOfChecked, KindOfValue,
-    KindOfValueAsNumber,
+use frender_form_control::{
+    FormControlValueKind, KindOfChecked, KindOfValue, KindOfValueAsNumber,
+    values::EitherFormControlValue,
 };
 
 pub trait ToProvideFormControlValue<VK: FormControlValueKind> {
     fn to_provide_form_control_value<Out>(&self, receive: impl FnOnce(VK::Value<'_>) -> Out)
-        -> Out;
+    -> Out;
 }
 
 pub trait ToProvideFormControlValueWithKind:
@@ -59,11 +59,8 @@ impl<S: ?Sized + KnownStr> ToProvideFormControlValueWithKind for S {
 }
 // endregion
 // region: either
-impl<
-        VK: FormControlValueKind,
-        A: ToProvideFormControlValue<VK>,
-        B: ToProvideFormControlValue<VK>,
-    > ToProvideFormControlValue<VK> for EitherFormControlValue<A, B>
+impl<VK: FormControlValueKind, A: ToProvideFormControlValue<VK>, B: ToProvideFormControlValue<VK>>
+    ToProvideFormControlValue<VK> for EitherFormControlValue<A, B>
 {
     fn to_provide_form_control_value<Out>(
         &self,
@@ -76,10 +73,10 @@ impl<
     }
 }
 impl<
-        VK: FormControlValueKind,
-        A: ToProvideFormControlValueWithKind<ToProvideFormControlValueKind = VK>,
-        B: ToProvideFormControlValueWithKind<ToProvideFormControlValueKind = VK>,
-    > ToProvideFormControlValueWithKind for EitherFormControlValue<A, B>
+    VK: FormControlValueKind,
+    A: ToProvideFormControlValueWithKind<ToProvideFormControlValueKind = VK>,
+    B: ToProvideFormControlValueWithKind<ToProvideFormControlValueKind = VK>,
+> ToProvideFormControlValueWithKind for EitherFormControlValue<A, B>
 {
     type ToProvideFormControlValueKind = VK;
 }
@@ -87,15 +84,15 @@ impl<
 #[cfg(feature = "either")]
 mod extern_either {
     use either::Either;
-    use frender_html::form_control::FormControlValueKind;
+    use frender_form_control::FormControlValueKind;
 
     use super::{ToProvideFormControlValue, ToProvideFormControlValueWithKind};
 
     impl<
-            VK: FormControlValueKind,
-            L: ToProvideFormControlValue<VK>,
-            R: ToProvideFormControlValue<VK>,
-        > ToProvideFormControlValue<VK> for Either<L, R>
+        VK: FormControlValueKind,
+        L: ToProvideFormControlValue<VK>,
+        R: ToProvideFormControlValue<VK>,
+    > ToProvideFormControlValue<VK> for Either<L, R>
     {
         fn to_provide_form_control_value<Out>(
             &self,
@@ -106,10 +103,10 @@ mod extern_either {
     }
 
     impl<
-            VK: FormControlValueKind,
-            L: ToProvideFormControlValueWithKind<ToProvideFormControlValueKind = VK>,
-            R: ToProvideFormControlValueWithKind<ToProvideFormControlValueKind = VK>,
-        > ToProvideFormControlValueWithKind for Either<L, R>
+        VK: FormControlValueKind,
+        L: ToProvideFormControlValueWithKind<ToProvideFormControlValueKind = VK>,
+        R: ToProvideFormControlValueWithKind<ToProvideFormControlValueKind = VK>,
+    > ToProvideFormControlValueWithKind for Either<L, R>
     {
         type ToProvideFormControlValueKind = VK;
     }
