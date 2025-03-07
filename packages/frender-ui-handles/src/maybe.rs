@@ -1,6 +1,6 @@
 use frender_dom::csr::{
-    UiHandle, UnmountedUiHandle,
     render::{RenderContext, RenderWithContext},
+    UiHandle, UnmountedUiHandle,
 };
 
 pub enum UiHandleMaybe<M, U> {

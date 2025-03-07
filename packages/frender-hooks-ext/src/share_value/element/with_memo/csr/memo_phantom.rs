@@ -1,6 +1,6 @@
 use frender_csr::{
-    RenderStateKind,
     experimental::{self, RenderHtml},
+    RenderStateKind,
 };
 use frender_memo::csr_experimental::{CompoundState, Kind};
 

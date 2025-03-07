@@ -1,7 +1,7 @@
 use frender_dom::csr::{
-    UiHandle, UnmountedUiHandle,
     behaviors::{NodeRenderSelf, NodeWithRenderContextAfterSelf},
     render::RenderWithContext,
+    UiHandle, UnmountedUiHandle,
 };
 
 pub struct CursorPlaceholdersSurrounded<C, UH> {

@@ -9,16 +9,16 @@ impl<V: ?Sized + ToElement> MapValueToElement<V> for WithToElement {}
 
 #[cfg(feature = "ssr")]
 mod ssr {
-    use frender_ssr::{SsrElement, html::assert::HtmlChildren};
+    use frender_ssr::{html::assert::HtmlChildren, SsrElement};
 
     use frender_to_element::ToElement;
 
     use super::{super::bound::ssr::MapValueToSsrElement, WithToElement};
 
     impl<
-        V: ?Sized + for<'a> ToElement<ToElement<'a>: SsrElement<HtmlChildren = HC>>,
-        HC: HtmlChildren,
-    > MapValueToSsrElement<V> for WithToElement
+            V: ?Sized + for<'a> ToElement<ToElement<'a>: SsrElement<HtmlChildren = HC>>,
+            HC: HtmlChildren,
+        > MapValueToSsrElement<V> for WithToElement
     {
         type HtmlChildrenWithValue = HC;
 
@@ -37,15 +37,15 @@ mod csr {
 
     use super::{
         super::bound::csr::{
-            AsMutCsrElementWithValue, MapValueToCsrElement, impl_MapValueToCsrElement_with_Self,
+            impl_MapValueToCsrElement_with_Self, AsMutCsrElementWithValue, MapValueToCsrElement,
         },
         WithToElement,
     };
 
     impl<
-        V: ?Sized + for<'a> ToElement<ToElement<'a>: CsrElement<RenderStateKind = K>>,
-        K: RenderStateKind,
-    > AsMutCsrElementWithValue<V> for WithToElement
+            V: ?Sized + for<'a> ToElement<ToElement<'a>: CsrElement<RenderStateKind = K>>,
+            K: RenderStateKind,
+        > AsMutCsrElementWithValue<V> for WithToElement
     {
         type ElementWithValue<'a>
             = V::ToElement<'a>
@@ -60,9 +60,9 @@ mod csr {
     }
 
     impl<
-        V: ?Sized + for<'a> ToElement<ToElement<'a>: CsrElement<RenderStateKind = K>>,
-        K: RenderStateKind,
-    > MapValueToCsrElement<V> for WithToElement
+            V: ?Sized + for<'a> ToElement<ToElement<'a>: CsrElement<RenderStateKind = K>>,
+            K: RenderStateKind,
+        > MapValueToCsrElement<V> for WithToElement
     {
         impl_MapValueToCsrElement_with_Self! {
             type Value = V;

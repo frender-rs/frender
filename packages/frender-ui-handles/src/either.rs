@@ -1,4 +1,4 @@
-use frender_dom::csr::{UiHandle, UnmountedUiHandle, render::RenderWithContext};
+use frender_dom::csr::{render::RenderWithContext, UiHandle, UnmountedUiHandle};
 
 pub enum EitherUiHandle<A, B> {
     A(A),

@@ -34,7 +34,7 @@ mod ssr {
 
 #[cfg(feature = "csr")]
 mod csr {
-    use frender_form_control::{KindOfValue, textarea::CsrTextAreaValue};
+    use frender_form_control::{textarea::CsrTextAreaValue, KindOfValue};
     use hooks::Signal;
 
     use crate::share_value::form_control::{

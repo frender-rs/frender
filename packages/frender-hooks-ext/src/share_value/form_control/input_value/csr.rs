@@ -2,7 +2,7 @@ use frender_form_control::input::{CsrInputValue, InputValueKind};
 use hooks::Signal;
 
 use super::super::{
-    FromFormControlValue, SignalIntoControlledValue, to_provide::ToProvideFormControlValueWithKind,
+    to_provide::ToProvideFormControlValueWithKind, FromFormControlValue, SignalIntoControlledValue,
 };
 
 impl<S, FK> CsrInputValue for SignalIntoControlledValue<S>

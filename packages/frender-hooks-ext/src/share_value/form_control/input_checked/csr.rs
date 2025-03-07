@@ -1,4 +1,4 @@
-use frender_form_control::{KindOfChecked, input::CsrInputChecked};
+use frender_form_control::{input::CsrInputChecked, KindOfChecked};
 use hooks::Signal;
 
 use super::super::{FromFormControlValue, SignalIntoControlledValue, ToProvideFormControlValue};

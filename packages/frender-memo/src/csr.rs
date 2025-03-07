@@ -3,13 +3,13 @@ use std::pin::Pin;
 use std::task::Poll;
 
 use frender_csr::{
-    CsrElement, RenderStateKind, StateUnmount, UnmountedUiHandle as _,
     experimental::{
         self, HtmlRenderContext, PinnedRenderStateKind, PinnedRenderStateKindPollRender,
         PinnedStateOfKind, PinnedUiHandleOfKind, RenderHtml, RenderInitPinned,
         UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender,
     },
-    proxy_csr_element_without_pinned_render_init,
+    proxy_csr_element_without_pinned_render_init, CsrElement, RenderStateKind, StateUnmount,
+    UnmountedUiHandle as _,
 };
 
 use frender_fn_traits::{FnOnce1, FnOnce2};
@@ -147,11 +147,12 @@ impl<K: PinnedRenderStateKindPollRender, Dep> PinnedRenderStateKindPollRender fo
 pub struct RenderInit<F>(F);
 
 impl<
-    F: for<'a> FnOnce1<&'a Dep, Output: CsrElement<RenderStateKind = K>>,
-    Dep,
-    K: PinnedRenderStateKind,
-    Ctx: ?Sized + HtmlRenderContext,
-> RenderInitPinned<&mut Ctx, PinnedState<K::PinnedState<Ctx::Renderer>, Dep>> for RenderInit<F>
+        F: for<'a> FnOnce1<&'a Dep, Output: CsrElement<RenderStateKind = K>>,
+        Dep,
+        K: PinnedRenderStateKind,
+        Ctx: ?Sized + HtmlRenderContext,
+    > RenderInitPinned<&mut Ctx, PinnedState<K::PinnedState<Ctx::Renderer>, Dep>>
+    for RenderInit<F>
 {
     type Output = K::PinnedUiHandle<Ctx::Renderer>;
 
@@ -173,10 +174,10 @@ impl<
 }
 
 impl<
-    F: for<'a> FnOnce1<&'a Dep, Output: CsrElement<RenderStateKind = K>>,
-    Dep: PartialEq,
-    K: RenderStateKind,
-> CsrElement for Memo<F, Dep>
+        F: for<'a> FnOnce1<&'a Dep, Output: CsrElement<RenderStateKind = K>>,
+        Dep: PartialEq,
+        K: RenderStateKind,
+    > CsrElement for Memo<F, Dep>
 {
     type RenderStateKind = Kind<K, Dep>;
     type PinnedRenderInit<R: ?Sized + RenderHtml> = RenderInit<F>;
@@ -325,12 +326,12 @@ impl<F, A> RenderInitProvideFirstArgument<F, A> {
 }
 
 impl<
-    F: for<'a> FnOnce2<A, &'a Dep, Output: CsrElement<RenderStateKind = K>>,
-    A,
-    Dep,
-    K: PinnedRenderStateKind,
-    Ctx: ?Sized + HtmlRenderContext,
-> RenderInitPinned<&mut Ctx, PinnedState<K::PinnedState<Ctx::Renderer>, Dep>>
+        F: for<'a> FnOnce2<A, &'a Dep, Output: CsrElement<RenderStateKind = K>>,
+        A,
+        Dep,
+        K: PinnedRenderStateKind,
+        Ctx: ?Sized + HtmlRenderContext,
+    > RenderInitPinned<&mut Ctx, PinnedState<K::PinnedState<Ctx::Renderer>, Dep>>
     for RenderInitProvideFirstArgument<F, A>
 {
     type Output = K::PinnedUiHandle<Ctx::Renderer>;
@@ -345,11 +346,11 @@ impl<
 }
 
 impl<
-    F: for<'a> FnOnce2<A, &'a Dep, Output: CsrElement<RenderStateKind = K>>,
-    A,
-    Dep: PartialEq,
-    K: RenderStateKind,
-> CsrElement for MemoAndProvideFirstArgument<F, A, Dep>
+        F: for<'a> FnOnce2<A, &'a Dep, Output: CsrElement<RenderStateKind = K>>,
+        A,
+        Dep: PartialEq,
+        K: RenderStateKind,
+    > CsrElement for MemoAndProvideFirstArgument<F, A, Dep>
 {
     type RenderStateKind = Kind<K, Dep>;
     type PinnedRenderInit<R: ?Sized + RenderHtml> = RenderInitProvideFirstArgument<F, A>;

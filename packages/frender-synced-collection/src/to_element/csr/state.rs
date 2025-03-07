@@ -1,18 +1,18 @@
 use std::{cell::RefCell, pin::Pin, rc::Rc, task::Poll};
 
 use frender_csr::{
-    CsrElement, StateUnmount, UiHandle, UnmountedUiHandle,
     experimental::{
         HtmlRenderContext, RenderHtml, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender,
     },
     render::{RenderContext, RenderWithContext},
+    CsrElement, StateUnmount, UiHandle, UnmountedUiHandle,
 };
 
 use crate::{StatesCommon, StatesLikeVec};
 
 use super::{
-    RcWithKey,
     render_states::{MountState, NeedsReposition},
+    RcWithKey,
 };
 
 pub(super) enum State<M, U, S> {
@@ -75,9 +75,9 @@ impl<M, U, S> State<M, U, S> {
         M: UiHandle<Ctx::Renderer, Unmounted = U>,
         U: UnmountedUiHandle<Ctx::Renderer, Mounted = M>,
         E::RenderStateKind: UnpinnedRenderStateKind<
-                UnpinnedUiHandle<Ctx::Renderer> = M,
-                UnpinnedState<Ctx::Renderer> = S,
-            >,
+            UnpinnedUiHandle<Ctx::Renderer> = M,
+            UnpinnedState<Ctx::Renderer> = S,
+        >,
     {
         self.render_init_or_update_with(
             || element,
@@ -117,9 +117,9 @@ impl<M, U, S> State<M, U, S> {
         M: UiHandle<Ctx::Renderer, Unmounted = U>,
         U: UnmountedUiHandle<Ctx::Renderer, Mounted = M>,
         E::RenderStateKind: UnpinnedRenderStateKind<
-                UnpinnedUiHandle<Ctx::Renderer> = M,
-                UnpinnedState<Ctx::Renderer> = S,
-            >,
+            UnpinnedUiHandle<Ctx::Renderer> = M,
+            UnpinnedState<Ctx::Renderer> = S,
+        >,
     {
         match self {
             State::BeforeMounted => {
@@ -172,9 +172,9 @@ impl<M, U, S> State<M, U, S> {
         M: UiHandle<Ctx::Renderer, Unmounted = U>,
         U: UnmountedUiHandle<Ctx::Renderer, Mounted = M>,
         E::RenderStateKind: UnpinnedRenderStateKind<
-                UnpinnedUiHandle<Ctx::Renderer> = M,
-                UnpinnedState<Ctx::Renderer> = S,
-            >,
+            UnpinnedUiHandle<Ctx::Renderer> = M,
+            UnpinnedState<Ctx::Renderer> = S,
+        >,
     {
         self.force_render_init_or_update_with(
             element,
@@ -195,9 +195,9 @@ impl<M, U, S> State<M, U, S> {
         M: UiHandle<Ctx::Renderer, Unmounted = U>,
         U: UnmountedUiHandle<Ctx::Renderer, Mounted = M>,
         E::RenderStateKind: UnpinnedRenderStateKind<
-                UnpinnedUiHandle<Ctx::Renderer> = M,
-                UnpinnedState<Ctx::Renderer> = S,
-            >,
+            UnpinnedUiHandle<Ctx::Renderer> = M,
+            UnpinnedState<Ctx::Renderer> = S,
+        >,
     {
         self.force_render_init_or_update_with(
             element,

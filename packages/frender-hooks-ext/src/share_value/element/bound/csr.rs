@@ -1,11 +1,11 @@
 use std::pin::Pin;
 
 use frender_csr::{
-    CsrElement, RenderStateKind,
     experimental::{
         PinnedStateOfKind, PinnedUiHandleOfKind, RenderHtml, UnpinnedStateOfKind,
         UnpinnedUiHandleOfKind,
     },
+    CsrElement, RenderStateKind,
 };
 
 pub trait CsrElementRenderUpdate {

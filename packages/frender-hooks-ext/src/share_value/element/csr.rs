@@ -1,13 +1,13 @@
 use std::{marker::PhantomData, pin::Pin, task::Poll};
 
 use frender_csr::{
-    CsrElement, StateUnmount,
     experimental::{
         self, HtmlRenderContext, PinnedRenderStateKind, PinnedRenderStateKindPollRender,
         PinnedStateOfKind, PinnedUiHandleOfKind, RenderHtml, RenderInitPinned,
         UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender, UnpinnedStateOfKind,
         UnpinnedUiHandleOfKind,
     },
+    CsrElement, StateUnmount,
 };
 use frender_ui_handles::CursorPlaceholdersSurrounded;
 
@@ -15,8 +15,8 @@ use hooks::{HookUnmount, ShareValue, Signal, SignalHook};
 use pin_project_lite::pin_project;
 
 use super::{
-    SignalIntoElement,
     bound::csr::{AsMutCsrElementWithValue, CsrElementRenderUpdate as _, MapValueToCsrElement},
+    SignalIntoElement,
 };
 
 pin_project!(
@@ -199,14 +199,14 @@ impl<SH: SignalHook, T, NRS> StateProj<'_, SH, T, NRS> {
         }
 
         impl<
-            Data,
-            FRender: FnMut(&mut Data, Pin<&mut S>, &mut NRS, &V),
-            FPoll: FnMut(&mut Data, Pin<&mut S>, &mut NRS, &mut std::task::Context<'_>) -> Poll<()>,
-            FWarn: FnMut(&mut Data, &str),
-            V: ?Sized,
-            S: ?Sized,
-            NRS: ?Sized,
-        > SignalHookRenderer<V, S, NRS> for Renderer<Data, FRender, FPoll, FWarn>
+                Data,
+                FRender: FnMut(&mut Data, Pin<&mut S>, &mut NRS, &V),
+                FPoll: FnMut(&mut Data, Pin<&mut S>, &mut NRS, &mut std::task::Context<'_>) -> Poll<()>,
+                FWarn: FnMut(&mut Data, &str),
+                V: ?Sized,
+                S: ?Sized,
+                NRS: ?Sized,
+            > SignalHookRenderer<V, S, NRS> for Renderer<Data, FRender, FPoll, FWarn>
         {
             fn render_with_value(
                 &mut self,

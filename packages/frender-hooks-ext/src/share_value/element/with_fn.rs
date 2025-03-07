@@ -15,7 +15,7 @@ mod csr {
 
     use super::{
         super::bound::csr::{
-            AsMutCsrElementWithValue, MapValueToCsrElement, impl_MapValueToCsrElement_with_Self,
+            impl_MapValueToCsrElement_with_Self, AsMutCsrElementWithValue, MapValueToCsrElement,
         },
         WithFn,
     };
@@ -57,7 +57,7 @@ mod csr {
 #[cfg(feature = "ssr")]
 mod ssr {
     use frender_fn_traits::FnMut1;
-    use frender_ssr::{SsrElement, html::assert::HtmlChildren};
+    use frender_ssr::{html::assert::HtmlChildren, SsrElement};
 
     use super::{super::bound::ssr::MapValueToSsrElement, WithFn};
 

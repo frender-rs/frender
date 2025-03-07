@@ -27,7 +27,7 @@ impl<F, Dep> MemoCallWithRef<F, Dep> {
 #[cfg(feature = "csr")]
 mod csr {
     use frender_csr::{CsrElement, RenderStateKind};
-    use frender_memo::{MemoAndProvideFirstArgument, csr_experimental::Kind};
+    use frender_memo::{csr_experimental::Kind, MemoAndProvideFirstArgument};
 
     use frender_fn_traits::FnMut2;
 
@@ -97,7 +97,7 @@ mod csr {
 #[cfg(feature = "ssr")]
 mod ssr {
     use frender_fn_traits::FnMut2;
-    use frender_ssr::{SsrElement, html::assert::HtmlChildren};
+    use frender_ssr::{html::assert::HtmlChildren, SsrElement};
 
     use super::{super::bound::ssr::MapValueToSsrElement, WithMemo};
 

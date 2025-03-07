@@ -1,6 +1,6 @@
 use hooks::ShareValue;
 
-use super::{SignalIntoElement, bound::ssr::MapValueToSsrElement};
+use super::{bound::ssr::MapValueToSsrElement, SignalIntoElement};
 
 impl<S: ShareValue, F> frender_ssr::SsrElement for SignalIntoElement<S, F>
 where
