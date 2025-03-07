@@ -41,10 +41,12 @@ fn temp_str_with_element_macro() -> impl Element {
 
 #[cfg(todo)]
 fn temp_str_with_hook_closure() -> impl Element {
-    frender::new_fn_hook_element(hook_closure!(move || -> TempStr<&'hook str> {
-        let s = h![use_time_string()];
-        TempRef(s)
-    }))
+    frender::elements::hook_element::new_fn_hook_element(hook_closure!(
+        move || -> TempStr<&'hook str> {
+            let s = h![use_time_string()];
+            TempRef(s)
+        }
+    ))
 }
 
 #[allow(unused)]
@@ -59,7 +61,7 @@ fn temp_str_macro_expanded_csr_only() -> impl ::frender::CsrElement {
         v
     }
 
-    ::frender::new_fn_hook_element(identity_fn(
+    ::frender::elements::hook_element::new_fn_hook_element(identity_fn(
         move |__hooks_hook_0: ::core::pin::Pin<&mut _>| {
             let s = ::frender::__private::hooks_core::UpdateHookUninitialized::h(
                 use_time_string(),
@@ -81,7 +83,7 @@ fn temp_str_macro_expanded() -> impl ::frender::Element {
         v
     }
 
-    ::frender::new_fn_hook_element(identity_fn(
+    ::frender::elements::hook_element::new_fn_hook_element(identity_fn(
         move |__hooks_hook_0: ::core::pin::Pin<&mut _>| {
             let s = ::frender::__private::hooks_core::UpdateHookUninitialized::h(
                 use_time_string(),

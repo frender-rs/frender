@@ -104,15 +104,15 @@ pub fn transform_item_fn_with(
     // TODO: link #[not_hook]
 
     let method_span = span;
-    let method_name = "new_fn_hook_element";
-
-    let method_name = proc_macro2::Ident::new(method_name, method_span);
+    let method_name = quote_spanned! {method_span=>
+        hook_element::new_fn_hook_element
+    };
 
     let prepend_stmt = before_stmts(item_fn, errors);
 
     item_fn.block.stmts.push(syn::Stmt::Expr(
         syn::Expr::Verbatim(quote_spanned! {span=>
-            #frender_path::#method_name (
+            #frender_path::elements::#method_name (
                 move |#fn_arg_data_pat| {
 
                     #fn_stmts_extract_data
