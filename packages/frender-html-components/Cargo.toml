@@ -7,3 +7,7 @@ edition = "2021"
 frender-html = { version = "0.1.0", path = "../frender-html", default-features = false, features = [
     "components",
 ] }
+
+[features]
+csr = ["frender-html/csr"]
+ssr = ["frender-html/ssr"]

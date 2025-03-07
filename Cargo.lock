@@ -890,7 +890,8 @@ dependencies = [
  "frender-events",
  "frender-hook-element",
  "frender-hooks-ext",
- "frender-html",
+ "frender-html-components",
+ "frender-html-values",
  "frender-keyed-elements",
  "frender-macros",
  "frender-memo",
@@ -1030,6 +1031,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "frender-dom-values"
+version = "0.1.0"
+dependencies = [
+ "frender-attr-value",
+ "frender-dom",
+ "frender-dom-tokens",
+ "frender-form-control",
+ "frender-style",
+]
+
+[[package]]
 name = "frender-element"
 version = "0.1.0"
 dependencies = [
@@ -1108,6 +1120,7 @@ dependencies = [
  "frender-attr-value",
  "frender-common",
  "frender-dom",
+ "frender-dom-values",
  "frender-events",
  "frender-form-control",
  "frender-reactive-value",
@@ -1137,6 +1150,13 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.60",
+]
+
+[[package]]
+name = "frender-html-values"
+version = "0.1.0"
+dependencies = [
+ "frender-html",
 ]
 
 [[package]]

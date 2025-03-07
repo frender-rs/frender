@@ -24,6 +24,7 @@ frender-render-with = { version = "0.1.0", path = "../frender-render-with", opti
 frender-keyed-elements = { version = "0.1.0", path = "../frender-keyed-elements", optional = true }
 frender-context = { version = "0.1.0", path = "../frender-context", default-features = false, optional = true }
 frender-element = { version = "0.1.0", path = "../frender-element", default-features = false }
+frender-html-values = { version = "0.1.0", path = "../frender-html-values" }
 frender-style = { version = "0.1.0", path = "../frender-style" }
 frender-dom-tokens = { version = "0.1.0", path = "../frender-dom-tokens" }
 frender-reactive-value = { version = "0.1.0", path = "../frender-reactive-value" }
@@ -31,16 +32,11 @@ frender-to-element = { version = "0.1.0", path = "../frender-to-element", option
 frender-memo = { version = "0.1.0", path = "../frender-memo", optional = true }
 frender-hooks-ext = { version = "0.1.0", path = "../frender-hooks-ext", optional = true }
 frender-synced-collection = { version = "0.1.0", path = "../frender-synced-collection", optional = true }
+frender-html-components = { version = "0.1.0", path = "../frender-html-components", optional = true }
 
 [dependencies.frender-hook-element]
 path = "../frender-hook-element"
 version = "0.1.0"
-
-[dependencies.frender-html]
-path = "../frender-html"
-version = "0.1.0"
-default-features = false
-features = ["experimental"]
 
 [dependencies.frender-macros]
 version = "1.0.0-alpha.8"
@@ -68,24 +64,20 @@ default = [
     "KeyedElements",
     "Memo",
 ]
+# non-default features
 feature_impl_trait_in_assoc_type = [
     "frender-render-with?/feature_impl_trait_in_assoc_type",
 ]
-html = ["csr"] # TODO: remove
-html-components = ["html", "frender-html/components"]
-either = [
-    #
-    "dep:either",
-    "frender-ssr/either",
-    "frender-html/either",
-    "frender-hooks-ext?/either",
-]
-web = ["dep:frender-csr-web"]
 spawn = ["frender-csr-web?/spawn"]
+RenderWith = ["dep:frender-render-with"]
+
+# default features
+web = ["dep:frender-csr-web"]
 ssr = [
     #
     "frender-keyed-elements?/ssr",
-    "frender-html/ssr",
+    "frender-html-components/ssr",
+    "frender-html-values/ssr",
     "frender-element/ssr",
     "frender-memo?/ssr",
     "frender-hooks-ext?/ssr",
@@ -96,22 +88,31 @@ csr = [
     "frender-keyed-elements?/csr",
     "frender-render-with?/csr",
     "frender-csr-web?/csr",
-    "frender-html/csr",
+    "frender-html-components/csr",
+    "frender-html-values/csr",
     "frender-element/csr",
     "frender-memo?/csr",
     "frender-memo?/experimental",
     "frender-hooks-ext?/csr",
     "frender-synced-collection?/csr",
 ]
-RenderWith = ["dep:frender-render-with"]
-KeyedElements = ["dep:frender-keyed-elements"]
+# default- features
+html-components = ["dep:frender-html-components"]
+either = [
+    #
+    "dep:either",
+    "frender-ssr/either",
+    "frender-element/either",
+    "frender-hooks-ext?/either",
+]
+hooks = ["frender-context?/hooks", "hooks_ext"]
+hooks_ext = ["dep:frender-hooks-ext"]
 ToElement = [
     "dep:frender-to-element",
     "frender-hooks-ext?/ToElement",
     "frender-synced-collection?/ToElement",
 ]
 context = ["dep:frender-context"]
-hooks = ["frender-context?/hooks", "hooks_ext"]
-hooks_ext = ["dep:frender-hooks-ext"]
 SyncedCollection = ["dep:frender-synced-collection"]
+KeyedElements = ["dep:frender-keyed-elements"]
 Memo = ["dep:frender-memo"]

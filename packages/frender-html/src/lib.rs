@@ -86,3 +86,5 @@ pub mod csr {
         pub use frender_dom::csr::render::{RenderContext, RenderWithContext};
     }
 }
+
+pub mod values;

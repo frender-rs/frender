@@ -11,13 +11,8 @@ pub use frender_to_element::{RefToElementWithFn, ToElement, ToElementWithFn};
 #[cfg(feature = "SyncedCollection")]
 pub use elements::synced_collection::{SyncedCollection, SyncedVec};
 
-mod absent;
-pub use absent::Absent;
-
 pub use frender_common::{either::EitherElement, EventListenerOptions, HandleEventWithOptions};
 pub use frender_hook_element::new_fn_hook_element;
-pub use frender_html as html;
-pub use frender_html::dom;
 pub use frender_macros::component;
 pub use frender_reactive_value::{
     non_reactive::Uncached, static_or_temp_ref::StaticOrTempRef, temp_into_static::TempIntoStatic,
@@ -65,25 +60,6 @@ pub use frender_context::{
     local_context,
 };
 
-pub use frender_common::Empty;
-pub use frender_html::dom::script::ScriptInnerTextWronglyEncoded;
-pub use frender_html::dom::special::DangerousInnerHtml;
-pub use frender_html::dom::string_element::StringElement;
-
-pub mod dom_tokens {
-    pub use frender_dom_tokens::{dom_tokens::*, *};
-}
-pub use frender_dom_tokens::{
-    constness::HasConstKnownPossibleDomTokens, dom_tokens::comma_separated as dom_tokens,
-    impl_dom_tokens_for, impl_has_const_dom_tokens_for, ChainableDomTokens, DomTokenList,
-    DomTokens,
-};
-
-pub mod style {
-    pub use frender_style::{style::*, *};
-}
-pub use frender_style::style::comma_separated as style;
-
 #[cfg(feature = "Memo")]
 pub use frender_memo::Memo;
 
@@ -98,11 +74,108 @@ pub mod main {
     pub use frender_csr_web::mount::spawn_mount_to_dom_element;
 }
 
-pub mod form_control {
-    pub use frender_html::form_control::values::{
-        EitherFormControlValue, UncontrolledWithDefaultValue,
+// region: values
+pub use frender_html_values::{
+    //
+    DangerousInnerHtml,
+    Empty,
+    Intrinsic,
+    StringElement,
+};
+
+#[cfg(feature = "csr")]
+pub use frender_html_values::ScriptInnerTextCsrOnly;
+
+#[cfg(feature = "ssr")]
+pub use frender_html_values::ScriptInnerTextWronglyEncoded;
+
+pub mod attr_value {
+    pub use frender_html_values::attr_value::{
+        //
+        Absent,
+        // html
+        AttrKindOfContentEditable,
+        AttrKindOfStr,
+        AttrValue,
+        AttrValueKind,
+        EitherAttrValue,
+        Spellcheck,
+    };
+
+    #[cfg(feature = "csr")]
+    pub use frender_html_values::attr_value::CsrAttrValue;
+    #[cfg(feature = "ssr")]
+    pub use frender_html_values::attr_value::SsrAttrValue;
+}
+
+#[doc(no_inline)]
+pub use self::macros::dom_tokens;
+pub mod dom_tokens {
+    pub use frender_html_values::dom_tokens::{
+        impl_dom_tokens_for,
+        impl_has_const_dom_tokens_for,
+        Chain,
+        EitherDomTokens,
+        EraseConstKnownPossibleDomTokens,
+        {comma_separated, one, r#const},
+        //
+        {ConstDomTokens, HasConstDomTokens},
+        {DomTokens, IntoDomTokens},
     };
 }
+
+pub mod form_control {
+    pub use frender_html_values::form_control::{
+        //
+        EitherFormControlValue,
+        UncontrolledWithDefaultValue,
+    };
+
+    pub mod input {
+        pub use frender_html_values::form_control::input::{
+            InputDataModel, IntoInputDataModel, {InputChecked, InputType, InputValue},
+        };
+
+        #[cfg(feature = "csr")]
+        pub use frender_html_values::form_control::input::{
+            IntoCsrInputDataModel, {CsrInputChecked, CsrInputType, CsrInputValue},
+        };
+        #[cfg(feature = "ssr")]
+        pub use frender_html_values::form_control::input::{
+            IntoSsrInputDataModel, {SsrInputChecked, SsrInputType, SsrInputValue},
+        };
+    }
+
+    pub mod textarea {
+        pub use frender_html_values::form_control::textarea::TextAreaValue;
+
+        #[cfg(feature = "csr")]
+        pub use frender_html_values::form_control::textarea::CsrTextAreaValue;
+        #[cfg(feature = "ssr")]
+        pub use frender_html_values::form_control::textarea::SsrTextAreaValue;
+    }
+}
+
+#[doc(no_inline)]
+pub use self::macros::style;
+pub mod style {
+    pub use frender_style::{
+        css_style_declaration, impl_has_const_declaration_list_for,
+        style::{comma_separated, one, r#const},
+        styles::{constness::ConstDeclarationList, Chain, EitherStyle, Never},
+        IntoStyle, Style,
+    };
+
+    #[cfg(feature = "csr")]
+    pub use frender_style::csr::CsrStyle;
+    #[cfg(feature = "ssr")]
+    pub use frender_style::ssr::SsrStyle;
+}
+
+pub mod macros {
+    pub use frender_html_values::macros::{dom_tokens, style};
+}
+// endregion
 
 pub mod prelude {
     // #[cfg(all(feature = "csr", feature = "ssr"))]
@@ -114,23 +187,21 @@ pub mod prelude {
 
     pub use frender_hook_element::component_fn;
 
-    pub use frender_html::csr::CsrElement;
+    pub use frender_element::CsrElement;
 
     pub use frender_element::Element;
 
     #[cfg(feature = "KeyedElements")]
     pub use crate::{Keyed, KeyedElements};
 
-    pub use crate::dom_tokens;
-
-    pub use crate::style;
+    pub use crate::macros::{dom_tokens, style};
 
     pub use crate::elements;
 
     pub use frender_macros::component;
 
     #[cfg(feature = "html-components")]
-    pub use frender_html::{cs, cs as intrinsic_components};
+    pub use {cs as intrinsic_components, frender_html_components as cs};
 
     #[cfg(feature = "hooks_ext")]
     pub use crate::hooks_ext::ShareValueExt as _;

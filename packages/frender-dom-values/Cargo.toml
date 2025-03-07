@@ -1,0 +1,28 @@
+[package]
+name = "frender-dom-values"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+frender-attr-value = { version = "0.1.0", path = "../frender-attr-value" }
+frender-dom = { version = "0.1.0", path = "../frender-dom" }
+frender-dom-tokens = { version = "0.1.0", path = "../frender-dom-tokens" }
+frender-form-control = { version = "0.1.0", path = "../frender-form-control" }
+frender-style = { version = "0.1.0", path = "../frender-style" }
+
+[features]
+csr = [
+    "frender-attr-value/csr",
+    "frender-dom/csr",
+    # "frender-dom-tokens/csr", # TODO: feature
+    "frender-form-control/csr",
+    "frender-style/csr",
+]
+ssr = [
+    "frender-attr-value/ssr",
+    "frender-dom/ssr",
+    # "frender-dom-tokens/ssr", # TODO: feature
+    "frender-form-control/ssr",
+    "frender-style/ssr",
+]
+html = ["frender-attr-value/html"]
