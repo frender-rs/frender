@@ -1,7 +1,9 @@
 use std::{marker::PhantomData, pin::Pin};
 
-pub mod csr;
-pub mod ssr;
+#[cfg(feature = "csr")]
+mod csr;
+#[cfg(feature = "ssr")]
+mod ssr;
 
 pub struct HookElement<F>(pub F);
 

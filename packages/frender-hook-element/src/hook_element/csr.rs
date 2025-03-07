@@ -1,6 +1,6 @@
 use std::{marker::PhantomData, pin::Pin, task::Poll};
 
-use frender_html::csr::{
+use frender_csr::{
     experimental::{
         self, HtmlRenderContext, PinnedRenderStateKind, PinnedRenderStateKindPollRender,
         PinnedUiHandleOfKind, RenderHtml, UnpinnedRenderStateKind,

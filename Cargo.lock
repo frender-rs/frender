@@ -1083,8 +1083,8 @@ dependencies = [
 name = "frender-hook-element"
 version = "0.1.0"
 dependencies = [
+ "frender-csr",
  "frender-element",
- "frender-html",
  "frender-ssr",
  "hooks-core",
  "pin-project-lite",

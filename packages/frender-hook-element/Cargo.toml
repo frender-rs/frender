@@ -6,9 +6,18 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-frender-ssr = { path = "../frender-ssr", version = "0.1.0" }
-pin-project-lite = "0.2.9"
 hooks-core = { version = "3.0.0-alpha", default-features = false }
 syn-lite = "0.1.0"
-frender-html = { version = "0.1.0", path = "../frender-html" }
 frender-element = { version = "0.1.0", path = "../frender-element" }
+
+# csr
+pin-project-lite = { version = "0.2.9", optional = true }
+frender-csr = { path = "../frender-csr", version = "0.1.0", optional = true, features = [
+    "experimental",
+] }
+# ssr
+frender-ssr = { path = "../frender-ssr", version = "0.1.0", optional = true }
+
+[features]
+csr = ["dep:pin-project-lite", "dep:frender-csr", "frender-element/csr"]
+ssr = ["dep:frender-ssr", "frender-element/ssr"]

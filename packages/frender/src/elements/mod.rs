@@ -103,6 +103,9 @@ Empty as Empty,
 #[cfg(feature = "SyncedCollection")]
 pub mod synced_collection;
 
+#[cfg(feature = "HookElement")]
+pub mod hook_element;
+
 #[cfg(any(test, doc, doctest))]
 mod doc_macros;
 #[cfg(any(test, doc, doctest))]

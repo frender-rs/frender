@@ -1,16 +1,23 @@
-pub use self::hook_element::{new_fn_hook_element, HookElement};
+pub use self::hook_element::{new_fn_hook_element, HookElement, UseHookData};
 
 mod hook_element;
 
 pub mod component_fn_options {
+    #[cfg(feature = "ssr")]
+    #[cfg(feature = "csr")]
+    #[doc(no_inline)]
     pub use frender_element::Element;
 
+    #[cfg(feature = "ssr")]
     pub mod ssr_only {
-        pub use frender_ssr::SsrElement as Element;
+        #[doc(no_inline)]
+        pub use frender_element::SsrElement as Element;
     }
 
+    #[cfg(feature = "csr")]
     pub mod csr_only {
-        pub use frender_html::csr::CsrElement as Element;
+        #[doc(no_inline)]
+        pub use frender_element::CsrElement as Element;
     }
 }
 

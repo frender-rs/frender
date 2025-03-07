@@ -1,4 +1,12 @@
-// pub use frender_element::Element;
+#[cfg(feature = "csr")]
+#[cfg(feature = "ssr")]
+pub use frender_element::Element;
+
+#[cfg(feature = "csr")]
+pub use frender_element::CsrElement;
+
+#[cfg(feature = "ssr")]
+pub use frender_element::SsrElement;
 
 #[cfg(feature = "hooks_ext")]
 pub mod hooks_ext;
@@ -11,19 +19,16 @@ pub use frender_to_element::{RefToElementWithFn, ToElement, ToElementWithFn};
 #[cfg(feature = "SyncedCollection")]
 pub use elements::synced_collection::{SyncedCollection, SyncedVec};
 
+#[cfg(feature = "HookElement")]
+#[doc(no_inline)]
+pub use crate::elements::hook_element::component_fn;
+
 pub use frender_common::{either::EitherElement, EventListenerOptions, HandleEventWithOptions};
-pub use frender_hook_element::new_fn_hook_element;
 pub use frender_macros::component;
 pub use frender_reactive_value::{
     non_reactive::Uncached, static_or_temp_ref::StaticOrTempRef, temp_into_static::TempIntoStatic,
     temp_ref::TempRef,
 };
-
-// #[cfg(feature = "csr")]
-// pub use frender_hook_element::frender_csr as csr;
-
-// #[cfg(feature = "ssr")]
-// pub use frender_hook_element::frender_ssr as ssr;
 
 pub use frender_ssr as ssr;
 
@@ -36,9 +41,6 @@ pub use prelude::*;
 //     #[cfg(feature = "html-components")]
 //     pub use frender_html::html::{components, components as intrinsic_components};
 // }
-
-pub use frender_hook_element as hook_element;
-pub use frender_hook_element::component_fn;
 
 pub use event::*;
 pub use frender_events::event;
@@ -178,18 +180,22 @@ pub mod macros {
 // endregion
 
 pub mod prelude {
-    // #[cfg(all(feature = "csr", feature = "ssr"))]
-    // pub use crate::Element;
+    #[cfg(feature = "csr")]
+    #[cfg(feature = "ssr")]
+    pub use crate::Element;
+
+    #[cfg(feature = "csr")]
+    pub use crate::CsrElement;
+
+    #[cfg(feature = "ssr")]
+    pub use crate::SsrElement;
 
     pub use crate::rsx;
 
     pub use frender_common::{HandleEvent, MaybeHandleEvent};
 
-    pub use frender_hook_element::component_fn;
-
-    pub use frender_element::CsrElement;
-
-    pub use frender_element::Element;
+    #[cfg(feature = "HookElement")]
+    pub use crate::component_fn;
 
     #[cfg(feature = "KeyedElements")]
     pub use crate::{Keyed, KeyedElements};
@@ -206,13 +212,8 @@ pub mod prelude {
     #[cfg(feature = "hooks_ext")]
     pub use crate::hooks_ext::ShareValueExt as _;
 
-    // #[cfg(feature = "csr")]
-    // pub use frender_hook_element::frender_csr::{
-    //     CsrContext, CsrElement, CsrRenderState, ElementsLinkedVec,
-    // };
-
     // #[cfg(feature = "ssr")]
-    pub use frender_ssr::{SsrElement, SsrElementExt};
+    pub use frender_ssr::SsrElementExt;
 }
 
 #[macro_export]
@@ -228,8 +229,12 @@ macro_rules! rsx {
 
 #[doc(hidden)]
 pub mod __private {
+    #[cfg(feature = "HookElement")]
+    // #[cfg(feature = "proc-macro")]
+    #[doc(hidden)]
     pub use frender_hook_element::__private::hooks_core;
 
+    #[doc(hidden)]
     pub use frender_macros::rsx as impl_rsx;
 }
 

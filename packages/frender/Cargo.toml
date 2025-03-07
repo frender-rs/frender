@@ -30,13 +30,13 @@ frender-dom-tokens = { version = "0.1.0", path = "../frender-dom-tokens" }
 frender-reactive-value = { version = "0.1.0", path = "../frender-reactive-value" }
 frender-to-element = { version = "0.1.0", path = "../frender-to-element", optional = true }
 frender-memo = { version = "0.1.0", path = "../frender-memo", optional = true }
-frender-hooks-ext = { version = "0.1.0", path = "../frender-hooks-ext", optional = true }
 frender-synced-collection = { version = "0.1.0", path = "../frender-synced-collection", optional = true }
 frender-html-components = { version = "0.1.0", path = "../frender-html-components", optional = true }
 
-[dependencies.frender-hook-element]
-path = "../frender-hook-element"
-version = "0.1.0"
+# hooks
+frender-hook-element = { version = "0.1.0", path = "../frender-hook-element", optional = true }
+frender-hooks-ext = { version = "0.1.0", path = "../frender-hooks-ext", optional = true }
+
 
 [dependencies.frender-macros]
 version = "1.0.0-alpha.8"
@@ -82,6 +82,7 @@ ssr = [
     "frender-memo?/ssr",
     "frender-hooks-ext?/ssr",
     "frender-synced-collection?/ssr",
+    "frender-hook-element?/ssr",
 ]
 csr = [
     #
@@ -95,6 +96,7 @@ csr = [
     "frender-memo?/experimental",
     "frender-hooks-ext?/csr",
     "frender-synced-collection?/csr",
+    "frender-hook-element?/csr",
 ]
 # default- features
 html-components = ["dep:frender-html-components"]
@@ -105,8 +107,11 @@ either = [
     "frender-element/either",
     "frender-hooks-ext?/either",
 ]
-hooks = ["frender-context?/hooks", "hooks_ext"]
+
+hooks = ["frender-context?/hooks", "hooks_ext", "HookElement"]
 hooks_ext = ["dep:frender-hooks-ext"]
+HookElement = ["dep:frender-hook-element"]
+
 ToElement = [
     "dep:frender-to-element",
     "frender-hooks-ext?/ToElement",
