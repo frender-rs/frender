@@ -4,12 +4,20 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-frender-html = { version = "0.1.0", path = "../frender-html", default-features = false }
-frender-ssr = { version = "0.1.0", path = "../frender-ssr", default-features = false }
+# csr
+frender-csr = { version = "0.1.0", path = "../frender-csr", optional = true, features = [
+    "experimental",
+] }
+# ssr
+frender-ssr = { version = "0.1.0", path = "../frender-ssr", optional = true }
+# hooks
 hooks = { version = "3.0.0-alpha.11", default-features = false, optional = true, features = [
     "Signal",
 ] }
-pin-project-lite = "0.2.14"
+# csr | hooks
+pin-project-lite = { version = "0.2.14", optional = true }
 
 [features]
-hooks = ["dep:hooks"]
+hooks = ["dep:hooks", "dep:pin-project-lite"]
+csr = ["dep:frender-csr", "dep:pin-project-lite"]
+ssr = ["dep:frender-ssr"]

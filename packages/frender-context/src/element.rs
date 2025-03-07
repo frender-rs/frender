@@ -1,14 +1,14 @@
-use frender_ssr::SsrElement;
-
 use crate::{ContextKey, ContextKeyInner};
 
 // TODO: `state_unmount()` doesn't get the correct context value. Is this a problem?
-pub mod csr;
+#[cfg(feature = "csr")]
+mod csr;
+#[cfg(feature = "ssr")]
 mod ssr;
 
 impl<T, Inner: ContextKeyInner<Value = T>> ContextKey<Inner> {
     /// Shortcut for <code>CTX.[value](Self::value)(value).[children](ElementWithContext::children)(get_element)</code>
-    pub fn provide<E: SsrElement, FE: FnOnce() -> E>(
+    pub fn provide<E, FE: FnOnce() -> E>(
         &'static self,
         value: T,
         get_element: FE,
@@ -21,7 +21,7 @@ impl<T, Inner: ContextKeyInner<Value = T>> ContextKey<Inner> {
     }
 
     /// Shortcut for <code>CTX.[get_value](Self::get_value)(get_value).[children](ElementWithContext::children)(get_element)</code>
-    pub fn provide_with<F: FnOnce() -> T, E: SsrElement, FE: FnOnce() -> E>(
+    pub fn provide_with<F: FnOnce() -> T, E, FE: FnOnce() -> E>(
         &'static self,
         get_value: F,
         get_element: FE,
@@ -100,7 +100,7 @@ pub struct ElementWithContext<
 impl<T, Inner: ContextKeyInner<Value = T> + 'static, F: IntoContextValue<ContextValue = T>>
     ElementWithContext<Inner, F, ()>
 {
-    pub fn children<E: SsrElement, FE: FnOnce() -> E>(
+    pub fn children<E, FE: FnOnce() -> E>(
         self,
         get_element: FE,
     ) -> ElementWithContext<Inner, F, FE> {

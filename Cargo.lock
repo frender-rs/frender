@@ -940,7 +940,7 @@ version = "0.1.0"
 name = "frender-context"
 version = "0.1.0"
 dependencies = [
- "frender-html",
+ "frender-csr",
  "frender-ssr",
  "hooks",
  "pin-project-lite",

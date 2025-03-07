@@ -83,6 +83,7 @@ ssr = [
     "frender-hooks-ext?/ssr",
     "frender-synced-collection?/ssr",
     "frender-hook-element?/ssr",
+    "frender-context?/ssr",
 ]
 csr = [
     #
@@ -97,6 +98,7 @@ csr = [
     "frender-hooks-ext?/csr",
     "frender-synced-collection?/csr",
     "frender-hook-element?/csr",
+    "frender-context?/csr",
 ]
 # default- features
 html-components = ["dep:frender-html-components"]
