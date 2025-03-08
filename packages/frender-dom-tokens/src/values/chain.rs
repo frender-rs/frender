@@ -34,10 +34,8 @@ impl<A: ChainableDomTokens, B: ChainableDomTokens> DomTokens for Chain<A, B> whe
 {
 }
 
-impl<A: ChainableDomTokens, B: ChainableDomTokens> crate::sealed::ChainableDomTokens
-    for crate::Chain<A, B>
-where
-    Self: HasConstKnownPossibleDomTokens,
+impl<A: ChainableDomTokens, B: ChainableDomTokens> crate::sealed::ChainableDomTokens for Chain<A, B> where
+    Self: HasConstKnownPossibleDomTokens
 {
 }
 impl<A: ChainableDomTokens, B: ChainableDomTokens> ChainableDomTokens for Chain<A, B> where

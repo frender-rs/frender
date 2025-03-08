@@ -1,4 +1,4 @@
-use frender_dom_tokens::{impl_dom_tokens_for, Empty};
+use frender_dom_tokens::{impl_dom_tokens_for, values::Empty};
 
 pub struct PubTokens;
 
@@ -28,7 +28,7 @@ fn r#const() {
 }
 
 mod private {
-    use frender_dom_tokens::{impl_dom_tokens_for, Empty};
+    use frender_dom_tokens::{impl_dom_tokens_for, values::Empty};
 
     struct PrivateTokens;
 

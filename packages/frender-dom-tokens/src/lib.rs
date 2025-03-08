@@ -1,17 +1,9 @@
-pub use self::either::EitherDomTokens;
-pub use self::erase_const_known::EraseConstKnownPossibleDomTokens;
-pub use chain::Chain;
 use constness::HasConstKnownPossibleDomTokens;
 pub use dom_token::{DomToken, UniqueDomTokenArray, UniqueDomTokenArrayVec, UniqueDomTokens};
-pub use frender_common::Empty;
 
-mod chain;
+pub mod values;
+
 mod dom_token;
-mod either;
-mod empty;
-mod erase_const_known;
-mod option;
-mod string;
 
 #[cfg(feature = "experimental")]
 pub mod experimental;
@@ -28,11 +20,11 @@ mod ssr;
 mod sealed;
 
 pub trait DomTokens: sealed::DomTokens {
-    fn erase_const_known_possible_dom_tokens(self) -> EraseConstKnownPossibleDomTokens<Self>
+    fn erase_const_known_possible_dom_tokens(self) -> values::EraseConstKnownPossibleDomTokens<Self>
     where
         Self: Sized,
     {
-        EraseConstKnownPossibleDomTokens(self)
+        values::EraseConstKnownPossibleDomTokens(self)
     }
 }
 
@@ -167,7 +159,7 @@ pub mod dom_tokens {
     pub mod syntax {
         pub use frender_const_expr::syntax::*;
 
-        pub use crate::{Chain, EitherDomTokens as Either, Empty};
+        pub use crate::values::{Chain, EitherDomTokens as Either, Empty};
 
         pub use super::r#const;
 
@@ -373,7 +365,7 @@ pub mod dom_tokens {
             pub use dom_tokens_typed_type_one as one;
 
             pub mod syntax {
-                pub use crate::{EitherDomTokens as Either, Empty};
+                pub use crate::values::{EitherDomTokens as Either, Empty};
                 pub use Option;
 
                 pub use frender_const_expr::syntax::*;
@@ -384,7 +376,7 @@ pub mod dom_tokens {
                 #[macro_export]
                 macro_rules! dom_tokens_typed_type_syntax_chain_impl {
                     ($($chain:tt)*) => {
-                        $crate::Chain::<$($chain)*>
+                        $crate::values::Chain::<$($chain)*>
                     };
                 }
 
@@ -494,7 +486,7 @@ pub mod dom_tokens {
                         $a:tt
                         $($rest:tt)+
                     ) => {
-                        $crate::EitherDomTokens::<
+                        $crate::values::EitherDomTokens::<
                             $crate::__dom_tokens_typed_type_syntax_parsed_patterns! {
                                 $a
                             },
@@ -564,7 +556,7 @@ pub mod dom_tokens {
             pub mod syntax {
                 pub use frender_const_expr::syntax::*;
 
-                pub use crate::{EitherDomTokens as Either, Empty};
+                pub use crate::values::{EitherDomTokens as Either, Empty};
 
                 pub use super::super::common_syntax::{chain, empty, r#macro};
 
@@ -572,7 +564,7 @@ pub mod dom_tokens {
                 #[macro_export]
                 macro_rules! dom_tokens_typed_expr_syntax_chain_impl {
                     ($($chain:tt)*) => {
-                        $crate::Chain($($chain)*)
+                        $crate::values::Chain($($chain)*)
                     };
                 }
 
