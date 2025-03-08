@@ -69,9 +69,11 @@ pub use frender_memo::Memo;
 pub use frender_csr_web::mount::GetDomElement;
 
 pub mod main {
+    #[cfg(feature = "csr")]
     #[cfg(feature = "web")]
     pub use frender_csr_web::mount::mount_to_dom_element;
 
+    #[cfg(feature = "csr")]
     #[cfg(all(feature = "web", feature = "spawn"))]
     pub use frender_csr_web::mount::spawn_mount_to_dom_element;
 }
