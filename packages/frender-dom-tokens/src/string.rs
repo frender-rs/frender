@@ -1,57 +1,57 @@
-use async_str_iter::IntoAsyncStrIterator;
+use frender_reactive_value::{
+    impl_known_StaticBorrowStr_v_0_1_0,
+    non_reactive::{Uncached, UncachedNonReactiveValue},
+    static_or_temp_ref::StaticOrTempRef,
+    temp_into_static::{IntoStaticCache, TempIntoStatic, UncachedTempIntoStatic},
+    temp_ref::TempRef,
+    value_kind::KindOfTempRef,
+};
 
-use crate::{DomTokens, DomTokensStateUnmount};
+#[cfg(feature = "csr")]
+use frender_reactive_value::non_reactive::CachedNonReactiveValue;
+#[cfg(feature = "ssr")]
+use frender_reactive_value::ssr::SsrStr;
 
-// TODO: TempStr
+use crate::IntoDomTokens;
 
-pub struct State<S>(S);
+#[cfg(feature = "csr")]
+#[cfg(feature = "ssr")]
+trait KnownNonReactiveStr: CachedNonReactiveValue<KindOfTempRef<str>> + SsrStr {}
 
-// TODO: figure out a better design for non-chainable dom tokens
-impl<S> DomTokensStateUnmount for State<S> {
-    fn dom_tokens_state_unmount(_: &mut Self, dom_token_list: &mut impl crate::DomTokenList) {
-        dom_token_list.set_value("");
+#[cfg(feature = "csr")]
+#[cfg(not(feature = "ssr"))]
+trait KnownNonReactiveStr: CachedNonReactiveValue<KindOfTempRef<str>> {}
+
+#[cfg(not(feature = "csr"))]
+#[cfg(feature = "ssr")]
+trait KnownNonReactiveStr: SsrStr {}
+
+#[cfg(not(feature = "csr"))]
+#[cfg(not(feature = "ssr"))]
+trait KnownNonReactiveStr {}
+
+#[cfg(feature = "ssr")]
+trait KnownUncachedStr: UncachedNonReactiveValue<KindOfTempRef<str>> + SsrStr {}
+
+#[cfg(not(feature = "ssr"))]
+trait KnownUncachedStr: UncachedNonReactiveValue<KindOfTempRef<str>> {}
+
+impl<T: UncachedTempIntoStatic<str>> KnownUncachedStr for TempIntoStatic<T> {}
+impl KnownUncachedStr for TempRef<'_, str> {}
+
+impl KnownNonReactiveStr for TempRef<'_, str> {}
+impl KnownNonReactiveStr for StaticOrTempRef<'_, str> {}
+impl<T: IntoStaticCache<str>> KnownNonReactiveStr for TempIntoStatic<T> {}
+impl<T: KnownUncachedStr> KnownNonReactiveStr for Uncached<T> {}
+
+impl_known_StaticBorrowStr_v_0_1_0!(KnownNonReactiveStr);
+
+impl<T: KnownNonReactiveStr> IntoDomTokens for T {
+    type IntoDomTokens = imp::NonReactiveStrIntoDomTokens<T>;
+
+    fn into_dom_tokens(self) -> Self::IntoDomTokens {
+        imp::NonReactiveStrIntoDomTokens(self)
     }
 }
 
-frender_common::impl_many!(
-    impl<__> DomTokens
-        for each_of![
-            &'static str,
-            String,
-            std::borrow::Cow<'static, str>,
-            std::rc::Rc<str>,
-            std::sync::Arc<str>,
-        ]
-    {
-        type State = State<Self>;
-
-        fn dom_tokens_render_init(
-            this: Self,
-            dom_token_list: &mut impl crate::DomTokenList,
-        ) -> Self::State {
-            let value = this.as_ref();
-
-            dom_token_list.set_value(value);
-
-            State(this)
-        }
-
-        fn dom_tokens_render_update(
-            this: Self,
-            dom_token_list: &mut impl crate::DomTokenList,
-            state: &mut Self::State,
-        ) {
-            if state.0 == this {
-                return;
-            }
-
-            *state = Self::dom_tokens_render_init(this, dom_token_list)
-        }
-
-        type DomTokensIntoAsyncStrIter = async_str_iter::any_str::IterAnyStr<Self>;
-
-        fn dom_tokens_into_async_str_iter(this: Self) -> Self::DomTokensIntoAsyncStrIter {
-            async_str_iter::any_str::AnyStr(this).into_async_str_iterator()
-        }
-    }
-);
+mod imp;

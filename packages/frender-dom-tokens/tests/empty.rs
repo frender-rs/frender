@@ -1,4 +1,8 @@
-use frender_dom_tokens::{dom_tokens, ChainableDomTokens, DomTokens};
+#![cfg(feature = "experimental")]
+#![cfg(feature = "csr")]
+#![cfg(feature = "ssr")]
+
+use frender_dom_tokens::{dom_tokens, experimental::csr::CsrDomTokens, ChainableDomTokens};
 use utils::dom_token_list::DomTokenListNever;
 
 use crate::utils::ssr::{collect_dom_tokens, collect_dom_tokens_prefix_space};
@@ -24,12 +28,14 @@ fn ssr() {
 fn csr() {
     let dom_token_list = &mut DomTokenListNever;
 
-    let mut state = DomTokens::dom_tokens_render_init(empty(), dom_token_list);
-    DomTokens::dom_tokens_render_update(empty(), dom_token_list, &mut state);
+    let mut state = CsrDomTokens::dom_tokens_render_init(empty(), dom_token_list);
+    CsrDomTokens::dom_tokens_render_update(empty(), dom_token_list, &mut state);
 }
 
 mod impl_dom_tokens {
-    use frender_dom_tokens::{impl_dom_tokens_for, ChainableDomTokens, DomTokens};
+    use frender_dom_tokens::{
+        experimental::csr::CsrDomTokens, impl_dom_tokens_for, ChainableDomTokens,
+    };
 
     use crate::utils::{
         dom_token_list::DomTokenListNever,
@@ -56,7 +62,7 @@ mod impl_dom_tokens {
     fn csr() {
         let dom_token_list = &mut DomTokenListNever;
 
-        let mut state = DomTokens::dom_tokens_render_init(empty(), dom_token_list);
-        DomTokens::dom_tokens_render_update(empty(), dom_token_list, &mut state);
+        let mut state = CsrDomTokens::dom_tokens_render_init(empty(), dom_token_list);
+        CsrDomTokens::dom_tokens_render_update(empty(), dom_token_list, &mut state);
     }
 }

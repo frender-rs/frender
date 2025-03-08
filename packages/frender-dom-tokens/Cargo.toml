@@ -6,21 +6,29 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-features = false }
 either = { version = "1.11.0", default-features = false, optional = true }
 frender-common = { version = "0.1.0", path = "../frender-common" }
-frender-const = { version = "0.1.0", path = "../frender-const", features = ["KnownConstUsizeAdd"] }
+frender-const = { version = "0.1.0", path = "../frender-const", features = [
+    "KnownConstUsizeAdd",
+] }
 frender-const-expr = { version = "0.1.0", path = "../frender-const-expr" }
 frender-macro-rules = { version = "0.1.0", path = "../frender-macro-rules", features = [
     "define_phantom_wrapper",
 ] }
+frender-reactive-value = { version = "0.1.0", path = "../frender-reactive-value" }
 web-sys = { version = "0.3.69", features = ["DomTokenList"], optional = true }
+
+# ssr
+async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-features = false, optional = true }
 
 [dev-dependencies]
 futures-lite = "2.3.0"
 
 [features]
+csr = []
+ssr = ["dep:async-str-iter", "frender-reactive-value/ssr"]
 # impl DomTokens, ChainableDomTokens for Either
 either = ["dep:either"]
 # impl DomTokenList for web_sys::DomTokenList
 web = ["dep:web-sys"]
+experimental = []

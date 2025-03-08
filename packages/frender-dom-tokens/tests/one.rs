@@ -1,3 +1,7 @@
+#![cfg(feature = "experimental")]
+#![cfg(feature = "csr")]
+#![cfg(feature = "ssr")]
+
 pub mod utils;
 
 use utils::{
@@ -6,7 +10,7 @@ use utils::{
 };
 
 mod literal {
-    use frender_dom_tokens::{dom_tokens, ChainableDomTokens, DomTokens};
+    use frender_dom_tokens::{dom_tokens, experimental::csr::CsrDomTokens, ChainableDomTokens};
 
     use super::*;
 
@@ -26,15 +30,15 @@ mod literal {
     fn csr() {
         let dom_token_list = &mut DomTokenListAddRemove::default();
         assert!(dom_token_list.tokens.is_empty());
-        let mut state = DomTokens::dom_tokens_render_init(value(), dom_token_list);
+        let mut state = CsrDomTokens::dom_tokens_render_init(value(), dom_token_list);
         assert_eq!(dom_token_list.tokens, ["literal"]);
-        DomTokens::dom_tokens_render_update(value(), dom_token_list, &mut state);
+        CsrDomTokens::dom_tokens_render_update(value(), dom_token_list, &mut state);
         assert_eq!(dom_token_list.tokens, ["literal"]);
     }
 }
 
 mod array_of_literals {
-    use frender_dom_tokens::{dom_tokens, ChainableDomTokens, DomTokens};
+    use frender_dom_tokens::{dom_tokens, experimental::csr::CsrDomTokens, ChainableDomTokens};
 
     use super::*;
 
@@ -61,13 +65,13 @@ mod array_of_literals {
     fn csr() {
         let dom_token_list = &mut DomTokenListAddRemove::default();
         assert!(dom_token_list.tokens.is_empty());
-        let mut state = DomTokens::dom_tokens_render_init(value(), dom_token_list);
+        let mut state = CsrDomTokens::dom_tokens_render_init(value(), dom_token_list);
         let state = &mut state;
         assert_eq!(
             dom_token_list.tokens,
             ["literal-0", "literal-1", "literal-2"]
         );
-        DomTokens::dom_tokens_render_update(value(), dom_token_list, state);
+        CsrDomTokens::dom_tokens_render_update(value(), dom_token_list, state);
         assert_eq!(
             dom_token_list.tokens,
             ["literal-0", "literal-1", "literal-2"]
@@ -76,7 +80,7 @@ mod array_of_literals {
 }
 
 mod r#if {
-    use frender_dom_tokens::{dom_tokens, ChainableDomTokens, DomTokens};
+    use frender_dom_tokens::{dom_tokens, experimental::csr::CsrDomTokens, ChainableDomTokens};
 
     use crate::{
         utils::ssr::{collect_dom_tokens, collect_dom_tokens_prefix_space},
@@ -107,22 +111,22 @@ mod r#if {
         let dom_token_list = &mut DomTokenListAddRemove::default();
 
         assert!(dom_token_list.tokens.is_empty());
-        let mut state = DomTokens::dom_tokens_render_init(value(true), dom_token_list);
+        let mut state = CsrDomTokens::dom_tokens_render_init(value(true), dom_token_list);
         let state = &mut state;
         assert_eq!(dom_token_list.tokens, ["a"]);
-        DomTokens::dom_tokens_render_update(value(true), &mut DomTokenListNever, state);
-        DomTokens::dom_tokens_render_update(value(true), dom_token_list, state);
+        CsrDomTokens::dom_tokens_render_update(value(true), &mut DomTokenListNever, state);
+        CsrDomTokens::dom_tokens_render_update(value(true), dom_token_list, state);
         assert_eq!(dom_token_list.tokens, ["a"]);
 
-        DomTokens::dom_tokens_render_update(value(false), dom_token_list, state);
+        CsrDomTokens::dom_tokens_render_update(value(false), dom_token_list, state);
         assert!(dom_token_list.tokens.is_empty());
 
-        DomTokens::dom_tokens_render_update(value(false), &mut DomTokenListNever, state);
+        CsrDomTokens::dom_tokens_render_update(value(false), &mut DomTokenListNever, state);
     }
 }
 
 mod if_else {
-    use frender_dom_tokens::{dom_tokens, ChainableDomTokens, DomTokens};
+    use frender_dom_tokens::{dom_tokens, experimental::csr::CsrDomTokens, ChainableDomTokens};
 
     use super::*;
 
@@ -146,22 +150,22 @@ mod if_else {
         let dom_token_list = &mut DomTokenListAddRemove::default();
         assert!(dom_token_list.tokens.is_empty());
 
-        let mut state = DomTokens::dom_tokens_render_init(value(true), dom_token_list);
+        let mut state = CsrDomTokens::dom_tokens_render_init(value(true), dom_token_list);
         let state = &mut state;
         assert_eq!(dom_token_list.tokens, ["a"]);
-        DomTokens::dom_tokens_render_update(value(true), &mut DomTokenListNever, state);
-        DomTokens::dom_tokens_render_update(value(true), dom_token_list, state);
+        CsrDomTokens::dom_tokens_render_update(value(true), &mut DomTokenListNever, state);
+        CsrDomTokens::dom_tokens_render_update(value(true), dom_token_list, state);
         assert_eq!(dom_token_list.tokens, ["a"]);
 
-        DomTokens::dom_tokens_render_update(value(false), dom_token_list, state);
+        CsrDomTokens::dom_tokens_render_update(value(false), dom_token_list, state);
         assert_eq!(dom_token_list.tokens, ["b", "c"]);
 
-        DomTokens::dom_tokens_render_update(value(false), &mut DomTokenListNever, state);
+        CsrDomTokens::dom_tokens_render_update(value(false), &mut DomTokenListNever, state);
     }
 }
 
 mod r#match {
-    use frender_dom_tokens::{dom_tokens, ChainableDomTokens, DomTokens};
+    use frender_dom_tokens::{dom_tokens, experimental::csr::CsrDomTokens, ChainableDomTokens};
 
     use super::*;
 
@@ -221,30 +225,30 @@ mod r#match {
     fn csr() {
         let dom_token_list = &mut DomTokenListAddRemove::default();
         assert!(dom_token_list.tokens.is_empty());
-        let mut state = DomTokens::dom_tokens_render_init(value(Theme::Dark), dom_token_list);
+        let mut state = CsrDomTokens::dom_tokens_render_init(value(Theme::Dark), dom_token_list);
         let state = &mut state;
         assert_eq!(dom_token_list.tokens, ["dark"]);
-        DomTokens::dom_tokens_render_update(value(Theme::Dark), &mut DomTokenListNever, state);
-        DomTokens::dom_tokens_render_update(value(Theme::Dark), dom_token_list, state);
+        CsrDomTokens::dom_tokens_render_update(value(Theme::Dark), &mut DomTokenListNever, state);
+        CsrDomTokens::dom_tokens_render_update(value(Theme::Dark), dom_token_list, state);
         assert_eq!(dom_token_list.tokens, ["dark"]);
 
-        DomTokens::dom_tokens_render_update(value(Theme::Light), dom_token_list, state);
+        CsrDomTokens::dom_tokens_render_update(value(Theme::Light), dom_token_list, state);
         assert_eq!(dom_token_list.tokens, ["light"]);
 
-        DomTokens::dom_tokens_render_update(
+        CsrDomTokens::dom_tokens_render_update(
             value(Theme::Contrast { colorful: true }),
             dom_token_list,
             state,
         );
         assert_eq!(dom_token_list.tokens, ["contrast", "colorful"]);
 
-        DomTokens::dom_tokens_render_update(
+        CsrDomTokens::dom_tokens_render_update(
             value(Theme::Contrast { colorful: true }),
             &mut DomTokenListNever,
             state,
         );
 
-        DomTokens::dom_tokens_render_update(
+        CsrDomTokens::dom_tokens_render_update(
             value(Theme::Contrast { colorful: false }),
             dom_token_list,
             state,
@@ -254,7 +258,9 @@ mod r#match {
 }
 
 mod r#as {
-    use frender_dom_tokens::{dom_tokens, impl_dom_tokens_for, ChainableDomTokens, DomTokens};
+    use frender_dom_tokens::{
+        dom_tokens, experimental::csr::CsrDomTokens, impl_dom_tokens_for, ChainableDomTokens,
+    };
 
     use super::*;
 
@@ -283,11 +289,11 @@ mod r#as {
     fn csr() {
         let dom_token_list = &mut DomTokenListAddRemove::default();
         assert!(dom_token_list.tokens.is_empty());
-        let mut state = DomTokens::dom_tokens_render_init(value(), dom_token_list);
+        let mut state = CsrDomTokens::dom_tokens_render_init(value(), dom_token_list);
         let state = &mut state;
         assert_eq!(dom_token_list.tokens, ["light"]);
-        DomTokens::dom_tokens_render_update(value(), &mut DomTokenListNever, state);
-        DomTokens::dom_tokens_render_update(value(), dom_token_list, state);
+        CsrDomTokens::dom_tokens_render_update(value(), &mut DomTokenListNever, state);
+        CsrDomTokens::dom_tokens_render_update(value(), dom_token_list, state);
         assert_eq!(dom_token_list.tokens, ["light"]);
     }
 }

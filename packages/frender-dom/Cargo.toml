@@ -52,8 +52,13 @@ features = [
 ]
 
 [features]
-ssr = ["dep:frender-ssr", "dep:async-str-iter", "frender-reactive-value/ssr"]
-csr = ["dep:frender-csr-core"]
+ssr = [
+    "dep:frender-ssr",
+    "dep:async-str-iter",
+    "frender-reactive-value/ssr",
+    "frender-dom-tokens/ssr",
+]
+csr = ["dep:frender-csr-core", "frender-dom-tokens/csr"]
 web = [
     "dep:web-sys",
     "dep:wasm-bindgen",

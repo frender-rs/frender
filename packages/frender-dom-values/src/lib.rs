@@ -90,7 +90,7 @@ pub mod dom_tokens {
         Chain,
         EitherDomTokens,
         EraseConstKnownPossibleDomTokens,
-        {DomTokens, IntoDomTokens},
+        {ChainableDomTokens, DomTokens, IntoDomTokens},
     };
 }
 

@@ -1026,6 +1026,7 @@ dependencies = [
  "frender-const",
  "frender-const-expr",
  "frender-macro-rules",
+ "frender-reactive-value",
  "futures-lite 2.3.0",
  "web-sys",
 ]

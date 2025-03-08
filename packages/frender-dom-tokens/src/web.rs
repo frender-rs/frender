@@ -1,8 +1,8 @@
 use web_sys::wasm_bindgen::UnwrapThrowExt;
 
-use crate::DomToken;
+use crate::dom_token::DomToken;
 
-impl crate::DomTokenList for web_sys::DomTokenList {
+impl crate::csr::DomTokenList for web_sys::DomTokenList {
     fn set_value(&mut self, value: &str) {
         web_sys::DomTokenList::set_value(self, value)
     }

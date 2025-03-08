@@ -5,8 +5,6 @@ use constness::HasConstKnownPossibleDomTokens;
 pub use dom_token::{DomToken, UniqueDomTokenArray, UniqueDomTokenArrayVec, UniqueDomTokens};
 pub use frender_common::Empty;
 
-use async_str_iter::AsyncStrIterator;
-
 mod chain;
 mod dom_token;
 mod either;
@@ -15,45 +13,21 @@ mod erase_const_known;
 mod option;
 mod string;
 
+#[cfg(feature = "experimental")]
+pub mod experimental;
+
+#[cfg(feature = "csr")]
 #[cfg(feature = "web")]
 mod web;
 
-/// See [DOMTokenList](https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList).
-pub trait DomTokenList {
-    fn set_value(&mut self, value: &str);
-    fn add_1(&mut self, token: DomToken);
-    fn remove_1(&mut self, token: DomToken);
-    fn replace(&mut self, old_token: DomToken, new_token: DomToken);
-}
+#[cfg(feature = "csr")]
+mod csr;
+#[cfg(feature = "ssr")]
+mod ssr;
 
-pub trait DomTokensStateUnmount {
-    fn dom_tokens_state_unmount(state: &mut Self, dom_token_list: &mut impl DomTokenList);
-}
+mod sealed;
 
-pub trait DomTokens {
-    type State: DomTokensStateUnmount;
-
-    fn dom_tokens_render_init(this: Self, dom_token_list: &mut impl DomTokenList) -> Self::State;
-    fn dom_tokens_render_init_with_old_state(
-        this: Self,
-        dom_token_list: &mut impl DomTokenList,
-        old_state: &mut Self::State,
-    ) where
-        Self: Sized,
-    {
-        *old_state = Self::dom_tokens_render_init(this, dom_token_list)
-    }
-
-    fn dom_tokens_render_update(
-        this: Self,
-        dom_token_list: &mut impl DomTokenList,
-        state: &mut Self::State,
-    );
-
-    type DomTokensIntoAsyncStrIter: AsyncStrIterator;
-
-    fn dom_tokens_into_async_str_iter(this: Self) -> Self::DomTokensIntoAsyncStrIter;
-
+pub trait DomTokens: sealed::DomTokens {
     fn erase_const_known_possible_dom_tokens(self) -> EraseConstKnownPossibleDomTokens<Self>
     where
         Self: Sized,
@@ -62,106 +36,12 @@ pub trait DomTokens {
     }
 }
 
-pub mod ssr {
-    pub mod asserts {
-        use async_str_iter::AsyncStrIterator;
-
-        mod sealed {
-            pub trait DomTokensPrefixSpace {}
-        }
-
-        /// [Empty](async_str_iter::empty::Empty) or multiple space separated dom tokens prefixed with a space.
-        pub trait DomTokensPrefixSpace: AsyncStrIterator + sealed::DomTokensPrefixSpace {}
-
-        // empty
-        impl sealed::DomTokensPrefixSpace for async_str_iter::empty::Empty {}
-        impl DomTokensPrefixSpace for async_str_iter::empty::Empty {}
-
-        // never
-        impl sealed::DomTokensPrefixSpace for async_str_iter::never::Never {}
-        impl DomTokensPrefixSpace for async_str_iter::never::Never {}
-
-        // option
-        impl<T: DomTokensPrefixSpace> sealed::DomTokensPrefixSpace
-            for async_str_iter::option::IterOption<T>
-        {
-        }
-        impl<T: DomTokensPrefixSpace> DomTokensPrefixSpace for async_str_iter::option::IterOption<T> {}
-
-        // either
-        impl<L: DomTokensPrefixSpace, R: DomTokensPrefixSpace> sealed::DomTokensPrefixSpace
-            for async_str_iter::either::IterEither<L, R>
-        {
-        }
-        impl<L: DomTokensPrefixSpace, R: DomTokensPrefixSpace> DomTokensPrefixSpace
-            for async_str_iter::either::IterEither<L, R>
-        {
-        }
-
-        // chain
-        impl<A: DomTokensPrefixSpace, B: DomTokensPrefixSpace> sealed::DomTokensPrefixSpace
-            for async_str_iter::chain::Chain<A, B>
-        {
-        }
-        impl<A: DomTokensPrefixSpace, B: DomTokensPrefixSpace> DomTokensPrefixSpace
-            for async_str_iter::chain::Chain<A, B>
-        {
-        }
-
-        // const
-        impl<T: ?Sized + crate::constness::HasConstDomTokens> sealed::DomTokensPrefixSpace
-            for crate::constness::ssr::ConstDomTokensPrefixSpaceIntoAsyncStrIter<T>
-        {
-        }
-        impl<T: ?Sized + crate::constness::HasConstDomTokens> DomTokensPrefixSpace
-            for crate::constness::ssr::ConstDomTokensPrefixSpaceIntoAsyncStrIter<T>
-        {
-        }
-    }
-}
-
-mod sealed {
-    pub trait ChainableDomTokens {}
-
-    // empty
-    impl ChainableDomTokens for crate::Empty {}
-
-    // const
-    impl<T: ?Sized + crate::constness::HasConstDomTokens> ChainableDomTokens
-        for crate::constness::ConstDomTokens<T>
-    {
-    }
-
-    // option
-    impl<T: ChainableDomTokens> ChainableDomTokens for Option<T> {}
-
-    // either
-    impl<A: ChainableDomTokens, B: ChainableDomTokens> ChainableDomTokens
-        for crate::EitherDomTokens<A, B>
-    {
-    }
-
-    // chain
-    impl<A: ChainableDomTokens, B: ChainableDomTokens> ChainableDomTokens for crate::Chain<A, B> {}
-
-    // EraseConstKnownPossibleDomTokens
-    impl<T: ChainableDomTokens> ChainableDomTokens for crate::EraseConstKnownPossibleDomTokens<T> {}
-
-    // IntoDomTokens
-    impl<T: crate::IntoDomTokens> ChainableDomTokens for T where T::IntoDomTokens: ChainableDomTokens {}
-}
-
 /// This trait is sealed to make sure <code>
 /// [ChainableDomTokens::DomTokensPrefixSpaceIntoAsyncStrIter] == " " + [DomTokens::DomTokensIntoAsyncStrIter]
 /// </code>
 pub trait ChainableDomTokens:
     DomTokens + sealed::ChainableDomTokens + HasConstKnownPossibleDomTokens
 {
-    type DomTokensPrefixSpaceIntoAsyncStrIter: ssr::asserts::DomTokensPrefixSpace;
-
-    fn dom_tokens_prefix_space_into_async_str_iter(
-        this: Self,
-    ) -> Self::DomTokensPrefixSpaceIntoAsyncStrIter;
 }
 
 pub trait IntoDomTokens {
@@ -173,39 +53,8 @@ pub trait IntoDomTokens {
 // We expect a value that `impl DomTokens` at const runtime.
 // So we can't `impl<T: DomTokens> IntoDomTokens for T`
 // because `fn into_dom_tokens` can't be const fn in stable rust.
-impl<T: IntoDomTokens> DomTokens for T {
-    type State = <T::IntoDomTokens as DomTokens>::State;
-
-    fn dom_tokens_render_init(this: Self, dom_token_list: &mut impl DomTokenList) -> Self::State {
-        <T::IntoDomTokens>::dom_tokens_render_init(this.into_dom_tokens(), dom_token_list)
-    }
-
-    fn dom_tokens_render_init_with_old_state(
-        this: Self,
-        dom_token_list: &mut impl DomTokenList,
-        old_state: &mut Self::State,
-    ) {
-        <T::IntoDomTokens>::dom_tokens_render_init_with_old_state(
-            this.into_dom_tokens(),
-            dom_token_list,
-            old_state,
-        )
-    }
-
-    fn dom_tokens_render_update(
-        this: Self,
-        dom_token_list: &mut impl DomTokenList,
-        state: &mut Self::State,
-    ) {
-        <T::IntoDomTokens>::dom_tokens_render_update(this.into_dom_tokens(), dom_token_list, state)
-    }
-
-    type DomTokensIntoAsyncStrIter = <T::IntoDomTokens as DomTokens>::DomTokensIntoAsyncStrIter;
-
-    fn dom_tokens_into_async_str_iter(this: Self) -> Self::DomTokensIntoAsyncStrIter {
-        <T::IntoDomTokens>::dom_tokens_into_async_str_iter(this.into_dom_tokens())
-    }
-}
+impl<T: IntoDomTokens> crate::sealed::DomTokens for T {}
+impl<T: IntoDomTokens> DomTokens for T {}
 
 impl<T: IntoDomTokens> HasConstKnownPossibleDomTokens for T
 where
@@ -221,21 +70,11 @@ where
         <T::IntoDomTokens as HasConstKnownPossibleDomTokens>::KNOWN_POSSIBLE_DOM_TOKENS_ARRAY_VEC;
 }
 
-impl<T: IntoDomTokens> ChainableDomTokens for T
-where
-    T::IntoDomTokens: ChainableDomTokens,
+impl<T: IntoDomTokens> crate::sealed::ChainableDomTokens for T where
+    T::IntoDomTokens: ChainableDomTokens
 {
-    type DomTokensPrefixSpaceIntoAsyncStrIter =
-        <T::IntoDomTokens as ChainableDomTokens>::DomTokensPrefixSpaceIntoAsyncStrIter;
-
-    fn dom_tokens_prefix_space_into_async_str_iter(
-        this: Self,
-    ) -> Self::DomTokensPrefixSpaceIntoAsyncStrIter {
-        <T::IntoDomTokens as ChainableDomTokens>::dom_tokens_prefix_space_into_async_str_iter(
-            this.into_dom_tokens(),
-        )
-    }
 }
+impl<T: IntoDomTokens> ChainableDomTokens for T where T::IntoDomTokens: ChainableDomTokens {}
 
 pub mod constness;
 

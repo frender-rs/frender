@@ -14,14 +14,14 @@ frender-style = { version = "0.1.0", path = "../frender-style" }
 csr = [
     "frender-attr-value/csr",
     "frender-dom/csr",
-    # "frender-dom-tokens/csr", # TODO: feature
+    "frender-dom-tokens/csr",
     "frender-form-control/csr",
     "frender-style/csr",
 ]
 ssr = [
     "frender-attr-value/ssr",
     "frender-dom/ssr",
-    # "frender-dom-tokens/ssr", # TODO: feature
+    "frender-dom-tokens/ssr",
     "frender-form-control/ssr",
     "frender-style/ssr",
 ]

@@ -1,6 +1,3 @@
-use std::marker::PhantomData;
-
-use csr::State;
 pub use frender_const::ConstUsize;
 
 use frender_common::const_utils::put_at;
@@ -8,6 +5,11 @@ use frender_common::const_utils::put_at;
 use crate::{
     dom_token::UniqueDomTokenArrayVec, ChainableDomTokens, DomToken, DomTokens, UniqueDomTokenArray,
 };
+
+#[cfg(feature = "csr")]
+mod csr;
+#[cfg(feature = "ssr")]
+pub(crate) mod ssr;
 
 mod sealed {
     pub trait IsUniqueDomTokenArray<'a> {}
@@ -109,17 +111,8 @@ impl<const N: usize> DomTokensPrefixSpaceString<N> {
 /// A str which satisfies [`crate::ssr::asserts::DomTokensPrefixSpace`].
 #[derive(Debug, Clone, Copy)]
 pub struct DomTokensPrefixSpaceStr<'a> {
+    #[cfg_attr(not(feature = "ssr"), expect(dead_code))]
     inner: &'a str,
-}
-
-impl<'a> DomTokensPrefixSpaceStr<'a> {
-    const fn to_str(self) -> &'a str {
-        self.inner
-    }
-
-    fn to_str_without_prefix_space(self) -> &'a str {
-        &self.to_str()[1..]
-    }
 }
 
 pub trait HasConstDomTokens {
@@ -137,125 +130,16 @@ frender_macro_rules::define_phantom_wrapper!(
     pub struct ConstDomTokens<T: ?Sized + HasConstDomTokens>;
 );
 
-pub mod ssr {
-    use std::task::Poll;
+impl<T: ?Sized + HasConstDomTokens> crate::sealed::DomTokens for ConstDomTokens<T> {}
+impl<T: ?Sized + HasConstDomTokens> DomTokens for ConstDomTokens<T> {}
 
-    use async_str_iter::AsyncStrIterator;
-
-    use super::{ConstDomTokens, HasConstDomTokens};
-
-    pub struct ConstDomTokensIntoAsyncStrIter<T: ?Sized + HasConstDomTokens> {
-        pub(crate) _const: ConstDomTokens<T>,
-        pub(crate) yielded: bool,
-    }
-
-    impl<T: ?Sized + HasConstDomTokens> Unpin for ConstDomTokensIntoAsyncStrIter<T> {}
-
-    impl<T: ?Sized + HasConstDomTokens> AsyncStrIterator for ConstDomTokensIntoAsyncStrIter<T> {
-        fn poll_next_str(
-            self: std::pin::Pin<&mut Self>,
-            _: &mut std::task::Context<'_>,
-        ) -> Poll<Option<&str>> {
-            Poll::Ready({
-                let this = self.get_mut();
-                if this.yielded {
-                    None
-                } else {
-                    this.yielded = true;
-                    Some(T::DOM_TOKENS_PREFIX_SPACE.to_str_without_prefix_space())
-                }
-            })
-        }
-    }
-
-    pub struct ConstDomTokensPrefixSpaceIntoAsyncStrIter<T: ?Sized + HasConstDomTokens> {
-        pub(crate) _const: ConstDomTokens<T>,
-        pub(crate) yielded: bool,
-    }
-
-    impl<T: ?Sized + HasConstDomTokens> Unpin for ConstDomTokensPrefixSpaceIntoAsyncStrIter<T> {}
-
-    impl<T: ?Sized + HasConstDomTokens> AsyncStrIterator
-        for ConstDomTokensPrefixSpaceIntoAsyncStrIter<T>
-    {
-        fn poll_next_str(
-            self: std::pin::Pin<&mut Self>,
-            _: &mut std::task::Context<'_>,
-        ) -> Poll<Option<&str>> {
-            Poll::Ready({
-                let this = self.get_mut();
-                if this.yielded {
-                    None
-                } else {
-                    this.yielded = true;
-                    Some(T::DOM_TOKENS_PREFIX_SPACE.to_str())
-                }
-            })
-        }
-    }
+impl<T: ?Sized + HasConstDomTokens<DomTokensLen = ConstUsize<N>>, const N: usize>
+    crate::sealed::ChainableDomTokens for crate::constness::ConstDomTokens<T>
+{
 }
-
-pub mod csr {
-    use std::marker::PhantomData;
-
-    use crate::DomTokensStateUnmount;
-
-    use super::HasConstDomTokens;
-
-    pub struct State<T: ?Sized + HasConstDomTokens>(pub(super) PhantomData<T>);
-
-    impl<T: ?Sized + HasConstDomTokens> DomTokensStateUnmount for State<T> {
-        fn dom_tokens_state_unmount(_: &mut Self, dom_token_list: &mut impl crate::DomTokenList) {
-            T::DOM_TOKENS
-                .as_ref()
-                .iter()
-                .for_each(|t| dom_token_list.remove_1(*t))
-        }
-    }
-}
-
-impl<T: ?Sized + HasConstDomTokens> DomTokens for ConstDomTokens<T> {
-    type State = State<T>;
-
-    fn dom_tokens_render_init(
-        _: Self,
-        dom_token_list: &mut impl crate::DomTokenList,
-    ) -> Self::State {
-        T::DOM_TOKENS
-            .as_ref()
-            .iter()
-            .for_each(|t| dom_token_list.add_1(*t));
-
-        State(PhantomData)
-    }
-
-    fn dom_tokens_render_update(_: Self, _: &mut impl crate::DomTokenList, _: &mut Self::State) {
-        // Does nothing
-    }
-
-    type DomTokensIntoAsyncStrIter = ssr::ConstDomTokensIntoAsyncStrIter<T>;
-
-    fn dom_tokens_into_async_str_iter(this: Self) -> Self::DomTokensIntoAsyncStrIter {
-        ssr::ConstDomTokensIntoAsyncStrIter {
-            _const: this,
-            yielded: false,
-        }
-    }
-}
-
 impl<T: ?Sized + HasConstDomTokens<DomTokensLen = ConstUsize<N>>, const N: usize> ChainableDomTokens
     for ConstDomTokens<T>
 {
-    type DomTokensPrefixSpaceIntoAsyncStrIter = ssr::ConstDomTokensPrefixSpaceIntoAsyncStrIter<T>;
-
-    fn dom_tokens_prefix_space_into_async_str_iter(
-        this: Self,
-    ) -> Self::DomTokensPrefixSpaceIntoAsyncStrIter {
-        ssr::ConstDomTokensPrefixSpaceIntoAsyncStrIter {
-            _const: this,
-            yielded: false,
-        }
-    }
 }
 
 impl<T: ?Sized + HasConstDomTokens<DomTokensLen = ConstUsize<N>>, const N: usize>

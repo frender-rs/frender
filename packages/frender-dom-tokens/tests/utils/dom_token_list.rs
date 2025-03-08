@@ -1,4 +1,4 @@
-use frender_dom_tokens::DomTokenList;
+use frender_dom_tokens::experimental::csr::DomTokenList;
 
 #[derive(Default)]
 pub struct DomTokenListAddRemove {

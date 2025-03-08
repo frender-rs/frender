@@ -3,7 +3,7 @@ use frender_const::{ConstUsize, KnownConstUsizeAdd};
 use crate::{
     constness::{HasConstKnownPossibleDomTokens, IsConstUsize},
     dom_token::UniqueDomTokenArrayVec,
-    ChainableDomTokens, DomTokens, DomTokensStateUnmount,
+    ChainableDomTokens, DomTokens,
 };
 
 #[derive(Debug, Clone, Copy)]
@@ -24,85 +24,25 @@ where
     };
 }
 
-impl<A: DomTokensStateUnmount, B: DomTokensStateUnmount> DomTokensStateUnmount for (A, B) {
-    fn dom_tokens_state_unmount(
-        (state_a, state_b): &mut Self,
-        dom_token_list: &mut impl crate::DomTokenList,
-    ) {
-        A::dom_tokens_state_unmount(state_a, dom_token_list);
-        B::dom_tokens_state_unmount(state_b, dom_token_list);
-    }
+impl<A: ChainableDomTokens, B: ChainableDomTokens> crate::sealed::DomTokens for Chain<A, B> where
+    Self: HasConstKnownPossibleDomTokens
+{
 }
 
-impl<A: ChainableDomTokens, B: ChainableDomTokens> DomTokens for Chain<A, B>
+impl<A: ChainableDomTokens, B: ChainableDomTokens> DomTokens for Chain<A, B> where
+    Self: HasConstKnownPossibleDomTokens
+{
+}
+
+impl<A: ChainableDomTokens, B: ChainableDomTokens> crate::sealed::ChainableDomTokens
+    for crate::Chain<A, B>
 where
     Self: HasConstKnownPossibleDomTokens,
 {
-    type State = (A::State, B::State);
-
-    fn dom_tokens_render_init(
-        Self(a, b): Self,
-        dom_token_list: &mut impl crate::DomTokenList,
-    ) -> Self::State {
-        _ = Self::ASSERT_KNOWN_NOT_DUP;
-        (
-            A::dom_tokens_render_init(a, dom_token_list),
-            B::dom_tokens_render_init(b, dom_token_list),
-        )
-    }
-
-    fn dom_tokens_render_init_with_old_state(
-        Self(a, b): Self,
-        dom_token_list: &mut impl crate::DomTokenList,
-        (old_state_a, old_state_b): &mut Self::State,
-    ) {
-        _ = Self::ASSERT_KNOWN_NOT_DUP;
-        A::dom_tokens_render_init_with_old_state(a, dom_token_list, old_state_a);
-        B::dom_tokens_render_init_with_old_state(b, dom_token_list, old_state_b);
-    }
-
-    fn dom_tokens_render_update(
-        Self(a, b): Self,
-        dom_token_list: &mut impl crate::DomTokenList,
-        (state_a, state_b): &mut Self::State,
-    ) {
-        _ = Self::ASSERT_KNOWN_NOT_DUP;
-        A::dom_tokens_render_update(a, dom_token_list, state_a);
-        B::dom_tokens_render_update(b, dom_token_list, state_b);
-    }
-
-    type DomTokensIntoAsyncStrIter = async_str_iter::chain::Chain<
-        A::DomTokensIntoAsyncStrIter,
-        B::DomTokensPrefixSpaceIntoAsyncStrIter,
-    >;
-
-    fn dom_tokens_into_async_str_iter(Self(a, b): Self) -> Self::DomTokensIntoAsyncStrIter {
-        _ = Self::ASSERT_KNOWN_NOT_DUP;
-        async_str_iter::chain::Chain::new(
-            A::dom_tokens_into_async_str_iter(a),
-            B::dom_tokens_prefix_space_into_async_str_iter(b),
-        )
-    }
 }
-
-impl<A: ChainableDomTokens, B: ChainableDomTokens> ChainableDomTokens for Chain<A, B>
-where
-    Self: HasConstKnownPossibleDomTokens,
+impl<A: ChainableDomTokens, B: ChainableDomTokens> ChainableDomTokens for Chain<A, B> where
+    Self: HasConstKnownPossibleDomTokens
 {
-    type DomTokensPrefixSpaceIntoAsyncStrIter = async_str_iter::chain::Chain<
-        A::DomTokensPrefixSpaceIntoAsyncStrIter,
-        B::DomTokensPrefixSpaceIntoAsyncStrIter,
-    >;
-
-    fn dom_tokens_prefix_space_into_async_str_iter(
-        Self(a, b): Self,
-    ) -> Self::DomTokensPrefixSpaceIntoAsyncStrIter {
-        _ = Self::ASSERT_KNOWN_NOT_DUP;
-        async_str_iter::chain::Chain::new(
-            A::dom_tokens_prefix_space_into_async_str_iter(a),
-            B::dom_tokens_prefix_space_into_async_str_iter(b),
-        )
-    }
 }
 
 impl<
@@ -125,4 +65,112 @@ where
                 B::KNOWN_POSSIBLE_DOM_TOKENS_ARRAY_VEC.as_unique_dom_tokens(),
             )
     };
+}
+
+#[cfg(feature = "csr")]
+mod csr {
+    use crate::{
+        constness::HasConstKnownPossibleDomTokens,
+        csr::{CsrDomTokens, DomTokenList, DomTokensStateUnmount},
+        ChainableDomTokens,
+    };
+
+    use super::Chain;
+
+    impl<A: DomTokensStateUnmount, B: DomTokensStateUnmount> DomTokensStateUnmount for (A, B) {
+        fn dom_tokens_state_unmount(
+            (state_a, state_b): &mut Self,
+            dom_token_list: &mut impl DomTokenList,
+        ) {
+            A::dom_tokens_state_unmount(state_a, dom_token_list);
+            B::dom_tokens_state_unmount(state_b, dom_token_list);
+        }
+    }
+
+    impl<A: ChainableDomTokens, B: ChainableDomTokens> CsrDomTokens for Chain<A, B>
+    where
+        Self: HasConstKnownPossibleDomTokens,
+    {
+        type State = (A::State, B::State);
+
+        fn dom_tokens_render_init(
+            Self(a, b): Self,
+            dom_token_list: &mut impl DomTokenList,
+        ) -> Self::State {
+            _ = Self::ASSERT_KNOWN_NOT_DUP;
+            (
+                A::dom_tokens_render_init(a, dom_token_list),
+                B::dom_tokens_render_init(b, dom_token_list),
+            )
+        }
+
+        fn dom_tokens_render_init_with_old_state(
+            Self(a, b): Self,
+            dom_token_list: &mut impl DomTokenList,
+            (old_state_a, old_state_b): &mut Self::State,
+        ) {
+            _ = Self::ASSERT_KNOWN_NOT_DUP;
+            A::dom_tokens_render_init_with_old_state(a, dom_token_list, old_state_a);
+            B::dom_tokens_render_init_with_old_state(b, dom_token_list, old_state_b);
+        }
+
+        fn dom_tokens_render_update(
+            Self(a, b): Self,
+            dom_token_list: &mut impl DomTokenList,
+            (state_a, state_b): &mut Self::State,
+        ) {
+            _ = Self::ASSERT_KNOWN_NOT_DUP;
+            A::dom_tokens_render_update(a, dom_token_list, state_a);
+            B::dom_tokens_render_update(b, dom_token_list, state_b);
+        }
+    }
+}
+
+#[cfg(feature = "ssr")]
+mod ssr {
+    use crate::{
+        constness::HasConstKnownPossibleDomTokens,
+        ssr::{SsrChainableDomTokens, SsrDomTokens},
+        ChainableDomTokens,
+    };
+
+    use super::Chain;
+
+    impl<A: ChainableDomTokens, B: ChainableDomTokens> SsrDomTokens for Chain<A, B>
+    where
+        Self: HasConstKnownPossibleDomTokens,
+    {
+        type DomTokensIntoAsyncStrIter = async_str_iter::chain::Chain<
+            A::DomTokensIntoAsyncStrIter,
+            B::DomTokensPrefixSpaceIntoAsyncStrIter,
+        >;
+
+        fn dom_tokens_into_async_str_iter(Self(a, b): Self) -> Self::DomTokensIntoAsyncStrIter {
+            _ = Self::ASSERT_KNOWN_NOT_DUP;
+            async_str_iter::chain::Chain::new(
+                A::dom_tokens_into_async_str_iter(a),
+                B::dom_tokens_prefix_space_into_async_str_iter(b),
+            )
+        }
+    }
+
+    impl<A: ChainableDomTokens, B: ChainableDomTokens> SsrChainableDomTokens for Chain<A, B>
+    where
+        Self: HasConstKnownPossibleDomTokens,
+    {
+        type DomTokensPrefixSpaceIntoAsyncStrIter = async_str_iter::chain::Chain<
+            A::DomTokensPrefixSpaceIntoAsyncStrIter,
+            B::DomTokensPrefixSpaceIntoAsyncStrIter,
+        >;
+
+        fn dom_tokens_prefix_space_into_async_str_iter(
+            Self(a, b): Self,
+        ) -> Self::DomTokensPrefixSpaceIntoAsyncStrIter {
+            _ = Self::ASSERT_KNOWN_NOT_DUP;
+            async_str_iter::chain::Chain::new(
+                A::dom_tokens_prefix_space_into_async_str_iter(a),
+                B::dom_tokens_prefix_space_into_async_str_iter(b),
+            )
+        }
+    }
 }

@@ -1,8 +1,13 @@
-use async_str_iter::ext::AsyncStrIteratorExt;
+#![cfg(feature = "experimental")]
+#![cfg(feature = "ssr")]
+
 use frender_dom_tokens::{
-    constness::HasConstKnownPossibleDomTokens, impl_dom_tokens_for, ChainableDomTokens, DomToken,
-    DomTokens,
+    constness::HasConstKnownPossibleDomTokens, impl_dom_tokens_for, DomToken,
 };
+
+use self::utils::ssr::{collect_dom_tokens, collect_dom_tokens_prefix_space};
+
+pub mod utils;
 
 struct ConstDomTokens;
 
@@ -22,16 +27,13 @@ fn const_dom_tokens() {
 
     futures_lite::future::block_on(async {
         assert_eq!(
-            DomTokens::dom_tokens_into_async_str_iter(ConstDomTokens)
-                .collect::<String>()
-                .await,
+            //
+            collect_dom_tokens(ConstDomTokens).await,
             "a b c"
         );
 
         assert_eq!(
-            ChainableDomTokens::dom_tokens_prefix_space_into_async_str_iter(ConstDomTokens)
-                .collect::<String>()
-                .await,
+            collect_dom_tokens_prefix_space(ConstDomTokens).await,
             " a b c"
         );
     });
