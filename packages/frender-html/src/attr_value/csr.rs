@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use frender_attr_value::{
     csr::{CsrAttrValue, UpdateAttrValue},
-    html::{AttrKindOfContentEditable, Spellcheck},
+    html::{AttrKindOfContentEditable, AttrKindOfSpellcheck},
     AttrKindOfStr, AttrValueKind,
 };
 use frender_common::convert::FromMut as _;
@@ -147,7 +147,7 @@ where
 }
 
 trait SimpleAttrValueKindRemoveAttr: AttrValueKind {}
-impl SimpleAttrValueKindRemoveAttr for Spellcheck {}
+impl SimpleAttrValueKindRemoveAttr for AttrKindOfSpellcheck {}
 impl SimpleAttrValueKindRemoveAttr for AttrKindOfContentEditable {}
 impl SimpleAttrValueKindRemoveAttr for AttrKindOfStr {}
 impl SimpleAttrValueKindRemoveAttr for i32 {}

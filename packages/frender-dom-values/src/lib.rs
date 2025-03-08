@@ -54,7 +54,7 @@ pub mod attr_value {
     };
 
     #[cfg(feature = "html")]
-    pub use frender_attr_value::html::{AttrKindOfContentEditable, Spellcheck};
+    pub use frender_attr_value::html::{AttrKindOfContentEditable, AttrKindOfSpellcheck};
 
     #[cfg(feature = "csr")]
     pub use frender_attr_value::csr::CsrAttrValue;

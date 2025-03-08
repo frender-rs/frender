@@ -31,7 +31,7 @@ macro_rules! define_behavior_fn_update_with {
         fn $set_attribute_ident(&mut self, renderer: &mut Renderer, $value: $maybe_ty);
     };
     (
-        update_with($set_attribute_ident:ident, custom_type!($custom_type:ty), impl_with! $impl_with:tt $(,)?)
+        update_with($set_attribute_ident:ident, custom_type!($custom_type:ty) $(, impl_with! $impl_with:tt $(,)?)?)
         value($value:ident)
         type($maybe_ty:ty)
     ) => {

@@ -28,7 +28,7 @@ macro_rules! impl_behavior_fn_update_with {
         }
     };
     (
-        update_with($set_attribute_ident:ident, custom_type!($custom_type:ty), impl_with! $impl_with:tt $(,)?)
+        update_with($set_attribute_ident:ident, custom_type!($custom_type:ty) $(, impl_with! $impl_with:tt $(,)?)?)
         value($value:ident)
         type($maybe_ty:ty)
         trait_name($trait_name:ident $($only_for_types:tt)?)
@@ -938,6 +938,30 @@ macro_rules! impl_attr_value_for_prop_marker {
         crate::macros::impl_attr_value_for_prop_marker! {
             update_with((
                 $set_attribute_ident,
+                impl_with!(
+                    update = |element, renderer| element.$set_attribute_ident(renderer, $value)
+                ),
+            ))
+            prop_marker($prop_marker)
+            trait_name($trait_name)
+            value($value)
+            value_kind($($value_kind)*)
+        }
+    };
+    (
+        update_with((
+            $set_attribute_ident:ident,
+            custom_type!($custom_type:ty) $(,)?
+        ))
+        prop_marker($prop_marker:ty)
+        trait_name($trait_name:ident)
+        value($value:ident)
+        value_kind($($value_kind:tt)*)
+    ) => {
+        crate::macros::impl_attr_value_for_prop_marker! {
+            update_with((
+                $set_attribute_ident,
+                custom_type!($custom_type),
                 impl_with!(
                     update = |element, renderer| element.$set_attribute_ident(renderer, $value)
                 ),

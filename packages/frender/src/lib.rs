@@ -99,11 +99,11 @@ pub mod attr_value {
         Absent,
         // html
         AttrKindOfContentEditable,
+        AttrKindOfSpellcheck,
         AttrKindOfStr,
         AttrValue,
         AttrValueKind,
         EitherAttrValue,
-        Spellcheck,
     };
 
     #[cfg(feature = "csr")]

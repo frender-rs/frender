@@ -1,7 +1,7 @@
 #![allow(warnings)] // TODO: remove
 
 use frender_attr_value::{
-    html::{AttrKindOfContentEditable, Spellcheck},
+    html::{AttrKindOfContentEditable, AttrKindOfSpellcheck},
     AttrKindOfStr,
 };
 #[cfg(feature = "csr")]
@@ -891,17 +891,8 @@ crate::macros::def_intrinsic_component_props!(
                         fn nonce(value: attr_value![&str]);
                         fn role(value: attr_value![&str]);
                         fn slot(value: attr_value![&str]);
-                        fn spellcheck(value: attr_value![Spellcheck]) {
-                            update_with!(
-                                //
-                                set_spellcheck,
-                                custom_type!(bool),
-                                impl_with!(
-                                    //
-                                    dom_api_value_from_value = |Spellcheck(v)| v,
-                                    update = |element, renderer| element.set_spellcheck(renderer, value),
-                                ),
-                            );
+                        fn spellcheck(value: attr_value![AttrKindOfSpellcheck]) {
+                            update_with!(set_spellcheck, custom_type!(bool));
                         }
                         fn style(value: bounds![Style]);
                         fn tab_index(value: attr_value![i32]) {

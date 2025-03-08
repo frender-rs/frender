@@ -802,8 +802,8 @@ pub mod HtmlElement {
     impl<V: frender_attr_value::AttrValue<AttrKindOfStr>> Property for slot<V> {
         type PropertyMarker = _prop_markers::slot;
     }
-    pub struct spellcheck<V: frender_attr_value::AttrValue<Spellcheck>>(pub V);
-    impl<V: frender_attr_value::AttrValue<Spellcheck>> Property for spellcheck<V> {
+    pub struct spellcheck<V: frender_attr_value::AttrValue<AttrKindOfSpellcheck>>(pub V);
+    impl<V: frender_attr_value::AttrValue<AttrKindOfSpellcheck>> Property for spellcheck<V> {
         type PropertyMarker = _prop_markers::spellcheck;
     }
     pub struct style<V: Style::Bounds>(pub V);

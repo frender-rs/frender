@@ -1377,7 +1377,7 @@ const _: () = {
         }
     }
     impl<M: AllowAttribute<prop_markers::spellcheck>, C, A, P> Intrinsic<M, C, A, P> {
-        pub fn spellcheck<V: frender_attr_value::AttrValue<Spellcheck>>(self, value: V) -> Intrinsic<M, C, (A, props::spellcheck<V>), P> {
+        pub fn spellcheck<V: frender_attr_value::AttrValue<AttrKindOfSpellcheck>>(self, value: V) -> Intrinsic<M, C, (A, props::spellcheck<V>), P> {
             Self::with_attribute_appended(self, props::spellcheck(value))
         }
     }

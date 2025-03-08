@@ -2,17 +2,9 @@ use frender_common::Empty;
 
 use crate::{html::bool_to_str, ssr::SsrAttrValue, AttrKindOfStr};
 
-use super::Spellcheck;
+use super::AttrKindOfSpellcheck;
 
-impl SsrAttrValue<Spellcheck> for Spellcheck {
-    type HtmlAttributeValue = <bool as SsrAttrValue<Spellcheck>>::HtmlAttributeValue;
-
-    fn maybe_into_html_attribute_value(this: Self) -> Option<Self::HtmlAttributeValue> {
-        SsrAttrValue::<Spellcheck>::maybe_into_html_attribute_value(this.0)
-    }
-}
-
-impl SsrAttrValue<Spellcheck> for bool {
+impl SsrAttrValue<AttrKindOfSpellcheck> for bool {
     type HtmlAttributeValue = <&'static str as SsrAttrValue<AttrKindOfStr>>::HtmlAttributeValue;
 
     fn maybe_into_html_attribute_value(this: Self) -> Option<Self::HtmlAttributeValue> {
@@ -22,7 +14,7 @@ impl SsrAttrValue<Spellcheck> for bool {
     }
 }
 
-impl SsrAttrValue<Spellcheck> for Empty {
+impl SsrAttrValue<AttrKindOfSpellcheck> for Empty {
     type HtmlAttributeValue = async_str_iter::empty::Empty;
 
     fn maybe_into_html_attribute_value(Self: Self) -> Option<Self::HtmlAttributeValue> {

@@ -2,7 +2,7 @@ mod content_editable;
 pub use content_editable::AttrKindOfContentEditable;
 
 mod spellcheck;
-pub use spellcheck::Spellcheck;
+pub use spellcheck::AttrKindOfSpellcheck;
 
 fn bool_to_str(this: bool) -> &'static str {
     if this {

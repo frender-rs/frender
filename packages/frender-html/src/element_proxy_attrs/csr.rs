@@ -315,7 +315,7 @@ pub(crate) mod macros {
             }
         };
         (
-            update_with($set_attribute_ident:ident, custom_type!($custom_type:ty), impl_with! $impl_with:tt $(,)?)
+            update_with($set_attribute_ident:ident, custom_type!($custom_type:ty) $(, impl_with! $impl_with:tt $(,)?)?)
             value($value:ident)
             type($maybe_ty:ty)
             trait_name($trait_name:ident $($only_for_types:tt)?)
