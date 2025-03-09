@@ -50,5 +50,5 @@ pub mod web {
 }
 
 pub mod html {
-    pub use crate::html::behaviors;
+    pub use crate::html::{behavior_type_traits, behaviors};
 }

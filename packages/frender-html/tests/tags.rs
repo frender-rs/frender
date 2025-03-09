@@ -1,15 +1,16 @@
 #![cfg(feature = "components")]
 #![cfg(feature = "csr")]
 
-use frender_html::html::{behavior_type_traits, markers};
+use frender_html::cs;
+use frender_html::csr::experimental::html::behavior_type_traits;
 
 #[test]
 const fn assert_impl()
 where
-    markers::div: behavior_type_traits::Node,
-    markers::div: behavior_type_traits::Element,
-    markers::div: behavior_type_traits::HtmlElement,
-    markers::div: behavior_type_traits::HtmlDivElement,
+    cs::div::Marker: behavior_type_traits::Node,
+    cs::div::Marker: behavior_type_traits::Element,
+    cs::div::Marker: behavior_type_traits::HtmlElement,
+    cs::div::Marker: behavior_type_traits::HtmlDivElement,
 {
 }
 
