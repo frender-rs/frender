@@ -13,11 +13,7 @@ impl_dom_tokens_for!(|self: PubTokens| dom_tokens!(
         Some(_) => "e",
         None => "f",
     },
-    {
-        {
-            Empty
-        }
-    } as Empty,
+    verbatim!(Empty) as Empty,
 ));
 
 #[test]
@@ -43,11 +39,7 @@ mod private {
             Some(_) => "e",
             None => "f",
         },
-        {
-            {
-                Empty
-            }
-        } as Empty,
+        verbatim!(Empty) as Empty,
     ));
 
     pub(crate) struct CrateTokens;
@@ -63,11 +55,7 @@ mod private {
             Some(_) => "e",
             None => "f",
         },
-        {
-            {
-                Empty
-            }
-        } as Empty,
+        verbatim!(Empty) as Empty,
     ));
 
     #[test]

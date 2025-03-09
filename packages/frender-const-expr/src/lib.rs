@@ -127,42 +127,6 @@ macro_rules! parse_one {
         }
     };
     (
-        // {{..}} as $ty      native block as
-        //
-        // Output is:
-        // native_block!({{ $($native_block_content:tt)* }} as $ty:ty)
-        {$($finish:tt)*} [$($prepend:tt)*]
-        ($($pre_expr:tt)*)
-        {{{$($_expr:tt)*}} as      $_as_ty:ty $(, $($_rest:tt)*)?}
-        {$native_block:tt  $as:tt  $as_ty:ty $(, $( $rest:tt)*)?}
-        [$($append:tt)*]
-    ) => {
-        $($finish)* {
-            $($prepend)*
-            { native_block!($($pre_expr)* $native_block $as $as_ty) }
-            { $(, $($rest)*)? }
-            $($append)*
-        }
-    };
-    (
-        // {{..}}       native block
-        //
-        // Output is:
-        // native_block!({{ $($native_block_content:tt)* }})
-        {$($finish:tt)*} [$($prepend:tt)*]
-        ($($pre_expr:tt)*)
-        {{{$($_expr:tt)*}} $($_rest:tt)*}
-        {$native_block:tt $($rest:tt )*}
-        [$($append:tt)*]
-    ) => {
-        $($finish)* {
-            $($prepend)*
-            { native_block!($($pre_expr)* $native_block) }
-            { $($rest)* }
-            $($append)*
-        }
-    };
-    (
         // {..}       block
         //
         // Output is:
@@ -267,6 +231,42 @@ macro_rules! parse_one {
             $($prepend)*
             { paren!($($pre_expr)* $paren) }
             { $($rest)* }
+            $($append)*
+        }
+    };
+    (
+        // some_macro! $macro_body:tt as _     simple macro as _
+        //
+        // Output is:
+        // r#macro!($macro_name:ident ! $macro_body:tt as _)
+        {$($finish:tt)*} [$($prepend:tt)*]
+        ($($pre_expr:tt)*)
+        { $_macro_name:ident !        $_macro_body:tt as     _             $($_rest:tt)*}
+        {  $macro_name:ident $bang:tt  $macro_body:tt $as:tt $underline:tt $( $rest:tt)*}
+        [$($append:tt)*]
+    ) => {
+        $($finish)* {
+            $($prepend)*
+            { r#macro!( $($pre_expr)* $macro_name $bang $macro_body $as $underline ) }
+            { $($rest)* }
+            $($append)*
+        }
+    };
+    (
+        // some_macro! $macro_body:tt as $ty:ty     simple macro as type
+        //
+        // Output is:
+        // r#macro!($macro_name:ident ! $macro_body:tt as $ty:ty)
+        {$($finish:tt)*} [$($prepend:tt)*]
+        ($($pre_expr:tt)*)
+        { $_macro_name:ident !        $_macro_body:tt as     $_as_ty:ty $(, $($_rest:tt)*)?}
+        {  $macro_name:ident $bang:tt  $macro_body:tt $as:tt  $as_ty:ty $(, $( $rest:tt)*)?}
+        [$($append:tt)*]
+    ) => {
+        $($finish)* {
+            $($prepend)*
+            { r#macro!( $($pre_expr)* $macro_name $bang $macro_body $as $as_ty ) }
+            { $(, $($rest)*)? }
             $($append)*
         }
     };
@@ -716,22 +716,6 @@ pub mod syntax {
         };
     }
 
-    /// Note that the default macro for native block syntax
-    /// doesn't allow `as $ty`.
-    #[doc(hidden)]
-    #[macro_export]
-    macro_rules! syntax_native_block {
-        // TODO: is this needed?
-        (@{$($with:tt)*} $(#$attr:tt)* $e:block /* matching a block would prevent unused brace */) => {
-            $(#$attr)*
-            $e
-        };
-        (@{$($with:tt)*} $(#$attr:tt)* {$($t:tt)*} /* allows braced tokens that are not a valid block */) => {
-            $(#$attr)*
-            {$($t)*}
-        };
-    }
-
     #[doc(hidden)]
     #[macro_export]
     macro_rules! syntax_block {
@@ -836,7 +820,7 @@ pub mod syntax {
         };
     }
 
-    /// The default macro for `some_macro!(..)` syntax doesn't allow attributes.
+    /// The default macro for `some_macro!(..)` syntax doesn't allow attributes or `as Type`.
     #[doc(hidden)]
     #[macro_export]
     macro_rules! syntax_macro {
@@ -997,9 +981,19 @@ pub mod syntax {
         syntax_array as array, syntax_block as block, syntax_chain as chain,
         syntax_const_block as const_block, syntax_empty as empty, syntax_if as r#if,
         syntax_literal as literal, syntax_macro as r#macro, syntax_match as r#match,
-        syntax_match_non_empty as match_non_empty, syntax_native_block as native_block,
-        syntax_never as never, syntax_one as one, syntax_paren as paren,
+        syntax_match_non_empty as match_non_empty, syntax_never as never, syntax_one as one,
+        syntax_paren as paren,
     };
+
+    pub mod macros {
+        #[macro_export]
+        #[doc(hidden)]
+        macro_rules! syntax_macros_verbatim {
+            ($($e:tt)*) => { $($e)* };
+        }
+
+        pub use syntax_macros_verbatim as verbatim;
+    }
 }
 
 pub mod const_marker {

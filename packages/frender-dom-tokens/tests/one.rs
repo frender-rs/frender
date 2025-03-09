@@ -269,11 +269,7 @@ mod r#as {
     impl_dom_tokens_for!(|self: MyDomTokens| "light");
 
     const fn value() -> impl ChainableDomTokens + Copy {
-        dom_tokens!({
-            {
-                MyDomTokens
-            }
-        })
+        dom_tokens!({ verbatim!(MyDomTokens) })
     }
 
     #[test]

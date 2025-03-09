@@ -164,7 +164,11 @@ pub mod dom_tokens {
         pub use super::r#const;
 
         pub mod macros {
+            #[doc(no_inline)]
             pub use dom_tokens;
+
+            #[doc(no_inline)]
+            pub use frender_const_expr::syntax::macros::verbatim;
         }
     }
 
@@ -346,7 +350,12 @@ pub mod dom_tokens {
                     dom_tokens_typed_const_markers_syntax_noop as noop,
                 };
 
-                pub use {noop as native_block, noop as never};
+                pub use noop as never;
+
+                pub mod macro_imps {
+                    pub use super::super::super::macro_imps::dom_tokens;
+                    pub use super::noop as verbatim;
+                }
             }
         }
 
@@ -377,20 +386,6 @@ pub mod dom_tokens {
                 macro_rules! dom_tokens_typed_type_syntax_chain_impl {
                     ($($chain:tt)*) => {
                         $crate::values::Chain::<$($chain)*>
-                    };
-                }
-
-                #[doc(hidden)]
-                #[macro_export]
-                macro_rules! dom_tokens_typed_type_syntax_native_block {
-                    (
-                        @{$($with:tt)*}
-                        #[__dom_tokens_typed_path($($p:tt)*)]
-                        $(#$attr:tt)*
-                        $e:block as $as_ty:ty
-                    ) => {
-                        $(#$attr)*
-                        $as_ty
                     };
                 }
 
@@ -533,9 +528,22 @@ pub mod dom_tokens {
                     dom_tokens_typed_type_syntax_const as r#const,
                     dom_tokens_typed_type_syntax_if as r#if,
                     dom_tokens_typed_type_syntax_match_non_empty as match_non_empty,
-                    dom_tokens_typed_type_syntax_native_block as native_block,
                     dom_tokens_typed_type_syntax_never as never,
                 };
+
+                pub mod macro_imps {
+                    pub use super::super::super::macro_imps::dom_tokens;
+
+                    #[macro_export]
+                    #[doc(hidden)]
+                    macro_rules! dom_tokens_typed_type_syntax_macro_imps_verbatim {
+                        (@{$($with:tt)*} #{$(#$attr:tt)*} $grouped_macro_content:tt as $as_ty:ty) => {
+                            $as_ty
+                        };
+                    }
+
+                    pub use dom_tokens_typed_type_syntax_macro_imps_verbatim as verbatim;
+                }
             }
         }
 
@@ -565,20 +573,6 @@ pub mod dom_tokens {
                 macro_rules! dom_tokens_typed_expr_syntax_chain_impl {
                     ($($chain:tt)*) => {
                         $crate::values::Chain($($chain)*)
-                    };
-                }
-
-                #[doc(hidden)]
-                #[macro_export]
-                macro_rules! dom_tokens_typed_expr_syntax_native_block {
-                    (
-                        @{$($with:tt)*}
-                        #[__dom_tokens_typed_path($($p:tt)*)]
-                        $(#$attr:tt)*
-                        $e:block $(as $as_ty:ty)?
-                    ) => {
-                        $(#$attr)*
-                        $e
                     };
                 }
 
@@ -738,9 +732,22 @@ pub mod dom_tokens {
                     dom_tokens_typed_expr_syntax_const as r#const,
                     dom_tokens_typed_expr_syntax_if as r#if,
                     dom_tokens_typed_expr_syntax_match_non_empty as match_non_empty,
-                    dom_tokens_typed_expr_syntax_native_block as native_block,
                     dom_tokens_typed_expr_syntax_never as never,
                 };
+
+                pub mod macro_imps {
+                    pub use super::super::super::macro_imps::dom_tokens;
+
+                    #[macro_export]
+                    #[doc(hidden)]
+                    macro_rules! dom_tokens_typed_expr_syntax_macro_imps_verbatim {
+                        (@{$($with:tt)*} #{$(#$attr:tt)*} $grouped_macro_content:tt as $as_ty:ty) => {
+                            $crate::dom_tokens::syntax::macros::verbatim! $grouped_macro_content
+                        };
+                    }
+
+                    pub use dom_tokens_typed_expr_syntax_macro_imps_verbatim as verbatim;
+                }
             }
         }
 
@@ -809,23 +816,12 @@ pub mod dom_tokens {
             #[doc(hidden)]
             #[macro_export]
             macro_rules! dom_tokens_typed_common_syntax_macro {
-                (@{$($with:tt)*} $(#$attr:tt)* $dom_tokens:ident $bang:tt [$($macro_content:tt)*]) => {
-                    $crate::dom_tokens_typed_common_syntax_macro! {
-                        @{$($with)*} $(#$attr)* $dom_tokens $bang ($($macro_content)*)
-                    }
-                };
-                (@{$($with:tt)*} $(#$attr:tt)* $dom_tokens:ident $bang:tt {$($macro_content:tt)*}) => {
-                    $crate::dom_tokens_typed_common_syntax_macro! {
-                        @{$($with)*} $(#$attr)* $dom_tokens $bang ($($macro_content)*)
-                    }
-                };
-                (@{$($with:tt)*} $(#$attr:tt)* $dom_tokens:ident $bang:tt $macro_content:tt) => {
-                    $crate::dom_tokens::typed::macros::$dom_tokens $bang {
-                        $($with)*::paren! {
-                            @{$($with)*}
-                            $(#$attr)*
-                            $macro_content
-                        }
+                (@{$($with:tt)*} $(#$attr:tt)* $macro_name:ident $bang:tt $macro_content:tt $($as:tt $($as_ty:tt)*)?) => {
+                    $($with)*::macro_imps::$macro_name $bang {
+                        @{$($with)*}
+                        #{$(#$attr)*}
+                        $macro_content
+                        $($as $($as_ty)*)?
                     }
                 };
             }
@@ -838,16 +834,30 @@ pub mod dom_tokens {
             };
         }
 
-        pub mod macros {
+        pub mod macro_imps {
             #[doc(hidden)]
             #[macro_export]
-            macro_rules! dom_tokens_typed_macros_dom_tokens {
-                ($($t:tt)*) => {
-                    $($t)*
+            macro_rules! dom_tokens_typed_macro_imps_dom_tokens {
+                (@$with:tt #$attrs:tt [$($macro_content:tt)*]) => {
+                    $crate::dom_tokens_typed_macro_imps_dom_tokens! {
+                        @$with #$attrs ($($macro_content)*)
+                    }
+                };
+                (@$with:tt #$attrs:tt {$($macro_content:tt)*}) => {
+                    $crate::dom_tokens_typed_macro_imps_dom_tokens! {
+                        @$with #$attrs ($($macro_content)*)
+                    }
+                };
+                (@{$($with:tt)*} #{$(#$attr:tt)*} $paren_macro_content:tt) => {
+                    $($with)*::paren! {
+                        @{$($with)*}
+                        $(#$attr)*
+                        $paren_macro_content
+                    }
                 };
             }
 
-            pub use dom_tokens_typed_macros_dom_tokens as dom_tokens;
+            pub use dom_tokens_typed_macro_imps_dom_tokens as dom_tokens;
         }
     }
 }
