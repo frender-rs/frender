@@ -372,8 +372,8 @@ impl WeakElement {
 mod cursor_placeholder {
     use std::borrow::Cow;
 
-    use frender_html::dom::csr::{
-        behaviors::{self, Node as _},
+    use frender_html::csr::{
+        experimental::behaviors::{self, Node as _},
         render::RenderWithContext,
         UiHandle, UnmountedUiHandle,
     };
@@ -500,8 +500,9 @@ mod dom {
 
     use super::{Element, Node};
 
-    use frender_html::dom::csr::{
-        behaviors, render::RenderWithContext, render_from::str::ValueForStr, ProvideMutMounted,
+    use frender_html::csr::{
+        experimental::{behaviors, node_ref, render_from::str::ValueForStr, ProvideMutMounted},
+        render::RenderWithContext,
         UiHandle, UnmountedUiHandle,
     };
 
@@ -625,7 +626,7 @@ mod dom {
             todo!()
         }
 
-        fn as_node_ref(&self) -> &(dyn 'static + frender_html::dom::node_ref::traits::Element) {
+        fn as_node_ref(&self) -> &(dyn 'static + node_ref::traits::Element) {
             todo!()
         }
     }
@@ -637,7 +638,7 @@ mod dom {
     }
 
     impl behaviors::HtmlElement<Renderer> for Element {
-        fn as_node_ref(&self) -> &(dyn 'static + frender_html::dom::node_ref::traits::HtmlElement) {
+        fn as_node_ref(&self) -> &(dyn 'static + node_ref::traits::HtmlElement) {
             todo!()
         }
     }
@@ -667,7 +668,8 @@ mod dom {
     }
 
     mod style {
-        use frender_html::dom::{csr::behaviors, style::csr::CssStyleDeclaration};
+        use frender_html::csr::experimental::behaviors;
+        use frender_style::css_style_declaration::{CssStyleDeclaration, Priority};
 
         use crate::{element::Element, renderer::Renderer};
 
@@ -682,7 +684,7 @@ mod dom {
                 &mut self,
                 property_name: &str,
                 value: &str,
-                priority: frender_html::dom::style::csr::Priority,
+                priority: Priority,
             ) {
                 self.0
                     .set_style_property(property_name, value, priority.is_important())
@@ -714,11 +716,11 @@ mod dom {
 }
 
 mod dom_token_list {
-    use frender_html::DomToken;
+    use frender_dom_tokens::{experimental::csr, DomToken};
 
     pub struct DomTokenList {}
 
-    impl frender_html::DomTokenList for DomTokenList {
+    impl csr::DomTokenList for DomTokenList {
         fn set_value(&mut self, value: &str) {
             todo!()
         }
@@ -739,13 +741,11 @@ mod dom_token_list {
 
 mod event_listener {
     use frender_common::HandleEvent;
-    use frender_html::{
-        csr::experimental::RenderInitPinned,
-        dom::{
-            csr::{OnEvent, PinnedRegisterUpdate, RegisterUpdate},
-            event_types::EventType,
-            HasEventTypeName,
-        },
+    use frender_html::csr::experimental::{
+        event_listener::{OnEvent, PinnedRegisterUpdate, RegisterUpdate},
+        event_types::{self, EventType},
+        events::HasEventTypeName,
+        RenderInitPinned,
     };
 
     use crate::renderer::Renderer;
@@ -825,12 +825,11 @@ mod event_listener {
     }
 
     impl<ET: HasEventTypeName + EventType> OnEvent<Renderer, ET> for Element {
-        type EventListener<
-            F: HandleEvent<<ET as frender_html::dom::event_types::EventType>::Event> + 'static,
-        > = EventListener<F>;
+        type EventListener<F: HandleEvent<<ET as event_types::EventType>::Event> + 'static> =
+            EventListener<F>;
 
         type EventListenerUnpinned<
-            F: HandleEvent<<ET as frender_html::dom::event_types::EventType>::Event> + 'static,
+            F: HandleEvent<<ET as event_types::EventType>::Event> + 'static,
         > = EventListenerUnpinned<F>;
     }
 }
@@ -838,12 +837,11 @@ mod event_listener {
 mod form_control {
     use std::marker::PhantomData;
 
-    use frender_html::{
-        dom::csr::RegisterUpdate,
-        form_control::{
-            csr::{FormControlElement, HandleFormControlValue},
-            FormControlValueKind, KindOfChecked, KindOfValue, KindOfValueAsNumber,
-        },
+    use frender_html::csr::experimental::event_listener::RegisterUpdate;
+
+    use frender_form_control::{
+        csr::{FormControlElement, HandleFormControlValue},
+        FormControlValueKind, KindOfChecked, KindOfValue, KindOfValueAsNumber,
     };
 
     use crate::renderer::Renderer;

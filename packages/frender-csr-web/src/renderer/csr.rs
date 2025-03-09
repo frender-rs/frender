@@ -1,12 +1,12 @@
 use std::borrow::Cow;
 
-use frender_html::{
-    csr::experimental::RenderHtml,
-    dom::csr::{
-        render::{Render, RenderWithContext},
-        web::{CursorPlaceholder, Node, RenderContext},
-        ProvideRenderContext,
+use frender_html::csr::{
+    experimental::{
+        render::Render,
+        web::{self, CursorPlaceholder, Node, RenderContext},
+        ProvideRenderContext, RenderHtml,
     },
+    render::RenderWithContext,
 };
 
 use super::{Renderer, RendererWithRoot};
@@ -22,9 +22,7 @@ impl ProvideRenderContext for RendererWithRoot {
     ) -> Res {
         let mut ctx = RenderContext {
             renderer: &mut self.renderer,
-            cursor: &mut frender_html::dom::csr::web::Cursor::first_child_of(Cow::Borrowed(
-                &self.root,
-            )),
+            cursor: &mut web::Cursor::first_child_of(Cow::Borrowed(&self.root)),
         };
         f(&mut ctx)
     }
@@ -178,7 +176,7 @@ impl RenderHtml for Renderer {
     );
 }
 
-impl frender_html::dom::csr::web::Renderer for Renderer {
+impl web::Renderer for Renderer {
     fn document(&self) -> Cow<web_sys::Document> {
         Cow::Borrowed(&self.document)
     }

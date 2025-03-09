@@ -1,4 +1,7 @@
-use frender_html::dom::csr::{render::RenderTextFrom, web::Node};
+use frender_html::csr::experimental::{
+    render::RenderTextFrom,
+    web::{self, Node},
+};
 
 use super::Renderer;
 
@@ -72,11 +75,11 @@ mod into_js_string {
 mod into_text_node {
     use std::{borrow::Cow, rc::Rc, sync::Arc};
 
+    use frender_html::values::StringElement;
     use frender_reactive_value::{static_or_temp_ref::StaticOrTempRef, temp_ref::TempRef};
     use wasm_bindgen::JsCast as _;
 
     use frender_common::impl_many;
-    use frender_html::dom::string_element::StringElement;
 
     use super::Renderer;
 
@@ -168,7 +171,7 @@ impl<V: into_text_node::IntoTextNode> RenderTextFrom<V> for Renderer {
 
     fn render_text_from(render_context: &mut Self::RenderContext<'_>, v: V) -> Self::Text {
         let text = v.into_text_node(render_context.renderer);
-        <Self as frender_html::dom::csr::web::Renderer>::mount_node(render_context, &text);
+        <Self as web::Renderer>::mount_node(render_context, &text);
         Node(text)
     }
 

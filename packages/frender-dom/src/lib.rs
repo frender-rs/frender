@@ -10,10 +10,6 @@ pub mod style {
     }
 }
 
-pub mod dom_tokens {
-    pub use frender_dom_tokens::{DomToken, DomTokenList, DomTokens};
-}
-
 mod tag;
 
 #[cfg(feature = "csr")]

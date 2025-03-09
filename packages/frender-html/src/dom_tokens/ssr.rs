@@ -1,11 +1,12 @@
-pub use frender_dom::dom_tokens::DomTokens as Bounds;
+pub(crate) use super::impl_bounds::Bounds;
 
-use frender_dom::dom_tokens::DomTokens;
+use frender_dom::ssr::experimental::SsrDomTokens;
+use frender_dom_values::dom_tokens::DomTokens;
 use frender_ssr::html::attr_value::AttrEqValue;
 
 use crate::impl_bounds::ssr::SpaceAndHtmlAttributes;
 
-type Haevoe<V> = AttrEqValue<<V as DomTokens>::DomTokensIntoAsyncStrIter>;
+type Haevoe<V> = AttrEqValue<<V as SsrDomTokens>::DomTokensIntoAsyncStrIter>;
 
 pub(crate) fn into_haevoe<V: DomTokens>(this: V) -> Haevoe<V> {
     Haevoe::<V>::new(V::dom_tokens_into_async_str_iter(this))

@@ -9,6 +9,7 @@ frender-dom = { version = "0.1.0", path = "../frender-dom" }
 frender-dom-tokens = { version = "0.1.0", path = "../frender-dom-tokens" }
 frender-form-control = { version = "0.1.0", path = "../frender-form-control" }
 frender-style = { version = "0.1.0", path = "../frender-style" }
+frender-events = { version = "0.1.0", path = "../frender-events" }
 
 [features]
 csr = [

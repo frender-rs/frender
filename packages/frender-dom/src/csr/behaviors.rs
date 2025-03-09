@@ -1,3 +1,4 @@
+use frender_dom_tokens::experimental::csr::DomTokenList;
 use frender_style::css_style_declaration::CssStyleDeclaration;
 
 use crate::csr::{render::RenderWithContext, render_from::str::ValueForStr};
@@ -71,7 +72,7 @@ pub trait HtmlElement<Renderer: ?Sized>: Element<Renderer> + SetInnerTextFromStr
 }
 
 pub trait ElementWithClassList<Renderer: ?Sized>: Element<Renderer> {
-    type ClassList<'a>: frender_dom_tokens::DomTokenList
+    type ClassList<'a>: DomTokenList
     where
         Self: 'a,
         Renderer: 'a;
@@ -79,7 +80,7 @@ pub trait ElementWithClassList<Renderer: ?Sized>: Element<Renderer> {
 }
 
 pub trait ElementWithRelList<Renderer: ?Sized>: Element<Renderer> {
-    type RelList<'a>: frender_dom_tokens::DomTokenList
+    type RelList<'a>: DomTokenList
     where
         Self: 'a,
         Renderer: 'a;

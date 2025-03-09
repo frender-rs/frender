@@ -10,7 +10,9 @@ frender-events = { version = "0.1.0", path = "../frender-events" }
 frender-common = { version = "0.1.0", path = "../frender-common" }
 
 frender-style = { version = "0.1.0", path = "../frender-style" }
-frender-dom-tokens = { version = "0.1.0", path = "../frender-dom-tokens" }
+frender-dom-tokens = { version = "0.1.0", path = "../frender-dom-tokens", features = [
+    "experimental",
+] }
 frender-attr-value = { version = "0.1.0", path = "../frender-attr-value" }
 
 # ssr
@@ -74,3 +76,4 @@ either = [
     "frender-dom-tokens/either",
     "frender-style/either",
 ]
+experimental = []

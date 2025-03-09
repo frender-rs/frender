@@ -1,6 +1,7 @@
 use std::marker::PhantomData;
 
-use frender_dom::dom_tokens::{DomTokenList, DomTokens};
+use frender_dom::csr::experimental::DomTokenList;
+use frender_dom_values::dom_tokens::DomTokens;
 
 use crate::{
     csr::behavior_type::{BehaviorType, UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior},

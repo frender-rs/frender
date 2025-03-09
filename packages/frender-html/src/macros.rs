@@ -704,8 +704,8 @@ macro_rules! impl_attribute {
         $event_type_listener_ident:ident $(,)?
     ]); $trait_name:tt) => {
         impl<
-            H: frender_common::HandleEvent<dyn crate::dom::event::$event_trait_name> + 'static,
-            F: frender_common::MaybeHandleEvent<dyn crate::dom::event::$event_trait_name, HandleEvent = H> + 'static,
+            H: frender_common::HandleEvent<dyn crate::values::event::$event_trait_name> + 'static,
+            F: frender_common::MaybeHandleEvent<dyn crate::values::event::$event_trait_name, HandleEvent = H> + 'static,
         > crate::into_property::IntoProperty
             for props::$fn_name::<F>
         {
@@ -760,7 +760,7 @@ macro_rules! impl_attribute {
         #[cfg(feature = "ssr")]
         impl<
             V: frender_attr_value::ssr::SsrAttrValue<$($maybe_ty)*>,
-        > crate::dom::ssr::IntoSpaceAndHtmlAttributesOrEmpty
+        > frender_dom::ssr::IntoSpaceAndHtmlAttributesOrEmpty
             for props::$fn_name<V>
         {
             type SpaceAndHtmlAttributesOrEmpty = crate::attr_value::ssr::SpaceAndHtmlAttributesOrEmpty<V, $($maybe_ty)*>;
@@ -797,7 +797,7 @@ macro_rules! impl_attribute {
         #[cfg(feature = "ssr")]
         impl<
             V: crate::impl_bounds::$bounds::ssr::Bounds,
-        > crate::dom::ssr::IntoSpaceAndHtmlAttributesOrEmpty
+        > frender_dom::ssr::IntoSpaceAndHtmlAttributesOrEmpty
             for props::$fn_name<V>
         {
             type SpaceAndHtmlAttributesOrEmpty = crate::impl_bounds::$bounds::ssr::Output<V>;
@@ -821,7 +821,7 @@ macro_rules! impl_attribute {
                 super::attributes::$fn_name(v)
             }
 
-            fn asserts_ssr<V: $($bounds)+>(v: V) -> impl $crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty {
+            fn asserts_ssr<V: $($bounds)+>(v: V) -> impl ::frender_dom::component::IntoSpaceAndHtmlAttributesOrEmpty {
                 super::attributes::$fn_name(v)
             }
         };
@@ -1404,7 +1404,7 @@ macro_rules! parse_fn_args_as_bounds {
         $event_type_listener_ident:ident $(,)?
     ]) do $commands:tt) => {
         $crate::expand! {
-            { frender_common::MaybeHandleEvent<dyn $crate::dom::event::$event_trait_name> + 'static }
+            { frender_common::MaybeHandleEvent<dyn crate::values::event::$event_trait_name> + 'static }
             do $commands
         }
     };

@@ -144,7 +144,7 @@ pub(crate) mod SetRef {
         ) => {
             impl<
                 V: FnOnce($(&$bounds_tps),*),
-            > $crate::dom::ssr::IntoSpaceAndHtmlAttributesOrEmpty
+            > ::frender_dom::ssr::IntoSpaceAndHtmlAttributesOrEmpty
                 for $($wrapper)*::<V>
             {
                 type SpaceAndHtmlAttributesOrEmpty = ::async_str_iter::empty::Empty;

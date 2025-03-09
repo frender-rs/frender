@@ -18,7 +18,7 @@ impl<PM, V> Property<PM, V> {
 
 pub(crate) mod impl_bounds {
     pub(crate) use super::Property;
-    pub(crate) use frender_dom::dom_tokens::DomTokens as Bounds;
+    pub(crate) use frender_dom_values::dom_tokens::DomTokens as Bounds;
 
     #[cfg(feature = "ssr")]
     pub(crate) use super::ssr;

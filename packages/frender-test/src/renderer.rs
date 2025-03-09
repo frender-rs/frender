@@ -1,11 +1,12 @@
 use std::borrow::Cow;
 
 use frender_html::{
-    csr::experimental::{self, RenderHtml},
-    dom::csr::{
-        behaviors::ElementWithChildren as _,
-        render::{Render, RenderWithContext},
-        ProvideRenderContext,
+    csr::{
+        experimental::{
+            self, behaviors::ElementWithChildren as _, render::Render, ProvideRenderContext,
+            RenderHtml,
+        },
+        render::RenderWithContext,
     },
     ElementProxyAttrs,
 };

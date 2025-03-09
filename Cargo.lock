@@ -1038,6 +1038,7 @@ dependencies = [
  "frender-attr-value",
  "frender-dom",
  "frender-dom-tokens",
+ "frender-events",
  "frender-form-control",
  "frender-style",
 ]
@@ -1289,9 +1290,12 @@ name = "frender-test"
 version = "0.1.0"
 dependencies = [
  "frender-common",
+ "frender-dom-tokens",
+ "frender-form-control",
  "frender-html",
  "frender-macro-rules",
  "frender-reactive-value",
+ "frender-style",
  "indexmap 2.2.6",
 ]
 

@@ -13,3 +13,14 @@ frender-html = { version = "0.1.0", path = "../frender-html", features = [
 frender-macro-rules = { version = "0.1.0", path = "../frender-macro-rules" }
 frender-reactive-value = { version = "0.1.0", path = "../frender-reactive-value" }
 indexmap = { version = "2.2.6" }
+frender-dom-tokens = { version = "0.1.0", path = "../frender-dom-tokens", features = [
+    "csr",
+    "experimental",
+] }
+frender-form-control = { version = "0.1.0", path = "../frender-form-control", features = [
+    "csr",
+    "chrono",
+] }
+frender-style = { version = "0.1.0", path = "../frender-style", features = [
+    "csr",
+] }

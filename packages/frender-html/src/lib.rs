@@ -1,14 +1,8 @@
 #![cfg_attr(feature = "macros_not_expanded", recursion_limit = "2048")]
 
-pub use frender_dom as dom;
-pub use frender_dom::dom_tokens::{DomToken, DomTokenList, DomTokens};
-
-pub use frender_form_control as form_control;
-
 use frender_common::{expand, Empty};
 
-// TODO: make private
-pub mod html;
+mod html;
 
 #[cfg(feature = "components")]
 pub use html::components as cs;

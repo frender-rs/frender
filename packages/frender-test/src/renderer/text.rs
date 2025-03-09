@@ -1,8 +1,8 @@
 use std::{borrow::Cow, rc::Rc, sync::Arc};
 
-use frender_html::dom::{
-    csr::{render::RenderTextFrom, UnmountedUiHandle},
-    string_element::StringElement,
+use frender_html::{
+    csr::{experimental::render::RenderTextFrom, UnmountedUiHandle},
+    values::StringElement,
 };
 use frender_macro_rules::impl_many;
 use frender_reactive_value::{static_or_temp_ref::StaticOrTempRef, temp_ref::TempRef};

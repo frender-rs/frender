@@ -1,15 +1,15 @@
 #![allow(warnings)] // TODO: remove
 
-use frender_attr_value::{
-    html::{AttrKindOfContentEditable, AttrKindOfSpellcheck},
-    AttrKindOfStr,
+use crate::values::{
+    attr_value::{AttrKindOfContentEditable, AttrKindOfSpellcheck, AttrKindOfStr},
+    form_control::textarea::TextAreaValue,
 };
+
 #[cfg(feature = "csr")]
 use frender_dom::csr::{
     render::{Render, RenderTextFromKnown, RenderWithContext},
     ProvideMutMounted, UiHandle,
 };
-use frender_form_control::textarea::TextAreaValue;
 
 use crate::impl_bounds::{DomTokens, Style};
 

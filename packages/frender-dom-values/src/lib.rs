@@ -66,7 +66,7 @@ pub mod attr_value {
 pub use self::macros::style;
 pub mod style {
     pub use frender_style::{
-        css_style_declaration, impl_has_const_declaration_list_for,
+        impl_has_const_declaration_list_for,
         style::{comma_separated, one, r#const},
         styles::{constness::ConstDeclarationList, Chain, EitherStyle, Never},
         IntoStyle, Style,
@@ -87,9 +87,7 @@ pub mod dom_tokens {
         dom_tokens::{comma_separated, one, r#const},
         impl_dom_tokens_for,
         impl_has_const_dom_tokens_for,
-        Chain,
-        EitherDomTokens,
-        EraseConstKnownPossibleDomTokens,
+        values::{Chain, EitherDomTokens, EraseConstKnownPossibleDomTokens},
         {ChainableDomTokens, DomTokens, IntoDomTokens},
     };
 }
@@ -97,4 +95,12 @@ pub mod dom_tokens {
 pub mod macros {
     pub use frender_dom_tokens::dom_tokens::comma_separated as dom_tokens;
     pub use frender_style::style::comma_separated as style;
+}
+
+pub mod event {
+    pub use frender_events::event::{
+        AnimationEvent, CompositionEvent, Event, FocusEvent, InputEvent, KeyboardEvent, MouseEvent,
+        PointerEvent, SecurityPolicyViolationEvent, TouchEvent, TransitionEvent, UiEvent,
+        WheelEvent,
+    };
 }
