@@ -1,4 +1,4 @@
-use crate::{IntoStyle, Style};
+use crate::IntoStyle;
 
 pub mod assert {
     use async_str_iter::AsyncStrIterator;
@@ -289,15 +289,12 @@ mod imp {
     }
 }
 
-pub trait SsrStyle: Style {
+pub trait SsrStyle {
     type IntoSsrDeclarationList: SsrDeclarationList;
     fn into_ssr_declaration_list(this: Self) -> Self::IntoSsrDeclarationList;
 }
 
-impl<S: IntoStyle> SsrStyle for S
-where
-    S::IntoStyle: SsrStyle,
-{
+impl<S: IntoStyle> SsrStyle for S {
     type IntoSsrDeclarationList = <S::IntoStyle as SsrStyle>::IntoSsrDeclarationList;
 
     fn into_ssr_declaration_list(this: Self) -> Self::IntoSsrDeclarationList {

@@ -7,7 +7,7 @@ pub use chain::Chain;
 
 pub mod constness;
 
-pub mod either;
+pub(crate) mod either;
 pub use either::EitherStyle;
 
 mod never;

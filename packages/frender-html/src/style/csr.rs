@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use frender_style::{csr::CsrStyle, css_style_declaration::CssStyleDeclaration};
+use frender_style::{css_style_declaration::CssStyleDeclaration, experimental::csr::CsrStyle};
 
 use crate::{
     csr::behavior_type::{BehaviorType, UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior},

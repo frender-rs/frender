@@ -5,6 +5,8 @@ use ccss::collections::{
     declaration_value_list::KnownDeclarationValueList,
 };
 
+use crate::styles::constness::const_value::{ConstBorrowStr, ConstValue, HasConstValue};
+
 /// A list of component values excluding important flag.
 ///
 /// This might be empty.
@@ -53,6 +55,19 @@ impl<'a> DeclarationValue<&'a str> {
     }
 }
 
+impl<'a, T: ?Sized + HasConstValue<Value: ConstBorrowStr<'a>>> DeclarationValue<ConstValue<T>> {
+    pub const fn new_const_value() -> Self {
+        const {
+            _ = DeclarationValue::new_const(
+                <<T::Value as ConstBorrowStr<'a>>::HasConstValueStr<T> as HasConstValue>::VALUE,
+            )
+        }
+        Self {
+            unparsed: ConstValue(),
+        }
+    }
+}
+
 impl<S> DeclarationValue<S> {
     /// Panics if `name.as_ref()` is not valid declaration value list.
     ///
@@ -84,11 +99,41 @@ impl<S> DeclarationValue<S> {
     }
 }
 
-pub mod csr;
-pub mod ssr;
+pub(crate) mod csr;
+pub(crate) mod ssr;
+
+mod sealed {
+    pub trait IntoDeclarationValue {}
+}
 
 pub trait IntoDeclarationValue:
-    ssr::IntoSsrDeclarationValue + csr::IntoCsrDeclarationValue
+    sealed::IntoDeclarationValue + ssr::IntoSsrDeclarationValue + csr::IntoCsrDeclarationValue
 {
 }
-impl<T: ssr::IntoSsrDeclarationValue + csr::IntoCsrDeclarationValue> IntoDeclarationValue for T {}
+
+mod imps {
+    use frender_reactive_value::{
+        non_reactive::CachedNonReactiveValue, static_or_into_static_str::StaticOrIntoStaticStr,
+        value_kind::KindOfTempRef,
+    };
+
+    use super::{sealed, DeclarationValue, IntoDeclarationValue};
+
+    impl<S: CachedNonReactiveValue<KindOfTempRef<str>> + StaticOrIntoStaticStr>
+        sealed::IntoDeclarationValue for S
+    {
+    }
+    impl<S: CachedNonReactiveValue<KindOfTempRef<str>> + StaticOrIntoStaticStr> IntoDeclarationValue
+        for S
+    {
+    }
+
+    impl<S: CachedNonReactiveValue<KindOfTempRef<str>> + StaticOrIntoStaticStr>
+        sealed::IntoDeclarationValue for DeclarationValue<S>
+    {
+    }
+    impl<S: CachedNonReactiveValue<KindOfTempRef<str>> + StaticOrIntoStaticStr> IntoDeclarationValue
+        for DeclarationValue<S>
+    {
+    }
+}

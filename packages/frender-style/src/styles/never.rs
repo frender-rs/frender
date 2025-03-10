@@ -2,6 +2,7 @@ use crate::Style;
 
 pub enum Never {}
 
+impl crate::sealed::Style for Never {}
 impl Style for Never {}
 
 impl Never {

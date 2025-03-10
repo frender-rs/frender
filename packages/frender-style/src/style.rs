@@ -1,11 +1,11 @@
-//! See [style!].
+//! See [`style!`](crate::style!).
 
 pub use frender_const_expr::{array_len, const_marker};
 
 /// Styles separated by comma.
 ///
-/// The macro input will be parsed as [style syntaxes](style::one) separated by comma.
-/// Then all styles will be [`chained`](style::chain).
+/// The macro input will be parsed as [style syntaxes](one) separated by comma.
+/// Then all styles will be [chained](crate::styles::Chain).
 #[macro_export]
 macro_rules! style {
     ($($t:tt)*) => {
@@ -16,9 +16,10 @@ macro_rules! style {
     };
 }
 
+#[doc(no_inline)]
 pub use style as comma_separated;
 
-/// An inline expr of [`ConstDeclarationList<impl HasConstDeclarationList>`](crate::styles::constness::ConstDeclarationList).
+/// An inline expr of [`ConstDeclarationList<impl HasConstDeclarationList>`](type@crate::styles::constness::ConstDeclarationList).
 #[doc(hidden)]
 #[macro_export]
 macro_rules! style_const {
@@ -79,11 +80,11 @@ macro_rules! __style_infer_const_type {
 ///
 /// #### literal and `const {..}`
 ///
-/// They will be parsed as a [`const style`](r#const!).
+/// They will be parsed as a [`const style`](const!).
 ///
-/// #### native block `{{..}}`
+/// #### verbatim expr `verbatim!(..)`
 ///
-/// The block will not be parsed. it will be directly used as an expr.
+/// The content will not be parsed. it will be directly used as an expr.
 /// If used as style attribute value, it should implement [`Style`].
 ///
 /// #### block `{..}`
@@ -137,6 +138,11 @@ pub mod syntax {
     pub use crate::styles::{Chain, EitherStyle as Either, Empty, Never};
 
     pub use super::r#const;
+
+    pub mod macros {
+        #[doc(no_inline)]
+        pub use style;
+    }
 }
 
 #[cfg(test)]
@@ -186,11 +192,7 @@ mod tests {
 
         match one!(match (true) {
             a if a => "",
-            _ => {
-                {
-                    style!()
-                }
-            }
+            _ => style!(),
         }) {
             crate::styles::EitherStyle::A(crate::styles::constness::ConstDeclarationList {
                 ..

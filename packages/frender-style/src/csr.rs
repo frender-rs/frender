@@ -1,4 +1,4 @@
-use crate::{css_style_declaration::CssStyleDeclaration, IntoStyle, Style};
+use crate::{css_style_declaration::CssStyleDeclaration, IntoStyle};
 
 pub trait CsrStyleStateUnmount {
     /// Takes `&mut Self` instead of `Self` so that:
@@ -12,7 +12,7 @@ impl CsrStyleStateUnmount for () {
     fn csr_style_state_unmount((): &mut Self, _: &mut impl CssStyleDeclaration) {}
 }
 
-pub trait CsrStyle: Style {
+pub trait CsrStyle {
     type State: CsrStyleStateUnmount;
 
     fn csr_style_render_init(this: Self, style: &mut impl CssStyleDeclaration) -> Self::State;
@@ -35,10 +35,7 @@ pub trait CsrStyle: Style {
     );
 }
 
-impl<S: IntoStyle> CsrStyle for S
-where
-    S::IntoStyle: CsrStyle,
-{
+impl<S: IntoStyle> CsrStyle for S {
     type State = <S::IntoStyle as CsrStyle>::State;
 
     fn csr_style_render_init(this: Self, style: &mut impl CssStyleDeclaration) -> Self::State {

@@ -1,7 +1,7 @@
-pub use frender_style::ssr::SsrStyle as Bounds;
+pub use frender_style::Style as Bounds;
 
 use frender_ssr::html::attr_value::AttrEqValue;
-use frender_style::ssr::{SsrDeclarationList, SsrStyle};
+use frender_style::experimental::ssr::{SsrDeclarationList, SsrStyle};
 
 use crate::impl_bounds::ssr::SpaceAndHtmlAttributes;
 

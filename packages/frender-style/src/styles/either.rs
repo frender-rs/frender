@@ -5,6 +5,7 @@ pub enum EitherStyle<A, B> {
     B(B),
 }
 
+impl<A: Style, B: Style> crate::sealed::Style for EitherStyle<A, B> {}
 impl<A: Style, B: Style> Style for EitherStyle<A, B> {}
 
 #[cfg(feature = "csr")]

@@ -10,6 +10,8 @@ use crate::{
     Style,
 };
 
+pub(crate) mod const_value;
+
 /// Note that implementations might have different values for csr and ssr.
 pub trait HasConstDeclarationList {
     /// This is used for ssr.
@@ -584,7 +586,6 @@ pub type StaticStr = &'static str;
 
 #[doc(hidden)]
 pub mod __private {
-
     pub use str;
 
     pub const fn from_utf8(v: &[u8]) -> &str {
@@ -600,6 +601,7 @@ frender_macro_rules::define_phantom_wrapper!(
     pub struct ConstDeclarationList<T: ?Sized + HasConstDeclarationList>;
 );
 
+impl<T: ?Sized + HasConstDeclarationList> crate::sealed::Style for ConstDeclarationList<T> {}
 impl<T: ?Sized + HasConstDeclarationList> Style for ConstDeclarationList<T> {}
 
 #[cfg(feature = "csr")]

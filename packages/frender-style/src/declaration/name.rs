@@ -2,6 +2,8 @@ use std::borrow::Borrow;
 
 use ccss::token::tokens::IdentToken;
 
+use crate::styles::constness::const_value::{ConstBorrowStr, ConstValue, HasConstValue};
+
 /// A valid declaration name.
 ///
 /// See https://drafts.csswg.org/css-syntax-3/#consume-declaration.
@@ -16,6 +18,17 @@ impl<'a> DeclarationName<&'a str> {
 
     pub const fn from_parsed(s: IdentToken<'a>) -> Self {
         Self(s.original_str())
+    }
+}
+
+impl<'a, T: ?Sized + HasConstValue<Value: ConstBorrowStr<'a>>> DeclarationName<ConstValue<T>> {
+    pub const fn new_const_value() -> Self {
+        const {
+            _ = DeclarationName::<&str>::new_const(
+                <<T::Value as ConstBorrowStr<'a>>::HasConstValueStr<T> as HasConstValue>::VALUE,
+            );
+        }
+        Self(ConstValue())
     }
 }
 
@@ -49,11 +62,26 @@ impl<N> DeclarationName<N> {
     }
 }
 
-pub mod csr;
-pub mod ssr;
+pub(crate) mod csr;
+pub(crate) mod ssr;
 
-pub trait IntoDeclarationName: ssr::IntoSsrDeclarationName + csr::IntoCsrDeclarationName {}
-impl<S: ?Sized + ssr::IntoSsrDeclarationName + csr::IntoCsrDeclarationName> IntoDeclarationName
-    for S
+mod sealed {
+    pub trait IntoDeclarationName {}
+}
+
+pub trait IntoDeclarationName:
+    sealed::IntoDeclarationName + ssr::IntoSsrDeclarationName + csr::IntoCsrDeclarationName
 {
+}
+
+mod imps {
+    use frender_reactive_value::static_or_into_static_str::StaticOrIntoStaticStr;
+
+    use super::{csr::CsrStr, sealed, DeclarationName, IntoDeclarationName};
+
+    impl<S: StaticOrIntoStaticStr + CsrStr> sealed::IntoDeclarationName for S {}
+    impl<S: StaticOrIntoStaticStr + CsrStr> IntoDeclarationName for S {}
+
+    impl<N: StaticOrIntoStaticStr + CsrStr> sealed::IntoDeclarationName for DeclarationName<N> {}
+    impl<N: StaticOrIntoStaticStr + CsrStr> IntoDeclarationName for DeclarationName<N> {}
 }

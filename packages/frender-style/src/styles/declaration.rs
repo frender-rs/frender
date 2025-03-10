@@ -4,6 +4,7 @@ use crate::{declaration::IntoDeclaration, IntoStyle, Style};
 
 pub struct IntoDeclarationAsStyle<D: IntoDeclaration>(pub D);
 
+impl<D: IntoDeclaration> crate::sealed::Style for IntoDeclarationAsStyle<D> {}
 impl<D: IntoDeclaration> Style for IntoDeclarationAsStyle<D> {}
 
 impl<D: IntoDeclaration> IntoStyle for D {

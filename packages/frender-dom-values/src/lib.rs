@@ -71,11 +71,6 @@ pub mod style {
         styles::{constness::ConstDeclarationList, Chain, EitherStyle, Never},
         IntoStyle, Style,
     };
-
-    #[cfg(feature = "csr")]
-    pub use frender_style::csr::CsrStyle;
-    #[cfg(feature = "ssr")]
-    pub use frender_style::ssr::SsrStyle;
 }
 
 #[doc(no_inline)]
