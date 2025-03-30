@@ -1,6 +1,6 @@
 use crate::{
-    leading_cow_str::LeadingCowStr,
-    parser::input_stream::{BufferedPreprocessedInputStream, Character},
+    input_stream::{BufferedPreprocessedInputStream, Character},
+    leading::cow_str::LeadingCowStr,
 };
 
 use super::after_attribute_value::quoted::AfterAttributeValueQuoted;
@@ -18,7 +18,7 @@ pub struct AttributeValue<'a, const CSR: usize, const SSR: usize> {
     /// ssr:      value  | value  | value | \n\n    | &amp;
     /// ```
     ///
-    /// The [preprocessed](crate::parser::input_stream::PreprocessedInputStream)
+    /// The [preprocessed](crate::input_stream::PreprocessedInputStream)
     /// string of the original input stream.
     pub(crate) ssr: LeadingCowStr<'a, SSR>,
 }

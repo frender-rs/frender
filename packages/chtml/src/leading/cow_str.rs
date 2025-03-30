@@ -1,4 +1,4 @@
-use crate::leading_string::LeadingString;
+use super::string::LeadingString;
 
 #[derive(Debug, Clone, Copy)]
 pub(crate) enum LeadingCowStr<'a, const CAP: usize> {

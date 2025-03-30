@@ -1,4 +1,4 @@
-use crate::parser::input_stream::{
+use crate::input_stream::{
     BufferedNonAsciiWsPreprocessedInputStream, BufferedPreprocessedInputStream, Character,
     NonAsciiWsCharacter, PreprocessOutput,
 };

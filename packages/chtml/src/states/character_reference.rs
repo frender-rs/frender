@@ -6,8 +6,8 @@ use const_array_vec::ArrayVec;
 use numeric::{NumericCharacterReference, NumericCharacterReferenceReturn};
 
 use crate::{
-    leading_cow_str::LeadingCowStr,
-    parser::input_stream::{BufferedPreprocessedInputStream, Character, PreprocessOutput},
+    input_stream::{BufferedPreprocessedInputStream, Character, PreprocessOutput},
+    leading::cow_str::LeadingCowStr,
 };
 
 use self::named::NamedCharacterReference;
@@ -196,7 +196,7 @@ enum Next<'a> {
 }
 
 mod named {
-    use crate::parser::input_stream::BufferedPreprocessedInputStream;
+    use crate::input_stream::BufferedPreprocessedInputStream;
 
     use super::{ncr, temporary_buffer, ForceMove};
 
@@ -289,16 +289,14 @@ mod named {
     }
 
     mod ambiguous_ampersand {
-        use crate::parser::input_stream::BufferedPreprocessedInputStream;
+        use crate::input_stream::BufferedPreprocessedInputStream;
 
         pub struct AmbiguousAmpersand<'a>(pub(super) BufferedPreprocessedInputStream<'a>);
     }
 }
 
 mod numeric {
-    use crate::parser::input_stream::{
-        BufferedPreprocessedInputStream, Character, PreprocessOutput,
-    };
+    use crate::input_stream::{BufferedPreprocessedInputStream, Character, PreprocessOutput};
 
     use super::temporary_buffer::{self, NumericCharacter};
 
@@ -511,7 +509,7 @@ mod numeric {
 mod ncr {
     use const_array_vec::ArrayVec;
 
-    use crate::parser::input_stream::{Character, PreprocessOutput, PreprocessedInputStream};
+    use crate::input_stream::{Character, PreprocessOutput, PreprocessedInputStream};
 
     #[derive(Clone, Copy)]
     pub struct Characters(ArrayVec<Character, 2>);
@@ -661,7 +659,7 @@ mod ncr {
             // )+
 
             // $vis mod $refs {
-            //     use crate::parser::input_stream::PreprocessOutput;
+            //     use crate::input_stream::PreprocessOutput;
             //     $(
             //         pub const $NAME: &[PreprocessOutput] = &super::$NAME;
             //     )+
@@ -697,7 +695,7 @@ mod ncr {
 
 /// https://html.spec.whatwg.org/#numeric-character-reference-end-state
 mod num_cr {
-    use crate::parser::input_stream::{pat_control, pat_noncharacter};
+    use crate::input_stream::{pat_control, pat_noncharacter};
 
     pub(super) const fn character_reference_code_to_char(crc: u32) -> char {
         // If the number is 0x00, then this is a null-character-reference parse error. Set the character reference code to 0xFFFD.

@@ -1,6 +1,4 @@
-use crate::parser::attrs::{AttributeEqValueSsr, Quote};
-
-use super::{parse_str, Attribute};
+use super::{parse_str, Attribute, AttributeEqValueSsr, Quote};
 
 // zero
 const _: () = {

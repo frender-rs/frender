@@ -1,8 +1,4 @@
-pub mod parser;
-
-mod leading_cow_str;
-mod leading_string;
-mod leading_vec;
+use chtml as parser;
 
 pub mod values;
 

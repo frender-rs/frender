@@ -1,4 +1,4 @@
-use crate::parser::input_stream::{BufferedNonAsciiWsPreprocessedInputStream, NonAsciiWsCharacter};
+use crate::input_stream::{BufferedNonAsciiWsPreprocessedInputStream, NonAsciiWsCharacter};
 
 use super::attribute_value::{
     AttributeValueDoubleQuoted, AttributeValueSingleQuoted, AttributeValueUnquoted,

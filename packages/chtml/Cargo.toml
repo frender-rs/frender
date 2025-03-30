@@ -1,0 +1,9 @@
+[package]
+name = "chtml"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+const-core = { version = "0.1.0", path = "../const-core" }
+const-array-vec = { version = "0.1.0", path = "../const-array-vec" }
+const-array-string = { version = "0.1.0", path = "../const-array-string" }

@@ -1,4 +1,4 @@
-use crate::parser::input_stream::{BufferedNonAsciiWsPreprocessedInputStream, NonAsciiWsCharacter};
+use crate::input_stream::{BufferedNonAsciiWsPreprocessedInputStream, NonAsciiWsCharacter};
 
 use super::{
     attribute_name::AttributeName, before_attribute_value::BeforeAttributeValue, Data,

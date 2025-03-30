@@ -1,10 +1,10 @@
 use const_array_string::ArrayString;
 
 use crate::{
-    leading_cow_str::LeadingCowStr,
-    leading_string::LeadingString,
-    leading_vec::LeadingVec,
-    parser::states::{before_attribute_value::BeforeAttributeValue, Data, SelfClosingStartTag},
+    leading::cow_str::LeadingCowStr,
+    leading::string::LeadingString,
+    leading::vec::LeadingVec,
+    states::{before_attribute_value::BeforeAttributeValue, Data, SelfClosingStartTag},
 };
 
 use super::states::{

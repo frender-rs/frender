@@ -1,12 +1,10 @@
 use crate::{
-    leading_cow_str::LeadingCowStr,
-    leading_string::LeadingString,
-    parser::{
-        input_stream::{BufferedPreprocessedInputStream, Character, PreprocessOutput},
-        states::{
-            after_attribute_value::quoted::AfterAttributeValueQuoted,
-            character_reference::CharacterReference,
-        },
+    input_stream::{BufferedPreprocessedInputStream, Character, PreprocessOutput},
+    leading::cow_str::LeadingCowStr,
+    leading::string::LeadingString,
+    states::{
+        after_attribute_value::quoted::AfterAttributeValueQuoted,
+        character_reference::CharacterReference,
     },
 };
 

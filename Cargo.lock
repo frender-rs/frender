@@ -392,6 +392,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "chtml"
+version = "0.1.0"
+dependencies = [
+ "const-array-string",
+ "const-array-vec",
+ "const-core",
+]
+
+[[package]]
 name = "cocoa"
 version = "0.25.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -942,9 +951,7 @@ dependencies = [
 name = "frender-attrs"
 version = "0.1.0"
 dependencies = [
- "const-array-string",
- "const-array-vec",
- "const-core",
+ "chtml",
  "either",
  "frender-common",
  "frender-macro-rules",

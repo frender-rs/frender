@@ -1,6 +1,6 @@
 //! https://html.spec.whatwg.org/#before-attribute-name-state
 
-use crate::parser::input_stream::{
+use crate::input_stream::{
     BufferedNonAsciiWsPreprocessedInputStream, BufferedPreprocessedInputStream, NonAsciiWsCharacter,
 };
 

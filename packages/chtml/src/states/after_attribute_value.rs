@@ -1,5 +1,5 @@
 pub mod quoted {
-    use crate::parser::{
+    use crate::{
         input_stream::{BufferedPreprocessedInputStream, Character},
         states::{before_attribute_name::BeforeAttributeName, Data, SelfClosingStartTag},
     };
