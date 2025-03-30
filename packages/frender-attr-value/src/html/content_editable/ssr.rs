@@ -2,7 +2,7 @@ use frender_common::Empty;
 
 use crate::{
     html::{bool_to_str, AttrKindOfContentEditable},
-    known::KnownSsrStr,
+    known::KnownStr,
     ssr::SsrAttrValue,
     AttrKindOfStr,
 };
@@ -26,7 +26,7 @@ impl SsrAttrValue<AttrKindOfContentEditable> for Empty {
     }
 }
 
-impl<V: KnownSsrStr> SsrAttrValue<AttrKindOfContentEditable> for V {
+impl<V: KnownStr> SsrAttrValue<AttrKindOfContentEditable> for V {
     type HtmlAttributeValue = <Self as SsrAttrValue<AttrKindOfStr>>::HtmlAttributeValue;
 
     fn maybe_into_html_attribute_value(this: Self) -> Option<Self::HtmlAttributeValue> {

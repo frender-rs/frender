@@ -9,4 +9,4 @@ edition = "2021"
 syn-lite = { version = "0.3.0", optional = true }
 
 [features]
-"define_phantom_wrapper" = ["syn-lite"]
+"define_phantom_wrapper" = ["dep:syn-lite"]

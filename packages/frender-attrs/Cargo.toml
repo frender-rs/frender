@@ -1,0 +1,18 @@
+[package]
+name = "frender-attrs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+const-core = { version = "0.1.0", path = "../const-core" }
+const-array-vec = { version = "0.1.0", path = "../const-array-vec" }
+const-array-string = { version = "0.1.0", path = "../const-array-string" }
+frender-common = { version = "0.1.0", path = "../frender-common" }
+either = { version = "1.15.0", optional = true, default-features = false }
+frender-macro-rules = { version = "0.1.0", path = "../frender-macro-rules", features = ["define_phantom_wrapper"] }
+
+[features]
+default = ["csr", "ssr", "either"] # TODO: remove
+csr = []
+ssr = []
+either = ["dep:either"]

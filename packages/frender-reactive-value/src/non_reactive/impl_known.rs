@@ -15,6 +15,9 @@ macro_rules! impl_known_StaticBorrowStr_v_0_1_0 {
 
 #[macro_export]
 macro_rules! impl_known_NonReactiveValueStr_v_0_1_0 {
+    (trait __ = $CachedNonReactiveValueStr:path;) => {
+        $crate::impl_known_NonReactiveValueStr_v_0_1_0! {$CachedNonReactiveValueStr}
+    };
     (
         trait StaticBorrowStr = $StaticBorrowStr:path;
         trait __ = $CachedNonReactiveValueStr:path;
@@ -23,14 +26,28 @@ macro_rules! impl_known_NonReactiveValueStr_v_0_1_0 {
 
         $crate::impl_known_NonReactiveValueStr_v_0_1_0! {$CachedNonReactiveValueStr}
     };
-    ($CachedNonReactiveValueStr:path) => {
+    (
+        trait StaticBorrowStr = $StaticBorrowStr:path;
+        trait UncachedNonReactiveValueStr = $UncachedNonReactiveValueStr:path;
+        trait __ = $CachedNonReactiveValueStr:path;
+    ) => {
+        impl<T: $StaticBorrowStr> $CachedNonReactiveValueStr for T {}
+
+        $crate::impl_known_NonReactiveValueStr_v_0_1_0! {
+            trait UncachedNonReactiveValueStr = $UncachedNonReactiveValueStr;
+            trait __ = $CachedNonReactiveValueStr;
+        }
+    };
+    (
+        trait UncachedNonReactiveValueStr = $UncachedNonReactiveValueStr:path;
+        trait __ = $CachedNonReactiveValueStr:path;
+    ) => {
         const _: () = {
             use $crate::{
-                non_reactive::{Uncached, UncachedNonReactiveValue, __private::str},
+                non_reactive::{Uncached, __private::str},
                 static_or_temp_ref::StaticOrTempRef,
                 temp_into_static::{IntoStaticCache, TempIntoStatic},
                 temp_ref::TempRef,
-                value_kind::KindOfTempRef,
             };
 
             impl $CachedNonReactiveValueStr for TempRef<'_, str> {}
@@ -39,11 +56,16 @@ macro_rules! impl_known_NonReactiveValueStr_v_0_1_0 {
 
             impl<T: IntoStaticCache<str>> $CachedNonReactiveValueStr for TempIntoStatic<T> {}
 
-            impl<T: UncachedNonReactiveValue<KindOfTempRef<str>>> $CachedNonReactiveValueStr
-                for Uncached<T>
-            {
-            }
+            impl<T: $UncachedNonReactiveValueStr> $CachedNonReactiveValueStr for Uncached<T> {}
         };
+    };
+    ($CachedNonReactiveValueStr:path) => {
+        $crate::impl_known_NonReactiveValueStr_v_0_1_0! {
+            trait UncachedNonReactiveValueStr = $crate::non_reactive::UncachedNonReactiveValue<
+                $crate::value_kind::KindOfTempRef<$crate::non_reactive::__private::str>
+            >;
+            trait __ = $CachedNonReactiveValueStr;
+        }
     };
 }
 
@@ -176,6 +198,23 @@ macro_rules! impl_known_IntoBorrowStr_v_0_1_0 {
             impl $IntoBorrowStr for StaticOrTempRef<'_, str> {}
 
             impl<T: IntoStatic<str>> $IntoBorrowStr for TempIntoStatic<T> {}
+        };
+    };
+}
+
+#[macro_export]
+macro_rules! impl_known_UncachedNonReactiveValueStr_v_0_1_0 {
+    ($UncachedNonReactiveValueStr:path) => {
+        const _: () = {
+            use $crate::{
+                non_reactive::__private::str,
+                temp_into_static::{TempIntoStatic, UncachedTempIntoStatic},
+                temp_ref::TempRef,
+            };
+
+            impl $UncachedNonReactiveValueStr for TempRef<'_, str> {}
+
+            impl<T: UncachedTempIntoStatic<str>> $UncachedNonReactiveValueStr for TempIntoStatic<T> {}
         };
     };
 }

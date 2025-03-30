@@ -1,0 +1,7 @@
+[package]
+name = "const-array-string"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+const-array-vec = { version = "0.1.0", path = "../const-array-vec" }

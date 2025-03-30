@@ -1,9 +1,9 @@
 use crate::{
     csr::cached_some::{CsrAttrValueCachedSome, ImplCsrAttrValueWithCachedSome},
-    known::KnownCsrStr,
+    known::KnownStr,
 };
 
 use super::AttrKindOfStr;
 
-impl<S: KnownCsrStr> ImplCsrAttrValueWithCachedSome for S {}
-impl<S: KnownCsrStr> CsrAttrValueCachedSome<AttrKindOfStr> for S {}
+impl<S: KnownStr> ImplCsrAttrValueWithCachedSome for S {}
+impl<S: KnownStr> CsrAttrValueCachedSome<AttrKindOfStr> for S {}

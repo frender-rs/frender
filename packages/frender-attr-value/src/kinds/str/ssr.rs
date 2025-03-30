@@ -1,10 +1,10 @@
 use frender_ssr_html::attr_value::AttrEqValue;
 
-use crate::{known::KnownSsrStr, ssr::SsrAttrValue};
+use crate::{known::KnownStr, ssr::SsrAttrValue};
 
 use super::AttrKindOfStr;
 
-impl<S: KnownSsrStr> SsrAttrValue<AttrKindOfStr> for S {
+impl<S: KnownStr> SsrAttrValue<AttrKindOfStr> for S {
     type HtmlAttributeValue = AttrEqValue<S::SsrStrIntoAsyncStrIterator>;
 
     fn maybe_into_html_attribute_value(this: Self) -> Option<Self::HtmlAttributeValue> {

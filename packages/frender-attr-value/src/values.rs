@@ -6,4 +6,4 @@ pub use either::EitherAttrValue;
 mod absent;
 pub use absent::Absent;
 
-// mod r#const;
+mod r#const;

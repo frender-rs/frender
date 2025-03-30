@@ -1,17 +1,32 @@
-#[cfg(feature = "csr")]
-pub(crate) use self::csr::KnownCsrStr;
-#[cfg(feature = "ssr")]
-pub(crate) use self::ssr::KnownSsrStr;
-
 use std::borrow::Borrow;
 
-use frender_reactive_value::{impl_known_IsStr_v_0_1_0, impl_known_StaticBorrowStr_v_0_1_0};
+use frender_reactive_value::{
+    impl_known_NonReactiveValueStr_v_0_1_0, impl_known_StaticBorrowStr_v_0_1_0,
+    impl_known_UncachedNonReactiveValueStr_v_0_1_0,
+};
 
-#[cfg(feature = "ssr")]
-use async_str_iter::IntoAsyncStrIterator;
 #[cfg(feature = "csr")]
-use frender_reactive_value::{non_reactive::CachedNonReactiveValue, value_kind::KindOfTempRef};
+use frender_reactive_value::{
+    non_reactive::{CachedNonReactiveValue, UncachedNonReactiveValue},
+    value_kind::KindOfTempRef,
+};
+#[cfg(feature = "ssr")]
+use {async_str_iter::IntoAsyncStrIterator, frender_reactive_value::ssr::SsrStr};
 
+#[cfg(feature = "csr")]
+#[cfg(feature = "ssr")]
+pub(crate) trait KnownStr: CachedNonReactiveValue<KindOfTempRef<str>> + SsrStr {}
+
+#[cfg(feature = "csr")]
+#[cfg(not(feature = "ssr"))]
+pub(crate) trait KnownStr: CachedNonReactiveValue<KindOfTempRef<str>> {}
+
+#[cfg(not(feature = "csr"))]
+#[cfg(feature = "ssr")]
+pub(crate) trait KnownStr: SsrStr {}
+
+#[cfg(not(feature = "csr"))]
+#[cfg(not(feature = "ssr"))]
 pub(crate) trait KnownStr {}
 
 #[cfg(feature = "csr")]
@@ -35,42 +50,26 @@ trait KnownStaticStr: 'static + Borrow<str> {}
 
 impl_known_StaticBorrowStr_v_0_1_0!(KnownStaticStr);
 
-impl_known_IsStr_v_0_1_0!(
-    trait BorrowStr = KnownStaticStr;
+impl_known_NonReactiveValueStr_v_0_1_0!(
+    trait StaticBorrowStr = KnownStaticStr;
+    trait UncachedNonReactiveValueStr = KnownUncachedStr;
     trait __ = KnownStr;
 );
+
 #[cfg(feature = "csr")]
-mod csr {
-    use frender_reactive_value::{
-        impl_known_NonReactiveValueStr_v_0_1_0, non_reactive::CachedNonReactiveValue,
-        value_kind::KindOfTempRef,
-    };
-
-    use crate::known::KnownStaticStr;
-
-    use super::KnownStr;
-
-    pub(crate) trait KnownCsrStr:
-        KnownStr + CachedNonReactiveValue<KindOfTempRef<str>>
-    {
-    }
-
-    impl_known_NonReactiveValueStr_v_0_1_0!(
-        trait StaticBorrowStr = KnownStaticStr;
-        trait __ = KnownCsrStr;
-    );
-}
-
 #[cfg(feature = "ssr")]
-mod ssr {
-    use frender_reactive_value::{impl_known_SsrStr_v_0_1_0, ssr::SsrStr};
+trait KnownUncachedStr: UncachedNonReactiveValue<KindOfTempRef<str>> + SsrStr {}
 
-    use super::{KnownStaticStr, KnownStr};
+#[cfg(feature = "csr")]
+#[cfg(not(feature = "ssr"))]
+trait KnownUncachedStr: UncachedNonReactiveValue<KindOfTempRef<str>> {}
 
-    pub(crate) trait KnownSsrStr: KnownStr + SsrStr {}
+#[cfg(not(feature = "csr"))]
+#[cfg(feature = "ssr")]
+trait KnownUncachedStr: SsrStr {}
 
-    impl_known_SsrStr_v_0_1_0!(
-        trait StaticBorrowStr = KnownStaticStr;
-        trait __ = KnownSsrStr;
-    );
-}
+#[cfg(not(feature = "csr"))]
+#[cfg(not(feature = "ssr"))]
+trait KnownUncachedStr {}
+
+impl_known_UncachedNonReactiveValueStr_v_0_1_0! {KnownUncachedStr}

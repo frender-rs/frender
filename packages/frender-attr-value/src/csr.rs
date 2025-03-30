@@ -1,4 +1,4 @@
-use crate::{AttrValue, AttrValueKind};
+use crate::{AttrValueKind, IntoAttrValue};
 
 pub trait UpdateAttrValue {
     type Kind: ?Sized + AttrValueKind;
@@ -10,7 +10,7 @@ pub trait UpdateAttrValue {
 
 /// Unlike CsrStyle and CsrDomTokens, AttrValue doesn't allow chaining.
 /// Thus, [`CsrAttrValue`] doesn't have method `remove_with_state`.
-pub trait CsrAttrValue<AK: ?Sized + AttrValueKind>: Sized + AttrValue<AK> {
+pub trait CsrAttrValue<AK: AttrValueKind>: Sized {
     type State;
 
     fn update_absent_attribute_value_into_state(
@@ -25,18 +25,11 @@ pub trait CsrAttrValue<AK: ?Sized + AttrValueKind>: Sized + AttrValue<AK> {
         updater: impl UpdateAttrValue<Kind = AK>,
     ) -> Self::State;
 
-    fn can_skip_update(this: &Self, state: &Self::State) -> bool;
-
     fn update_attribute_value_with_state(
         this: Self,
         updater: impl UpdateAttrValue<Kind = AK>,
         state: &mut Self::State,
-    ) {
-        if Self::can_skip_update(&this, state) {
-            return;
-        }
-        Self::force_update_attribute_value_with_state(this, updater, state)
-    }
+    );
 
     fn force_update_attribute_value_with_state(
         this: Self,
@@ -73,6 +66,70 @@ pub trait CsrAttrValue<AK: ?Sized + AttrValueKind>: Sized + AttrValue<AK> {
                 this, updater,
             ))
         }
+    }
+}
+
+impl<T: IntoAttrValue<AK>, AK: AttrValueKind> CsrAttrValue<AK> for T {
+    type State = <T::IntoAttrValue as CsrAttrValue<AK>>::State;
+
+    fn update_absent_attribute_value_into_state(
+        this: Self,
+        updater: impl UpdateAttrValue<Kind = AK>,
+    ) -> Self::State {
+        <T::IntoAttrValue as CsrAttrValue<AK>>::update_absent_attribute_value_into_state(
+            this.into_attr_value(),
+            updater,
+        )
+    }
+
+    fn update_attribute_value_into_state(
+        this: Self,
+        updater: impl UpdateAttrValue<Kind = AK>,
+    ) -> Self::State {
+        <T::IntoAttrValue as CsrAttrValue<AK>>::update_attribute_value_into_state(
+            this.into_attr_value(),
+            updater,
+        )
+    }
+
+    fn update_attribute_value_with_state(
+        this: Self,
+        updater: impl UpdateAttrValue<Kind = AK>,
+        state: &mut Self::State,
+    ) {
+        <T::IntoAttrValue as CsrAttrValue<AK>>::update_attribute_value_with_state(
+            this.into_attr_value(),
+            updater,
+            state,
+        )
+    }
+
+    fn force_update_attribute_value_with_state(
+        this: Self,
+        updater: impl UpdateAttrValue<Kind = AK>,
+        state: &mut Self::State,
+    ) {
+        <T::IntoAttrValue as CsrAttrValue<AK>>::force_update_attribute_value_with_state(
+            this.into_attr_value(),
+            updater,
+            state,
+        )
+    }
+
+    fn attribute_is_known_as_absent(state: &Self::State) -> bool {
+        <T::IntoAttrValue as CsrAttrValue<AK>>::attribute_is_known_as_absent(state)
+    }
+
+    fn update_attribute_value_with_option_state(
+        this: Self,
+        updater: impl UpdateAttrValue<Kind = AK>,
+        state: &mut Option<Self::State>,
+    ) {
+        <T::IntoAttrValue as CsrAttrValue<AK>>::update_attribute_value_with_option_state(
+            this.into_attr_value(),
+            updater,
+            state,
+        )
     }
 }
 

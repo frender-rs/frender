@@ -8,7 +8,7 @@ use crate::{
     },
     html::{bool_to_str, AttrKindOfContentEditable},
     impl_csr_attr_value_for_unit_struct, impl_csr_attr_value_with_cache,
-    known::KnownCsrStr,
+    known::KnownStr,
     AttrKindOfStr,
 };
 
@@ -52,4 +52,4 @@ impl AttrValueKindWithReactiveValueKind for AttrKindOfContentEditable {
     }
 }
 
-impl<V: KnownCsrStr> CsrAttrValueCachedSome<AttrKindOfContentEditable> for V {}
+impl<V: KnownStr> CsrAttrValueCachedSome<AttrKindOfContentEditable> for V {}

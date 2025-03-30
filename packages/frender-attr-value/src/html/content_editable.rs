@@ -1,6 +1,8 @@
 use frender_common::Empty;
 
-use crate::{known::KnownStr, AttrValue, AttrValueKind};
+use crate::{
+    kinds::str::StrIntoAttrValue, known::KnownStr, AttrValue, AttrValueKind, IntoAttrValue,
+};
 
 /// ## impl [`AttrValue<ContentEditable>`](crate::AttrValue) for
 ///
@@ -25,7 +27,14 @@ impl AttrValueKind for AttrKindOfContentEditable {
 
 impl AttrValue<AttrKindOfContentEditable> for Empty {}
 impl AttrValue<AttrKindOfContentEditable> for bool {}
-impl<S: ?Sized + KnownStr> AttrValue<AttrKindOfContentEditable> for S {}
+
+impl<T: KnownStr> IntoAttrValue<AttrKindOfContentEditable> for T {
+    type IntoAttrValue = StrIntoAttrValue<T>;
+
+    fn into_attr_value(self) -> Self::IntoAttrValue {
+        StrIntoAttrValue(self)
+    }
+}
 
 #[cfg(feature = "csr")]
 mod csr;
