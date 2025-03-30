@@ -37,5 +37,11 @@ mod ssr {
 
     use crate::ssr::SsrAttributes;
 
-    impl SsrAttributes for EmptyAttributes {}
+    impl SsrAttributes for EmptyAttributes {
+        type IntoSsrAttributes = async_str_iter::empty::Empty;
+
+        fn into_ssr_attributes(self) -> Self::IntoSsrAttributes {
+            async_str_iter::empty::Empty
+        }
+    }
 }

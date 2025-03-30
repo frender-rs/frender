@@ -10,9 +10,11 @@ frender-macro-rules = { version = "0.1.0", path = "../frender-macro-rules", feat
     "define_phantom_wrapper",
 ] }
 chtml = { version = "0.1.0", path = "../chtml" }
+frender-ssr-html = { version = "0.1.0", path = "../frender-ssr-html", optional = true }
+async-str-iter = { version = "0.1.0", path = "../async-str-iter", optional = true }
 
 [features]
-default = ["csr", "ssr", "either"] # TODO: remove
+default = ["csr", "ssr", "either"]                   # TODO: remove
 csr = []
-ssr = []
+ssr = ["dep:frender-ssr-html", "dep:async-str-iter"]
 either = ["dep:either"]

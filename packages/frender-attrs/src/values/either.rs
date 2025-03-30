@@ -64,7 +64,18 @@ mod csr {
 }
 #[cfg(feature = "ssr")]
 mod ssr {
+    use async_str_iter::either::IterEither;
+
     use crate::{ssr::SsrAttributes, values::EitherAttributes};
 
-    impl<A: SsrAttributes, B: SsrAttributes> SsrAttributes for EitherAttributes<A, B> {}
+    impl<A: SsrAttributes, B: SsrAttributes> SsrAttributes for EitherAttributes<A, B> {
+        type IntoSsrAttributes = IterEither<A::IntoSsrAttributes, B::IntoSsrAttributes>;
+
+        fn into_ssr_attributes(self) -> Self::IntoSsrAttributes {
+            match self {
+                EitherAttributes::A(this) => IterEither::Left(this.into_ssr_attributes()),
+                EitherAttributes::B(this) => IterEither::Right(this.into_ssr_attributes()),
+            }
+        }
+    }
 }

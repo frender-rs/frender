@@ -25,10 +25,23 @@ mod imp {
 
     #[cfg(feature = "csr")]
     use super::csr::CsrConstAttributes;
+    #[cfg(feature = "ssr")]
+    use super::ssr::SsrConstAttributes;
 
     #[cfg(feature = "csr")]
+    #[cfg(feature = "ssr")]
+    pub trait ConstAttributesAttributes: CsrConstAttributes + SsrConstAttributes {}
+
+    #[cfg(feature = "csr")]
+    #[cfg(not(feature = "ssr"))]
     pub trait ConstAttributesAttributes: CsrConstAttributes {}
+
     #[cfg(not(feature = "csr"))]
+    #[cfg(feature = "ssr")]
+    pub trait ConstAttributesAttributes: SsrConstAttributes {}
+
+    #[cfg(not(feature = "csr"))]
+    #[cfg(not(feature = "ssr"))]
     pub trait ConstAttributesAttributes {}
 
     impl<const ATTRS: usize, const SSR_STRING_CAP: usize> ConstAttributesAttributes
@@ -244,8 +257,10 @@ mod expr {
 }
 
 mod exprs {
-
+    #[cfg(feature = "csr")]
     mod csr;
+    #[cfg(feature = "ssr")]
+    mod ssr;
 }
 
 #[cfg(test)]

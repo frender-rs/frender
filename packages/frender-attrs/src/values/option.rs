@@ -49,9 +49,17 @@ mod csr {
 }
 #[cfg(feature = "ssr")]
 mod ssr {
+    use async_str_iter::{option::IterOption, IntoAsyncStrIterator};
+
     use crate::ssr::SsrAttributes;
 
     use super::OptionAttributes;
 
-    impl<T: SsrAttributes> SsrAttributes for OptionAttributes<T> {}
+    impl<T: SsrAttributes> SsrAttributes for OptionAttributes<T> {
+        type IntoSsrAttributes = IterOption<T::IntoSsrAttributes>;
+
+        fn into_ssr_attributes(self) -> Self::IntoSsrAttributes {
+            self.0.map(T::into_ssr_attributes).into_async_str_iterator()
+        }
+    }
 }

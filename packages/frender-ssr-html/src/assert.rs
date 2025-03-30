@@ -112,6 +112,18 @@ mod space_and_html_attributes_or_empty {
         for async_str_iter::option::IterOption<V>
     {
     }
+
+    impl<A: SpaceAndHtmlAttributesOrEmpty, B: SpaceAndHtmlAttributesOrEmpty> Sealed
+        for async_str_iter::either::IterEither<A, B>
+    {
+    }
+    impl<A: SpaceAndHtmlAttributesOrEmpty, B: SpaceAndHtmlAttributesOrEmpty>
+        SpaceAndHtmlAttributesOrEmpty for async_str_iter::either::IterEither<A, B>
+    {
+    }
+
+    impl Sealed for ::chtml::attrs::ssr::SpaceAndAttributesStrIntoIter<'_> {}
+    impl SpaceAndHtmlAttributesOrEmpty for ::chtml::attrs::ssr::SpaceAndAttributesStrIntoIter<'_> {}
 }
 
 /// Any numbers of `<div>...</div>` or `<br>` or `abc` (text).

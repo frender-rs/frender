@@ -42,9 +42,17 @@ mod csr {
 }
 #[cfg(feature = "ssr")]
 mod ssr {
+    use async_str_iter::chain::Chain;
+
     use crate::ssr::SsrAttributes;
 
     use super::ChainAttributes;
 
-    impl<A: SsrAttributes, B: SsrAttributes> SsrAttributes for ChainAttributes<A, B> {}
+    impl<A: SsrAttributes, B: SsrAttributes> SsrAttributes for ChainAttributes<A, B> {
+        type IntoSsrAttributes = Chain<A::IntoSsrAttributes, B::IntoSsrAttributes>;
+
+        fn into_ssr_attributes(self) -> Self::IntoSsrAttributes {
+            Chain::new(self.0.into_ssr_attributes(), self.1.into_ssr_attributes())
+        }
+    }
 }

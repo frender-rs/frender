@@ -563,5 +563,8 @@ enum ValueAsSsr<'a> {
     Eq { quote: Option<Quote>, ssr: &'a str },
 }
 
+#[cfg(feature = "ssr")]
+pub mod ssr;
+
 #[cfg(test)]
 mod tests;

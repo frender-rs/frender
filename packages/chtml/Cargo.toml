@@ -7,3 +7,7 @@ edition = "2021"
 const-core = { version = "0.1.0", path = "../const-core" }
 const-array-vec = { version = "0.1.0", path = "../const-array-vec" }
 const-array-string = { version = "0.1.0", path = "../const-array-string" }
+async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-features = false, optional = true }
+
+[features]
+ssr = ["dep:async-str-iter"]

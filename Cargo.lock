@@ -395,6 +395,7 @@ dependencies = [
 name = "chtml"
 version = "0.1.0"
 dependencies = [
+ "async-str-iter",
  "const-array-string",
  "const-array-vec",
  "const-core",
@@ -951,10 +952,12 @@ dependencies = [
 name = "frender-attrs"
 version = "0.1.0"
 dependencies = [
+ "async-str-iter",
  "chtml",
  "either",
  "frender-common",
  "frender-macro-rules",
+ "frender-ssr-html",
 ]
 
 [[package]]
@@ -1291,6 +1294,7 @@ name = "frender-ssr-html"
 version = "0.1.0"
 dependencies = [
  "async-str-iter",
+ "chtml",
  "either",
  "html-escape",
  "pin-project-lite",
