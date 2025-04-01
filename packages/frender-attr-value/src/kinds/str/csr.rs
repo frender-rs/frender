@@ -1,9 +1,13 @@
-use crate::{
-    csr::cached_some::{CsrAttrValueCachedSome, ImplCsrAttrValueWithCachedSome},
-    known::KnownStr,
-};
+use frender_reactive_value::{temp_ref::TempRef, value_kind::KindOfTempRef};
+
+use crate::csr::cached_some::AttrValueKindWithReactiveValueKind;
 
 use super::AttrKindOfStr;
 
-impl<S: KnownStr> ImplCsrAttrValueWithCachedSome for S {}
-impl<S: KnownStr> CsrAttrValueCachedSome<AttrKindOfStr> for S {}
+impl AttrValueKindWithReactiveValueKind<KindOfTempRef<str>> for AttrKindOfStr {
+    fn reactive_value_into_attr_value(
+        TempRef(value): <KindOfTempRef<str> as frender_reactive_value::value_kind::ValueKind>::Value<'_>,
+    ) -> Self::AttrValue<'_> {
+        value
+    }
+}

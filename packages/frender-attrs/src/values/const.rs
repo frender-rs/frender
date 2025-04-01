@@ -51,9 +51,9 @@ mod imp {
 }
 
 #[macro_export]
-macro_rules! impl_has_const_attributes_for {
+macro_rules! impl_HasConstAttributes_for {
     (impl <$(__)?> $($rest:tt)*) => {
-        $crate::impl_has_const_attributes_for! {
+        $crate::impl_HasConstAttributes_for! {
             impl $($rest)*
         }
     };
@@ -62,7 +62,7 @@ macro_rules! impl_has_const_attributes_for {
             const $NAME:tt: _ = $const_expr:expr;
         }
     ) => {
-        $crate::impl_has_const_attributes_for! {
+        $crate::impl_HasConstAttributes_for! {
             impl $for_ty {
                 const $NAME: &'static $crate::values::r#const::__private::str = $const_expr;
             }

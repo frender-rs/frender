@@ -45,4 +45,11 @@ impl<const CAP: usize> ArrayString<CAP> {
     pub const fn push_str(&mut self, string: &str) {
         self.vec.extend_from_slice(string.as_bytes())
     }
+
+    /// Panics if `NEW_CAP < self.len()`
+    pub const fn into_with_capacity<const NEW_CAP: usize>(self) -> ArrayString<NEW_CAP> {
+        ArrayString {
+            vec: self.vec.into_with_capacity::<NEW_CAP>(),
+        }
+    }
 }

@@ -1,18 +1,17 @@
 use crate::{AttrValue, AttrValueKind};
 
-/// Indicates an attribute is absent.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
-pub struct Absent;
+pub struct AbsentAttributeValue;
 
-impl<VK: AttrValueKind> AttrValue<VK> for Absent {}
+impl<VK: AttrValueKind> crate::sealed::AttrValue<VK> for AbsentAttributeValue {}
+impl<VK: AttrValueKind> AttrValue<VK> for AbsentAttributeValue {}
 
 #[cfg(feature = "ssr")]
 mod ssr {
     use crate::{ssr::SsrAttrValue, AttrValueKind};
 
-    use super::Absent;
+    use super::AbsentAttributeValue;
 
-    impl<VK: AttrValueKind> SsrAttrValue<VK> for Absent {
+    impl<VK: AttrValueKind> SsrAttrValue<VK> for AbsentAttributeValue {
         type HtmlAttributeValue = async_str_iter::never::Never;
 
         fn maybe_into_html_attribute_value(Self: Self) -> Option<Self::HtmlAttributeValue> {
@@ -24,53 +23,58 @@ mod ssr {
 #[cfg(feature = "csr")]
 mod csr {
     use crate::{
-        csr::{CsrAttrValue, UpdateAttrValue},
+        csr::{CsrAttrValue, CsrAttrValueState, UpdateAttrValue},
         AttrValueKind,
     };
 
-    use super::Absent;
+    use super::AbsentAttributeValue;
 
-    impl<VK: AttrValueKind> CsrAttrValue<VK> for Absent {
-        type State = ();
+    pub struct State;
 
-        fn update_absent_attribute_value_into_state(
+    impl CsrAttrValueState for State {
+        fn attribute_is_known_as_absent(&self) -> bool {
+            true
+        }
+    }
+
+    impl<VK: AttrValueKind> CsrAttrValue<VK> for AbsentAttributeValue {
+        type State = State;
+
+        fn render_init_on_absent_attribute(
             Self: Self,
             _: impl UpdateAttrValue<Kind = VK>,
         ) -> Self::State {
             // already absent
+            State
         }
 
-        fn update_attribute_value_into_state(
+        fn render_init(Self: Self, updater: impl UpdateAttrValue<Kind = VK>) -> Self::State {
+            updater.remove();
+            State
+        }
+
+        fn render_init_by_reusing_on_absent_attribute(
+            Self: Self,
+            _: impl UpdateAttrValue<Kind = VK>,
+            self::State: &mut Self::State,
+        ) {
+            // the attribute is already absent
+        }
+
+        fn render_init_by_reusing(
             Self: Self,
             updater: impl UpdateAttrValue<Kind = VK>,
-        ) -> Self::State {
+            self::State: &mut Self::State,
+        ) {
             updater.remove()
         }
 
-        fn can_skip_update(Self: &Self, (): &Self::State) -> bool {
-            // It has been updated in self._into_state()
-            // and there will be no further updates.
-            true
-        }
-
-        fn update_attribute_value_with_state(
+        fn render_update(
             Self: Self,
             _: impl UpdateAttrValue<Kind = VK>,
-            (): &mut Self::State,
+            self::State: &mut Self::State,
         ) {
             // skip update
-        }
-
-        fn force_update_attribute_value_with_state(
-            Self: Self,
-            _: impl UpdateAttrValue<Kind = VK>,
-            (): &mut Self::State,
-        ) {
-            // the attribute has already been made sure as absent in self._into_state()
-        }
-
-        fn attribute_is_known_as_absent((): &Self::State) -> bool {
-            true
         }
     }
 }

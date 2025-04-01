@@ -3,7 +3,7 @@ mod assoc_const {
 
     enum HasConstValue {}
 
-    impl_has_const_attributes_for!(
+    impl_HasConstAttributes_for!(
         impl<__> HasConstValue {
             const ATTRS: _ = "";
         }
@@ -22,7 +22,7 @@ mod empty {
 
     enum HasConstValue {}
 
-    impl_has_const_attributes_for!(
+    impl_HasConstAttributes_for!(
         impl<__> HasConstValue {
             const _: _ = "";
         }

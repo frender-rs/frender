@@ -1,44 +1,69 @@
-use frender_common::Empty;
-
-use crate::{
-    csr::{CsrAttrValue, UpdateAttrValue},
-    impl_csr_attr_value_for_unit_struct,
+use crate::csr::{
+    const_some::impl_csr_attr_value_for_const_some, CsrAttrValue, CsrAttrValueState,
+    UpdateAttrValue,
 };
 
-impl CsrAttrValue<bool> for Empty {
-    impl_csr_attr_value_for_unit_struct!((()) as bool);
+use super::{BoolAsAttrValue, EmptyAsTrue};
+
+impl CsrAttrValue<bool> for EmptyAsTrue {
+    impl_csr_attr_value_for_const_some!((()) as bool);
 }
 
-impl CsrAttrValue<bool> for bool {
-    type State = Self;
+pub struct BoolAsAttrValueState(bool);
 
-    fn update_absent_attribute_value_into_state(
-        this: Self,
+impl CsrAttrValueState for BoolAsAttrValueState {
+    fn attribute_is_known_as_absent(&self) -> bool {
+        !self.0
+    }
+}
+
+impl CsrAttrValue<bool> for BoolAsAttrValue {
+    type State = BoolAsAttrValueState;
+
+    fn render_init_on_absent_attribute(
+        Self(this): Self,
         updater: impl UpdateAttrValue<Kind = bool>,
     ) -> Self::State {
         if this {
             updater.set(())
         }
-        this
+        BoolAsAttrValueState(this)
     }
 
-    fn update_attribute_value_into_state(
-        this: Self,
-        updater: impl UpdateAttrValue<Kind = bool>,
-    ) -> Self::State {
+    fn render_init(Self(this): Self, updater: impl UpdateAttrValue<Kind = bool>) -> Self::State {
         if this {
             updater.set(())
         } else {
             updater.remove()
         }
-        this
+        BoolAsAttrValueState(this)
     }
 
-    fn can_skip_update(this: &Self, state: &Self::State) -> bool {
-        *this == *state
+    fn render_init_by_reusing_on_absent_attribute(
+        this: Self,
+        updater: impl UpdateAttrValue<Kind = bool>,
+        state: &mut Self::State,
+    ) {
+        *state = Self::render_init_on_absent_attribute(this, updater)
     }
 
-    fn attribute_is_known_as_absent(state: &Self::State) -> bool {
-        !*state
+    fn render_init_by_reusing(
+        this: Self,
+        updater: impl UpdateAttrValue<Kind = bool>,
+        state: &mut Self::State,
+    ) {
+        *state = Self::render_init(this, updater)
+    }
+
+    fn render_update(
+        this: Self,
+        updater: impl UpdateAttrValue<Kind = bool>,
+        state: &mut Self::State,
+    ) {
+        if this.0 == state.0 {
+            return;
+        }
+
+        *state = Self::render_init(this, updater)
     }
 }

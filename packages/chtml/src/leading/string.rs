@@ -49,7 +49,7 @@ impl<const CAP: usize> LeadingString<CAP> {
         self.len() == 0
     }
 
-    const fn try_to_array_string(self) -> Option<ArrayString<CAP>> {
+    pub(crate) const fn try_to_array_string(self) -> Option<ArrayString<CAP>> {
         match self.try_as_str() {
             Some(whole) => Some({
                 let mut res = ArrayString::new();

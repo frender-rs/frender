@@ -729,7 +729,7 @@ macro_rules! impl_attribute {
         $(update_with! $update_with:tt;)?
     } $trait_name:ident) => {
         impl<
-            V: frender_attr_value::AttrValue<$($maybe_ty)*>,
+            V: frender_attr_value::IntoAttrValue<$($maybe_ty)*>,
         > crate::into_property::IntoProperty
             for props::$fn_name<V>
         {
@@ -759,11 +759,11 @@ macro_rules! impl_attribute {
 
         #[cfg(feature = "ssr")]
         impl<
-            V: frender_attr_value::ssr::SsrAttrValue<$($maybe_ty)*>,
+            V: frender_attr_value::IntoAttrValue<$($maybe_ty)*>,
         > frender_dom::ssr::IntoSpaceAndHtmlAttributesOrEmpty
             for props::$fn_name<V>
         {
-            type SpaceAndHtmlAttributesOrEmpty = crate::attr_value::ssr::SpaceAndHtmlAttributesOrEmpty<V, $($maybe_ty)*>;
+            type SpaceAndHtmlAttributesOrEmpty = crate::attr_value::ssr::SpaceAndHtmlAttributesOrEmpty<V::IntoAttrValue, $($maybe_ty)*>;
 
             fn into_space_and_html_attributes_or_empty(self) -> Self::SpaceAndHtmlAttributesOrEmpty {
                 crate::attr_value::ssr::into_space_and_html_attributes_or_empty::<prop_markers::$fn_name, V>(self.0)
@@ -1410,13 +1410,13 @@ macro_rules! parse_fn_args_as_bounds {
     };
     (($value:ident : attr_value![&str]) do $commands:tt) => {
         $crate::expand! {
-            { frender_attr_value::AttrValue::<AttrKindOfStr> }
+            { frender_attr_value::IntoAttrValue::<AttrKindOfStr> }
             do $commands
         }
     };
     (($value:ident : attr_value![$maybe_ty:ty]) do $commands:tt) => {
         $crate::expand! {
-            { frender_attr_value::AttrValue::<$maybe_ty> }
+            { frender_attr_value::IntoAttrValue::<$maybe_ty> }
             do $commands
         }
     };

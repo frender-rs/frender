@@ -1,4 +1,4 @@
-use crate::{AttrValueKind, IntoAttrValue};
+use crate::AttrValueKind;
 
 pub trait UpdateAttrValue {
     type Kind: ?Sized + AttrValueKind;
@@ -8,136 +8,45 @@ pub trait UpdateAttrValue {
     fn remove(self);
 }
 
-/// Unlike CsrStyle and CsrDomTokens, AttrValue doesn't allow chaining.
-/// Thus, [`CsrAttrValue`] doesn't have method `remove_with_state`.
-pub trait CsrAttrValue<AK: AttrValueKind>: Sized {
-    type State;
-
-    fn update_absent_attribute_value_into_state(
-        this: Self,
-        updater: impl UpdateAttrValue<Kind = AK>,
-    ) -> Self::State {
-        Self::update_attribute_value_into_state(this, updater)
-    }
-
-    fn update_attribute_value_into_state(
-        this: Self,
-        updater: impl UpdateAttrValue<Kind = AK>,
-    ) -> Self::State;
-
-    fn update_attribute_value_with_state(
-        this: Self,
-        updater: impl UpdateAttrValue<Kind = AK>,
-        state: &mut Self::State,
-    );
-
-    fn force_update_attribute_value_with_state(
-        this: Self,
-        updater: impl UpdateAttrValue<Kind = AK>,
-        state: &mut Self::State,
-    ) {
-        *state = if Self::attribute_is_known_as_absent(state) {
-            Self::update_absent_attribute_value_into_state(this, updater)
-        } else {
-            Self::update_attribute_value_into_state(this, updater)
-        }
-    }
-
+pub trait CsrAttrValueState {
     /// Returning `true` implies that the attribute is absent.
     /// Returning `false` implies that the attribute might be absent.
     ///
     /// This method is to optimize `impl CsrAttrValue for Option, Either`
     ///
     /// Always returning `false` is correct.
-    fn attribute_is_known_as_absent(state: &Self::State) -> bool {
-        let _ = state;
+    fn attribute_is_known_as_absent(&self) -> bool {
         false
     }
-
-    fn update_attribute_value_with_option_state(
-        this: Self,
-        updater: impl UpdateAttrValue<Kind = AK>,
-        state: &mut Option<Self::State>,
-    ) {
-        if let Some(state) = state {
-            Self::update_attribute_value_with_state(this, updater, state)
-        } else {
-            *state = Some(Self::update_absent_attribute_value_into_state(
-                this, updater,
-            ))
-        }
-    }
 }
 
-impl<T: IntoAttrValue<AK>, AK: AttrValueKind> CsrAttrValue<AK> for T {
-    type State = <T::IntoAttrValue as CsrAttrValue<AK>>::State;
+/// Unlike CsrStyle and CsrDomTokens, AttrValue doesn't allow chaining.
+/// Thus, [`CsrAttrValue`] doesn't have method `remove_with_state`.
+pub trait CsrAttrValue<AK: AttrValueKind>: Sized {
+    type State: CsrAttrValueState;
 
-    fn update_absent_attribute_value_into_state(
+    fn render_init_on_absent_attribute(
         this: Self,
         updater: impl UpdateAttrValue<Kind = AK>,
-    ) -> Self::State {
-        <T::IntoAttrValue as CsrAttrValue<AK>>::update_absent_attribute_value_into_state(
-            this.into_attr_value(),
-            updater,
-        )
-    }
+    ) -> Self::State;
 
-    fn update_attribute_value_into_state(
-        this: Self,
-        updater: impl UpdateAttrValue<Kind = AK>,
-    ) -> Self::State {
-        <T::IntoAttrValue as CsrAttrValue<AK>>::update_attribute_value_into_state(
-            this.into_attr_value(),
-            updater,
-        )
-    }
+    fn render_init(this: Self, updater: impl UpdateAttrValue<Kind = AK>) -> Self::State;
 
-    fn update_attribute_value_with_state(
+    fn render_init_by_reusing_on_absent_attribute(
         this: Self,
         updater: impl UpdateAttrValue<Kind = AK>,
         state: &mut Self::State,
-    ) {
-        <T::IntoAttrValue as CsrAttrValue<AK>>::update_attribute_value_with_state(
-            this.into_attr_value(),
-            updater,
-            state,
-        )
-    }
+    );
 
-    fn force_update_attribute_value_with_state(
+    fn render_init_by_reusing(
         this: Self,
         updater: impl UpdateAttrValue<Kind = AK>,
         state: &mut Self::State,
-    ) {
-        <T::IntoAttrValue as CsrAttrValue<AK>>::force_update_attribute_value_with_state(
-            this.into_attr_value(),
-            updater,
-            state,
-        )
-    }
+    );
 
-    fn attribute_is_known_as_absent(state: &Self::State) -> bool {
-        <T::IntoAttrValue as CsrAttrValue<AK>>::attribute_is_known_as_absent(state)
-    }
-
-    fn update_attribute_value_with_option_state(
-        this: Self,
-        updater: impl UpdateAttrValue<Kind = AK>,
-        state: &mut Option<Self::State>,
-    ) {
-        <T::IntoAttrValue as CsrAttrValue<AK>>::update_attribute_value_with_option_state(
-            this.into_attr_value(),
-            updater,
-            state,
-        )
-    }
-}
-
-#[doc(hidden)]
-pub mod __private {
-    pub use frender_common::expand;
+    fn render_update(this: Self, updater: impl UpdateAttrValue<Kind = AK>, state: &mut Self::State);
 }
 
 pub(crate) mod cached_some;
 
-pub(crate) mod macros;
+pub(crate) mod const_some;

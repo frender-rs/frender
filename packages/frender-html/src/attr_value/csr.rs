@@ -1,9 +1,9 @@
 use std::marker::PhantomData;
 
 use frender_attr_value::{
-    csr::{CsrAttrValue, UpdateAttrValue},
+    experimental::csr::UpdateAttrValue,
     html::{AttrKindOfContentEditable, AttrKindOfSpellcheck},
-    AttrKindOfStr, AttrValueKind,
+    AttrKindOfStr, AttrValue, AttrValueKind, IntoAttrValue,
 };
 use frender_common::convert::FromMut as _;
 use frender_dom::csr::behaviors::Element as _;
@@ -81,8 +81,9 @@ impl<
         //
         BT: BehaviorType,
         PM: UpdateAttrValueOfBehaviorType<BT> + RemoveAttrOfBehaviorType<BT>,
-        V: CsrAttrValue<PM::AttrValueKind>,
-    > UnpinnedRenderWithBehavior<BT> for Property<PM, V>
+        T: IntoAttrValue<PM::AttrValueKind, IntoAttrValue = V>,
+        V: AttrValue<PM::AttrValueKind>,
+    > UnpinnedRenderWithBehavior<BT> for Property<PM, T>
 {
     type UnpinnedRenderStateKind = Kind<PM, V::State>;
 
@@ -92,7 +93,7 @@ impl<
         renderer: &mut R,
         b: &mut <BT as BehaviorType>::OfBehaviorType<R>,
     ) -> V::State {
-        V::update_absent_attribute_value_into_state(value, Updater { _prop_marker, renderer, b })
+        V::render_init_on_absent_attribute(T::into_attr_value(value), Updater { _prop_marker, renderer, b })
     }
 
     fn unpinned_render_update_with_behavior<R: ?Sized + RenderHtml>(
@@ -102,7 +103,7 @@ impl<
         b: &mut <BT as BehaviorType>::OfBehaviorType<R>,
         state: &mut <Self::UnpinnedRenderStateKind as UnpinnedNonReactiveRenderStateKind>::UnpinnedNonReactiveState<R>,
     ) {
-        V::update_attribute_value_with_state(value, Updater { _prop_marker, renderer, b }, state)
+        V::render_update(T::into_attr_value(value), Updater { _prop_marker, renderer, b }, state)
     }
 }
 

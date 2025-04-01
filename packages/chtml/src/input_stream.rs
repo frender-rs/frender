@@ -349,10 +349,20 @@ impl Character {
     }
 
     pub(crate) const fn new(ch: char) -> Self {
-        assert!(ch != chars::CR);
+        match Self::try_new(ch) {
+            Some(v) => v,
+            None => panic!("invalid Character"),
+        }
+    }
+
+    pub(crate) const fn try_new(ch: char) -> Option<Self> {
+        if ch == chars::CR {
+            // '\r' has been preprocessed as '\n'
+            return None;
+        }
         match PreprocessParseErrorInvalidCharKind::test(ch) {
-            Ok(preprocessed) => Self { preprocessed },
-            Err(_) => panic!("invalid Character"),
+            Ok(preprocessed) => Some(Self { preprocessed }),
+            Err(_) => None,
         }
     }
 }
@@ -663,6 +673,28 @@ impl<'a> PreprocessedInputStream<'a> {
         buffered_from_unbuffered!(self)
     }
 }
+
+/*
+pub(crate) type BufferedChars<'a> = Buffered<char, Chars<'a>>;
+
+impl<'a> BufferedChars<'a> {
+    pub(crate) const fn next(&mut self) -> Option<char> {
+        buffered_next!(self)
+    }
+    pub(crate) const fn const_clone(&self) -> Self {
+        buffered_const_clone!(self)
+    }
+    pub(crate) const fn from_unbuffered(chars: Chars<'a>) -> Self {
+        buffered_from_unbuffered!(chars)
+    }
+    pub(crate) const fn full_as_str(&self) -> &'a str {
+        match self.as_full() {
+            Some(full) => full.as_str(),
+            None => "",
+        }
+    }
+}
+*/
 
 #[cfg(test)]
 mod tests;

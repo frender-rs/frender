@@ -1,6 +1,7 @@
 use frender_common::Empty;
+use frender_reactive_value::value_kind::KindOfOwned;
 
-use crate::{AttrValue, AttrValueKind};
+use crate::{values::cached_some::CachedSome, AttrValue, AttrValueKind, IntoAttrValue};
 
 #[cfg(feature = "csr")]
 mod csr;
@@ -25,5 +26,27 @@ impl AttrValueKind for AttrKindOfSpellcheck {
     type AttrValue<'a> = bool;
 }
 
-impl AttrValue<AttrKindOfSpellcheck> for bool {}
-impl AttrValue<AttrKindOfSpellcheck> for Empty {}
+type CachedSomeBool = CachedSome<bool, KindOfOwned<bool>>;
+
+impl IntoAttrValue<AttrKindOfSpellcheck> for bool {
+    type IntoAttrValue = CachedSomeBool;
+
+    fn into_attr_value(self) -> Self::IntoAttrValue {
+        CachedSome::new(self)
+    }
+}
+
+pub struct EmptyAsSpellcheck;
+impl IntoAttrValue<AttrKindOfSpellcheck> for Empty {
+    type IntoAttrValue = EmptyAsSpellcheck;
+
+    fn into_attr_value(self) -> Self::IntoAttrValue {
+        EmptyAsSpellcheck
+    }
+}
+
+impl crate::sealed::AttrValue<AttrKindOfSpellcheck> for CachedSomeBool {}
+impl AttrValue<AttrKindOfSpellcheck> for CachedSomeBool {}
+
+impl crate::sealed::AttrValue<AttrKindOfSpellcheck> for EmptyAsSpellcheck {}
+impl AttrValue<AttrKindOfSpellcheck> for EmptyAsSpellcheck {}

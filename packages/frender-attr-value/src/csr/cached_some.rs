@@ -1,67 +1,72 @@
 use frender_reactive_value::{
     non_reactive::{CachedNonReactiveValue, CachedNonReactiveValueRenderInit as _},
-    temp_ref::TempRef,
-    value_kind::{KindOfTempRef, ValueKind},
+    value_kind::ValueKind,
 };
 
-use crate::{AttrKindOfStr, AttrValue, AttrValueKind};
+use crate::{values::cached_some::CachedSome, AttrValueKind};
 
-use super::{CsrAttrValue, UpdateAttrValue};
+use super::{CsrAttrValue, CsrAttrValueState, UpdateAttrValue};
 
-pub trait AttrValueKindWithReactiveValueKind: AttrValueKind {
-    type ReactiveValueKind: ValueKind;
-    fn reactive_value_into_attr_value(
-        value: <Self::ReactiveValueKind as ValueKind>::Value<'_>,
-    ) -> Self::AttrValue<'_>;
+pub trait AttrValueKindWithReactiveValueKind<VK: ValueKind>: AttrValueKind {
+    fn reactive_value_into_attr_value(value: VK::Value<'_>) -> Self::AttrValue<'_>;
 }
 
-impl AttrValueKindWithReactiveValueKind for AttrKindOfStr {
-    type ReactiveValueKind = KindOfTempRef<str>;
-
-    fn reactive_value_into_attr_value(
-        TempRef(value): <Self::ReactiveValueKind as ValueKind>::Value<'_>,
-    ) -> Self::AttrValue<'_> {
-        value
-    }
-}
-
-pub(crate) trait ImplCsrAttrValueWithCachedSome {}
-pub(crate) trait CsrAttrValueCachedSome<AK: AttrValueKindWithReactiveValueKind>:
-    ImplCsrAttrValueWithCachedSome + AttrValue<AK> + CachedNonReactiveValue<AK::ReactiveValueKind>
-{
-}
-
-fn render_some<AK: AttrValueKindWithReactiveValueKind>(
+fn render_some<AK: AttrValueKindWithReactiveValueKind<VK>, VK: ValueKind>(
     updater: impl UpdateAttrValue<Kind = AK>,
-) -> impl FnOnce(<AK::ReactiveValueKind as ValueKind>::Value<'_>) {
+) -> impl FnOnce(VK::Value<'_>) {
     |v| {
         updater.set(AK::reactive_value_into_attr_value(v));
     }
 }
 
-impl<T: CsrAttrValueCachedSome<AK>, AK: AttrValueKindWithReactiveValueKind> CsrAttrValue<AK> for T {
-    type State = T::Cache;
+pub struct State<Cache>(Cache);
 
-    fn update_attribute_value_into_state(
+impl<Cache> CsrAttrValueState for State<Cache> {}
+
+impl<T: CachedNonReactiveValue<VK>, AK: AttrValueKindWithReactiveValueKind<VK>, VK: ValueKind>
+    CsrAttrValue<AK> for CachedSome<T, VK>
+{
+    type State = State<T::Cache>;
+
+    fn render_init_on_absent_attribute(
         this: Self,
         updater: impl UpdateAttrValue<Kind = AK>,
     ) -> Self::State {
+        Self::render_init(this, updater)
+    }
+
+    fn render_init(this: Self, updater: impl UpdateAttrValue<Kind = AK>) -> Self::State {
+        let this = this.0;
         let (mut cache, render_init) = this.into_cache_and_render_init();
 
         render_init.cached_non_reactive_value_render_init(render_some(updater), &mut cache);
 
-        cache
+        State(cache)
     }
 
-    fn can_skip_update(this: &Self, cache: &Self::State) -> bool {
-        this.match_cache(cache)
-    }
-
-    fn force_update_attribute_value_with_state(
+    fn render_update(
         this: Self,
         updater: impl UpdateAttrValue<Kind = AK>,
-        cache: &mut Self::State,
+        State(cache): &mut Self::State,
     ) {
+        let this = this.0;
+        _ = this.maybe_update_into_cache_and_render(render_some(updater), cache)
+    }
+
+    fn render_init_by_reusing_on_absent_attribute(
+        this: Self,
+        updater: impl UpdateAttrValue<Kind = AK>,
+        state: &mut Self::State,
+    ) {
+        Self::render_init_by_reusing(this, updater, state);
+    }
+
+    fn render_init_by_reusing(
+        this: Self,
+        updater: impl UpdateAttrValue<Kind = AK>,
+        State(cache): &mut Self::State,
+    ) {
+        let this = this.0;
         this.update_into_cache_and_render(render_some(updater), cache)
     }
 }

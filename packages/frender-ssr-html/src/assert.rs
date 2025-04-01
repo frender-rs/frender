@@ -63,6 +63,9 @@ mod html_attribute_eq_value_or_empty {
         for async_str_iter::either::IterEither<L, R>
     {
     }
+
+    impl Sealed for chtml::encode::attribute_value::ssr::EqValueStrIntoIter<'_> {}
+    impl HtmlAttributeEqValueOrEmpty for chtml::encode::attribute_value::ssr::EqValueStrIntoIter<'_> {}
 }
 
 // Empty or ` a=b c=d`

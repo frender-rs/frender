@@ -77,6 +77,18 @@ impl<T, const CAP: usize> ArrayVec<T, CAP> {
 
         self.len += other.len();
     }
+
+    /// Panics if `NEW_CAP < self.len`
+    pub const fn into_with_capacity<const NEW_CAP: usize>(self) -> ArrayVec<T, NEW_CAP>
+    where
+        T: Copy,
+        T: ConstDummyValue,
+    {
+        assert!(NEW_CAP >= self.len());
+        let mut res = ArrayVec::new();
+        res.extend_from_slice(self.as_slice());
+        res
+    }
 }
 
 /// The implementation should have the same value as [`Default::default()`].

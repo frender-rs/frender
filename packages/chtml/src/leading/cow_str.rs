@@ -31,7 +31,7 @@ impl<const CAP: usize> LeadingCowStr<'_, CAP> {
         self.make_mut_owned().push(ch)
     }
 
-    const fn push_str(&mut self, s: &str) {
+    pub(crate) const fn push_str(&mut self, s: &str) {
         self.make_mut_owned().push_str(s)
     }
 

@@ -1,7 +1,8 @@
 use frender_common::Empty;
+use frender_reactive_value::value_kind::{KindOfOwned, KindOfTempRef};
 
 use crate::{
-    kinds::str::StrIntoAttrValue, known::KnownStr, AttrValue, AttrValueKind, IntoAttrValue,
+    known::KnownStr, values::cached_some::CachedSome, AttrValue, AttrValueKind, IntoAttrValue,
 };
 
 /// ## impl [`AttrValue<ContentEditable>`](crate::AttrValue) for
@@ -25,16 +26,39 @@ impl AttrValueKind for AttrKindOfContentEditable {
     type AttrValue<'a> = &'a str;
 }
 
-impl AttrValue<AttrKindOfContentEditable> for Empty {}
-impl AttrValue<AttrKindOfContentEditable> for bool {}
-
-impl<T: KnownStr> IntoAttrValue<AttrKindOfContentEditable> for T {
-    type IntoAttrValue = StrIntoAttrValue<T>;
+pub struct EmptyAsContentEditable;
+impl IntoAttrValue<AttrKindOfContentEditable> for Empty {
+    type IntoAttrValue = EmptyAsContentEditable;
 
     fn into_attr_value(self) -> Self::IntoAttrValue {
-        StrIntoAttrValue(self)
+        EmptyAsContentEditable
     }
 }
+
+impl crate::sealed::AttrValue<AttrKindOfContentEditable> for EmptyAsContentEditable {}
+impl AttrValue<AttrKindOfContentEditable> for EmptyAsContentEditable {}
+
+type CachedSomeBool = CachedSome<bool, KindOfOwned<bool>>;
+impl IntoAttrValue<AttrKindOfContentEditable> for bool {
+    type IntoAttrValue = CachedSomeBool;
+
+    fn into_attr_value(self) -> Self::IntoAttrValue {
+        CachedSome::new(self)
+    }
+}
+impl crate::sealed::AttrValue<AttrKindOfContentEditable> for CachedSomeBool {}
+impl AttrValue<AttrKindOfContentEditable> for CachedSomeBool {}
+
+type CachedSomeStr<T: KnownStr> = CachedSome<T, KindOfTempRef<str>>;
+impl<T: KnownStr> IntoAttrValue<AttrKindOfContentEditable> for T {
+    type IntoAttrValue = CachedSomeStr<T>;
+
+    fn into_attr_value(self) -> Self::IntoAttrValue {
+        CachedSome::new(self)
+    }
+}
+impl<T: KnownStr> crate::sealed::AttrValue<AttrKindOfContentEditable> for CachedSomeStr<T> {}
+impl<T: KnownStr> AttrValue<AttrKindOfContentEditable> for CachedSomeStr<T> {}
 
 #[cfg(feature = "csr")]
 mod csr;

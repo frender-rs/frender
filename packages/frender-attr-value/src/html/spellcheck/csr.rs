@@ -1,22 +1,23 @@
+use frender_reactive_value::value_kind::KindOfOwned;
+
 use crate::{
-    csr::CsrAttrValue, html::AttrKindOfSpellcheck, impl_csr_attr_value_for_unit_struct,
-    impl_csr_attr_value_with_cache,
+    csr::const_some::impl_csr_attr_value_for_const_some,
+    csr::{cached_some::AttrValueKindWithReactiveValueKind, CsrAttrValue},
+    html::AttrKindOfSpellcheck,
 };
 
-impl CsrAttrValue<AttrKindOfSpellcheck> for bool {
-    type State = Self;
+use super::EmptyAsSpellcheck;
 
-    impl_csr_attr_value_with_cache!(
-        kind![AttrKindOfSpellcheck],
-        set = |this| this,
-        eq = Self::eq,
-    );
+impl AttrValueKindWithReactiveValueKind<KindOfOwned<bool>> for AttrKindOfSpellcheck {
+    fn reactive_value_into_attr_value(
+        value: <KindOfOwned<bool> as frender_reactive_value::value_kind::ValueKind>::Value<'_>,
+    ) -> Self::AttrValue<'_> {
+        value
+    }
 }
 
-use frender_common::Empty;
-
-impl CsrAttrValue<AttrKindOfSpellcheck> for Empty {
-    impl_csr_attr_value_for_unit_struct!((AttrKindOfSpellcheck::EMPTY) as AttrKindOfSpellcheck);
+impl CsrAttrValue<AttrKindOfSpellcheck> for EmptyAsSpellcheck {
+    impl_csr_attr_value_for_const_some!((AttrKindOfSpellcheck::EMPTY) as AttrKindOfSpellcheck);
 }
 
 impl AttrKindOfSpellcheck {

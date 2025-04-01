@@ -1,5 +1,5 @@
 use ::frender_ssr::html::attr::{AssertSpaceAndHtmlAttributeName, SpaceAndHtmlAttribute};
-use frender_attr_value::ssr::SsrAttrValue;
+use frender_attr_value::{experimental::ssr::SsrAttrValue, IntoAttrValue};
 
 use crate::has_const_attr_name::HasConstAttrNameSsr;
 
@@ -7,7 +7,13 @@ use super::HasAttrValueKind;
 
 pub type SpaceAndHtmlAttributesOrEmpty<V, VK> = ::async_str_iter::option::IterOption<SpaceAndHtmlAttribute<AssertSpaceAndHtmlAttributeName<&'static str>, <V as SsrAttrValue<VK>>::HtmlAttributeValue>>;
 
-pub(crate) fn into_space_and_html_attributes_or_empty<PM: HasConstAttrNameSsr + HasAttrValueKind, V: SsrAttrValue<PM::AttrValueKind>>(value: V) -> SpaceAndHtmlAttributesOrEmpty<V, PM::AttrValueKind> {
+pub(crate) fn into_space_and_html_attributes_or_empty<
+    //
+    PM: HasConstAttrNameSsr + HasAttrValueKind,
+    T: IntoAttrValue<PM::AttrValueKind>,
+>(
+    value: T,
+) -> SpaceAndHtmlAttributesOrEmpty<T::IntoAttrValue, PM::AttrValueKind> {
     #[cfg(test)]
     const {
         let spaced = PM::ASSERT_SPACE_AND_HTML_ATTRIBUTE_NAME.as_inner_str().as_bytes();
@@ -24,5 +30,11 @@ pub(crate) fn into_space_and_html_attributes_or_empty<PM: HasConstAttrNameSsr + 
             _ => panic!(),
         }
     };
-    ::async_str_iter::IntoAsyncStrIterator::into_async_str_iterator(V::maybe_into_html_attribute_value(value).map(|v| SpaceAndHtmlAttribute(PM::ASSERT_SPACE_AND_HTML_ATTRIBUTE_NAME, v)))
+    ::async_str_iter::IntoAsyncStrIterator::into_async_str_iterator(
+        T::IntoAttrValue::maybe_into_html_attribute_value(
+            //
+            T::into_attr_value(value),
+        )
+        .map(|v| SpaceAndHtmlAttribute(PM::ASSERT_SPACE_AND_HTML_ATTRIBUTE_NAME, v)),
+    )
 }

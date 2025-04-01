@@ -104,12 +104,8 @@ pub mod attr_value {
         AttrValue,
         AttrValueKind,
         EitherAttrValue,
+        IntoAttrValue,
     };
-
-    #[cfg(feature = "csr")]
-    pub use frender_html_values::attr_value::CsrAttrValue;
-    #[cfg(feature = "ssr")]
-    pub use frender_html_values::attr_value::SsrAttrValue;
 }
 
 #[doc(no_inline)]

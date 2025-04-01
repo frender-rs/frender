@@ -1,29 +1,18 @@
-use frender_common::Empty;
-use frender_reactive_value::value_kind::KindOfTempRef;
+use frender_reactive_value::value_kind::{KindOfOwned, KindOfTempRef};
 
 use crate::{
     csr::{
-        cached_some::{AttrValueKindWithReactiveValueKind, CsrAttrValueCachedSome},
-        CsrAttrValue, UpdateAttrValue,
+        cached_some::AttrValueKindWithReactiveValueKind,
+        const_some::impl_csr_attr_value_for_const_some, CsrAttrValue, UpdateAttrValue,
     },
     html::{bool_to_str, AttrKindOfContentEditable},
-    impl_csr_attr_value_for_unit_struct, impl_csr_attr_value_with_cache,
-    known::KnownStr,
     AttrKindOfStr,
 };
 
-impl CsrAttrValue<AttrKindOfContentEditable> for bool {
-    type State = Self;
+use super::EmptyAsContentEditable;
 
-    impl_csr_attr_value_with_cache!(
-        kind![AttrKindOfContentEditable],
-        set = |this| bool_to_str(this),
-        eq = Self::eq,
-    );
-}
-
-impl CsrAttrValue<AttrKindOfContentEditable> for Empty {
-    impl_csr_attr_value_for_unit_struct!(("") as AttrKindOfContentEditable);
+impl CsrAttrValue<AttrKindOfContentEditable> for EmptyAsContentEditable {
+    impl_csr_attr_value_for_const_some!(("") as AttrKindOfContentEditable);
 }
 
 struct UpdateStr<U: UpdateAttrValue<Kind = AttrKindOfContentEditable>>(U);
@@ -40,16 +29,18 @@ impl<U: UpdateAttrValue<Kind = AttrKindOfContentEditable>> UpdateAttrValue for U
     }
 }
 
-impl AttrValueKindWithReactiveValueKind for AttrKindOfContentEditable {
-    type ReactiveValueKind = KindOfTempRef<str>;
-
+impl AttrValueKindWithReactiveValueKind<KindOfTempRef<str>> for AttrKindOfContentEditable {
     fn reactive_value_into_attr_value(
-        value: <Self::ReactiveValueKind as frender_reactive_value::value_kind::ValueKind>::Value<
-            '_,
-        >,
+        value: <KindOfTempRef<str> as frender_reactive_value::value_kind::ValueKind>::Value<'_>,
     ) -> Self::AttrValue<'_> {
         value.0
     }
 }
 
-impl<V: KnownStr> CsrAttrValueCachedSome<AttrKindOfContentEditable> for V {}
+impl AttrValueKindWithReactiveValueKind<KindOfOwned<bool>> for AttrKindOfContentEditable {
+    fn reactive_value_into_attr_value(
+        value: <KindOfOwned<bool> as frender_reactive_value::value_kind::ValueKind>::Value<'_>,
+    ) -> Self::AttrValue<'_> {
+        bool_to_str(value)
+    }
+}

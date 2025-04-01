@@ -942,8 +942,11 @@ name = "frender-attr-value"
 version = "0.1.0"
 dependencies = [
  "async-str-iter",
+ "chtml",
+ "const-core",
  "either",
  "frender-common",
+ "frender-const-value",
  "frender-reactive-value",
  "frender-ssr-html",
 ]
@@ -975,6 +978,13 @@ version = "0.1.0"
 [[package]]
 name = "frender-const-expr"
 version = "0.1.0"
+
+[[package]]
+name = "frender-const-value"
+version = "0.1.0"
+dependencies = [
+ "const-core",
+]
 
 [[package]]
 name = "frender-context"

@@ -7,6 +7,10 @@ edition = "2021"
 either = { version = "1.13.0", optional = true, default-features = false }
 frender-common = { version = "0.1.0", path = "../frender-common" }
 frender-reactive-value = { version = "0.1.0", path = "../frender-reactive-value" }
+chtml = { version = "0.1.0", path = "../chtml" }
+const-core = { version = "0.1.0", path = "../const-core" }
+frender-const-value = { version = "0.1.0", path = "../frender-const-value" }
+
 # ssr
 async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-features = false, optional = true }
 frender-ssr-html = { version = "0.1.0", path = "../frender-ssr-html", default-features = false, optional = true }
@@ -22,3 +26,4 @@ ssr = [
     "dep:frender-ssr-html",
     "frender-reactive-value/ssr",
 ]
+experimental = []

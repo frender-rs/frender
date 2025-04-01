@@ -1,9 +1,6 @@
 pub use self::kinds::str::AttrKindOfStr;
 
 #[cfg(feature = "csr")]
-use self::csr::macros::*;
-
-#[cfg(feature = "csr")]
 mod csr;
 #[cfg(feature = "ssr")]
 mod ssr;
@@ -46,17 +43,15 @@ mod sealed {
 
 pub trait AttrValue<VK: AttrValueKind>: sealed::AttrValue<VK> {}
 
-pub trait ImplAttrValueWithIntoAttrValue {}
-
-pub trait IntoAttrValue<VK: AttrValueKind>: ImplAttrValueWithIntoAttrValue {
+pub trait IntoAttrValue<VK: AttrValueKind> {
     type IntoAttrValue: AttrValue<VK>;
 
     fn into_attr_value(self) -> Self::IntoAttrValue;
 }
 
-impl<T: IntoAttrValue<VK>, VK: AttrValueKind> sealed::AttrValue<VK> for T {}
-impl<T: IntoAttrValue<VK>, VK: AttrValueKind> AttrValue<VK> for T {}
-
 mod known;
 
 pub mod attr_value;
+
+#[cfg(feature = "experimental")]
+pub mod experimental;

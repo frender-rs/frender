@@ -50,16 +50,11 @@ pub mod attr_value {
             Absent,
             EitherAttrValue,
         },
-        AttrKindOfStr, AttrValue, AttrValueKind,
+        AttrKindOfStr, AttrValue, AttrValueKind, IntoAttrValue,
     };
 
     #[cfg(feature = "html")]
     pub use frender_attr_value::html::{AttrKindOfContentEditable, AttrKindOfSpellcheck};
-
-    #[cfg(feature = "csr")]
-    pub use frender_attr_value::csr::CsrAttrValue;
-    #[cfg(feature = "ssr")]
-    pub use frender_attr_value::ssr::SsrAttrValue;
 }
 
 #[doc(no_inline)]
