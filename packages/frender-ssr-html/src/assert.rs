@@ -83,6 +83,9 @@ mod space_and_html_attributes_or_empty {
 
     pub trait Sealed {}
 
+    impl Sealed for async_str_iter::never::Never {}
+    impl SpaceAndHtmlAttributesOrEmpty for async_str_iter::never::Never {}
+
     impl Sealed for async_str_iter::empty::Empty {}
     impl SpaceAndHtmlAttributesOrEmpty for async_str_iter::empty::Empty {}
 
