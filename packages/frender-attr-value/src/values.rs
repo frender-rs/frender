@@ -1,5 +1,16 @@
 use crate::{AttrValueKind, IntoAttrValue};
 
+#[derive(Debug, Clone, Copy)]
+pub enum Never {}
+mod never;
+impl<VK: AttrValueKind> IntoAttrValue<VK> for Never {
+    type IntoAttrValue = never::NeverAttrValue;
+
+    fn into_attr_value(self) -> Self::IntoAttrValue {
+        match self {}
+    }
+}
+
 mod option;
 impl<T: IntoAttrValue<VK>, VK: AttrValueKind> IntoAttrValue<VK> for Option<T> {
     type IntoAttrValue = option::OptionAttrValue<T::IntoAttrValue>;
