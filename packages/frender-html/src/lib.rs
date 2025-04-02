@@ -38,7 +38,6 @@ pub mod __private {
 mod special;
 
 mod attr_value;
-mod attrs;
 mod dom_tokens;
 mod event_listener;
 mod style;
@@ -67,6 +66,8 @@ pub mod csr {
     pub(crate) mod property_common;
 
     pub(crate) mod kinds;
+
+    mod attrs;
 
     #[cfg(feature = "experimental")]
     pub mod experimental;

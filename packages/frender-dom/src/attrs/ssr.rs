@@ -1,5 +1,6 @@
 use frender_attrs::{experimental::ssr::SsrAttributes, IntoAttributes};
-use frender_dom::ssr::IntoSpaceAndHtmlAttributesOrEmpty;
+
+use crate::ssr::IntoSpaceAndHtmlAttributesOrEmpty;
 
 use super::Attrs;
 

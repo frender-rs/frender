@@ -1,5 +1,6 @@
 pub use frender_dom::{
     //
+    attrs::Attrs,
     special::DangerousInnerHtml,
     string_element::StringElement,
     Empty,

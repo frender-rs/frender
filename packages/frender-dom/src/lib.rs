@@ -28,5 +28,7 @@ pub mod node_ref;
 
 pub mod string_element;
 
+pub mod attrs;
+
 #[cfg(feature = "web")]
 mod shims;

@@ -14,6 +14,9 @@ frender-dom-tokens = { version = "0.1.0", path = "../frender-dom-tokens", featur
     "experimental",
 ] }
 frender-attr-value = { version = "0.1.0", path = "../frender-attr-value" }
+frender-attrs = { version = "0.1.0", path = "../frender-attrs", features = [
+    "experimental",
+] }
 
 # ssr
 frender-ssr = { version = "0.1.0", path = "../frender-ssr", optional = true }
@@ -59,8 +62,9 @@ ssr = [
     "dep:async-str-iter",
     "frender-reactive-value/ssr",
     "frender-dom-tokens/ssr",
+    "frender-attrs/ssr",
 ]
-csr = ["dep:frender-csr-core", "frender-dom-tokens/csr"]
+csr = ["dep:frender-csr-core", "frender-dom-tokens/csr", "frender-attrs/csr"]
 web = [
     "dep:web-sys",
     "dep:wasm-bindgen",
@@ -73,6 +77,7 @@ web = [
 either = [
     "frender-ssr?/either",
     "frender-attr-value/either",
+    "frender-attrs/either",
     "frender-dom-tokens/either",
     "frender-style/either",
 ]

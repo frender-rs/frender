@@ -1057,6 +1057,7 @@ version = "0.1.0"
 dependencies = [
  "async-str-iter",
  "frender-attr-value",
+ "frender-attrs",
  "frender-common",
  "frender-csr-core",
  "frender-dom-tokens",
