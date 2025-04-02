@@ -172,7 +172,7 @@ pub mod form_control {
 pub use self::macros::style;
 pub mod style {
     pub use frender_style::{
-        css_style_declaration, impl_has_const_declaration_list_for,
+        css_style_declaration, impl_HasConstDeclarationList_for,
         style::{comma_separated, one, r#const},
         styles::{constness::ConstDeclarationList, Chain, EitherStyle, Never},
         IntoStyle, Style,

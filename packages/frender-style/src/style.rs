@@ -112,7 +112,7 @@ pub mod __private {
     pub mod const_impl {
         #[doc(hidden)]
         pub use crate::{
-            impl_has_const_declaration_list_for as impl_marker_for,
+            impl_HasConstDeclarationList_for as impl_marker_for,
             styles::constness::{
                 ConstDeclarationList as ConstValue, HasConstDeclarationList as HasConstValue,
             },

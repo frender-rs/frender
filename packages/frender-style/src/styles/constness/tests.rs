@@ -5,7 +5,7 @@ use crate::{ssr::SsrDeclarationList, styles::constness::HasConstDeclarationList}
 
 enum Demo {}
 
-impl_has_const_declaration_list_for!(
+impl_HasConstDeclarationList_for!(
     impl<__> Demo {
         const _: _ = r"
                 font-size: large;

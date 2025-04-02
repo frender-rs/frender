@@ -292,9 +292,9 @@ macro_rules! __style_infer_const_type {
 }
 
 #[macro_export]
-macro_rules! impl_has_const_declaration_list_for {
+macro_rules! impl_HasConstDeclarationList_for {
     (impl <$(__)?> $($rest:tt)*) => {
-        $crate::impl_has_const_declaration_list_for! {
+        $crate::impl_HasConstDeclarationList_for! {
             impl $($rest)*
         }
     };
@@ -303,7 +303,7 @@ macro_rules! impl_has_const_declaration_list_for {
             const $NAME:tt: $Ty:tt = $($const_expr_and_semi:tt)*
         }
     ) => {
-        $crate::impl_has_const_declaration_list_for! {
+        $crate::impl_HasConstDeclarationList_for! {
             impl $for_ty {
                 const $NAME: $crate::__style_infer_const_type![[$Ty] $($const_expr_and_semi)*]
                     = $($const_expr_and_semi)*
