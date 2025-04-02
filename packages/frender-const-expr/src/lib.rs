@@ -5,14 +5,14 @@ macro_rules! parse_one {
     (
         // attributes
         {$($finish:tt)*} [$($prepend:tt)*]
-        ($($pre_expr:tt)*)
+        {$($pre_expr:tt)*}
         {#         [$($_attr:tt)*] $($_rest:tt)*}
         {$pound:tt $attr:tt        $( $rest:tt)*}
         [$($append:tt)*]
     ) => {
         $crate::parse_one! {
             {$($finish)*} [$($prepend)*]
-            ($($pre_expr)* $pound $attr)
+            {$($pre_expr)* $pound $attr}
             { $($rest)* }
             { $($rest)* }
             [$($append)*]
@@ -24,14 +24,14 @@ macro_rules! parse_one {
         // Output is:
         // literal!($lit:literal as _)
         {$($finish:tt)*} [$($prepend:tt)*]
-        ($($pre_expr:tt)*)
+        $pre_expr:tt
         {$_s:literal as        _             $($_rest:tt)*}
         { $s:tt      $as:ident $underline:tt $( $rest:tt)*}
         [$($append:tt)*]
     ) => {
         $($finish)* {
             $($prepend)*
-            { literal!($($pre_expr)* $s $as $underline) }
+            { literal!($pre_expr {$s $as $underline}) }
             { $($rest)* }
             $($append)*
         }
@@ -42,14 +42,14 @@ macro_rules! parse_one {
         // Output is:
         // literal!($lit:literal as $ty:ty)
         {$($finish:tt)*} [$($prepend:tt)*]
-        ($($pre_expr:tt)*)
+        $pre_expr:tt
         {$_s:literal as        $_as_ty:ty $(, $($_rest:tt)*)?}
         {$s:tt       $as:ident  $as_ty:ty $(, $( $rest:tt)*)?}
         [$($append:tt)*]
     ) => {
         $($finish)* {
             $($prepend)*
-            { literal!($($pre_expr)* $s $as $as_ty) }
+            { literal!($pre_expr {$s $as $as_ty}) }
             { $(, $($rest)*)? }
             $($append)*
         }
@@ -60,14 +60,14 @@ macro_rules! parse_one {
         // Output is:
         // literal!($lit:literal)
         {$($finish:tt)*} [$($prepend:tt)*]
-        ($($pre_expr:tt)*)
+        $pre_expr:tt
         {$_s:literal $($_rest:tt)*}
         { $s:tt      $( $rest:tt)*}
         [$($append:tt)*]
     ) => {
         $($finish)* {
             $($prepend)*
-            { literal!($($pre_expr)* $s) }
+            { literal!($pre_expr {$s}) }
             { $($rest)* }
             $($append)*
         }
@@ -78,14 +78,14 @@ macro_rules! parse_one {
         // Output is:
         // const_block!(const $block:block as _)
         {$($finish:tt)*} [$($prepend:tt)*]
-        ($($pre_expr:tt)*)
+        $pre_expr:tt
         {const        {$($_b:tt)*} as        _             $($_rest:tt)*}
         {$const:ident $block:tt    $as:ident $underline:tt $( $rest:tt)*}
         [$($append:tt)*]
     ) => {
         $($finish)* {
             $($prepend)*
-            { const_block!($($pre_expr)* $const $block $as $underline) }
+            { const_block!($pre_expr {$const $block $as $underline}) }
             { $($rest)* }
             $($append)*
         }
@@ -96,14 +96,14 @@ macro_rules! parse_one {
         // Output is:
         // const_block!(const $block:block as $ty:ty)
         {$($finish:tt)*} [$($prepend:tt)*]
-        ($($pre_expr:tt)*)
+        $pre_expr:tt
         {const        {$($_b:tt)*} as        $_as_ty:ty $(, $($_rest:tt)*)?}
         {$const:ident $block:tt    $as:ident  $as_ty:ty $(, $( $rest:tt)*)?}
         [$($append:tt)*]
     ) => {
         $($finish)* {
             $($prepend)*
-            { const_block!($($pre_expr)* $const $block $as $as_ty) }
+            { const_block!($pre_expr {$const $block $as $as_ty}) }
             { $(, $($rest)*)? }
             $($append)*
         }
@@ -114,14 +114,14 @@ macro_rules! parse_one {
         // Output is:
         // const_block!(const $block:block)
         {$($finish:tt)*} [$($prepend:tt)*]
-        ($($pre_expr:tt)*)
+        $pre_expr:tt
         {const        {$($_b:tt)*} $($_rest:tt)*}
         {$const:ident $block:tt    $( $rest:tt)*}
         [$($append:tt)*]
     ) => {
         $($finish)* {
             $($prepend)*
-            { const_block!($($pre_expr)* $const $block) }
+            { const_block!($pre_expr {$const $block}) }
             { $($rest)* }
             $($append)*
         }
@@ -132,14 +132,14 @@ macro_rules! parse_one {
         // Output is:
         // block!({ $($block_content:tt)* })
         {$($finish:tt)*} [$($prepend:tt)*]
-        ($($pre_expr:tt)*)
+        $pre_expr:tt
         {{$($_block:tt)*} $($_rest:tt)*}
         {$block:tt        $($rest:tt )*}
         [$($append:tt)*]
     ) => {
         $($finish)* {
             $($prepend)*
-            { block!($($pre_expr)* $block) }
+            { block!($pre_expr {$block}) }
             { $($rest)* }
             $($append)*
         }
@@ -150,14 +150,14 @@ macro_rules! parse_one {
         // Output is:
         // array!([$($array_content:tt)*] as _)
         {$($finish:tt)*} [$($prepend:tt)*]
-        ($($pre_expr:tt)*)
+        $pre_expr:tt
         { [$($_array:tt)*] as        _             $($_rest:tt)*}
         { $array:tt        $as:ident $underline:tt $($rest:tt )*}
         [$($append:tt)*]
     ) => {
         $($finish)* {
             $($prepend)*
-            { array!($($pre_expr)* $array $as $underline) }
+            { array!($pre_expr {$array $as $underline}) }
             { $($rest)* }
             $($append)*
         }
@@ -168,14 +168,14 @@ macro_rules! parse_one {
         // Output is:
         // array!([$($array_content:tt)*] as _)
         {$($finish:tt)*} [$($prepend:tt)*]
-        ($($pre_expr:tt)*)
+        $pre_expr:tt
         { [$($_array:tt)*] as        [$($_as_ty:tt)*] $($_rest:tt)*}
         { $array:tt        $as:ident $as_ty:tt        $($rest:tt )*}
         [$($append:tt)*]
     ) => {
         $($finish)* {
             $($prepend)*
-            { array!($($pre_expr)* $array $as $as_ty) }
+            { array!($pre_expr {$array $as $as_ty}) }
             { $($rest)* }
             $($append)*
         }
@@ -186,14 +186,14 @@ macro_rules! parse_one {
         // Output is:
         // array!([$($array_content:tt)*])
         {$($finish:tt)*} [$($prepend:tt)*]
-        ($($pre_expr:tt)*)
+        $pre_expr:tt
         { [$($_array:tt)*] as        $_as_ty:ty $(, $($_rest:tt)*)?}
         { $array:tt        $as:ident  $as_ty:ty $(, $( $rest:tt)*)?}
         [$($append:tt)*]
     ) => {
         $($finish)* {
             $($prepend)*
-            { array!($($pre_expr)* $array $as $as_ty) }
+            { array!($pre_expr {$array $as $as_ty}) }
             { $(, $($rest)*)? }
             $($append)*
         }
@@ -204,14 +204,14 @@ macro_rules! parse_one {
         // Output is:
         // array!([$($array_content:tt)*])
         {$($finish:tt)*} [$($prepend:tt)*]
-        ($($pre_expr:tt)*)
+        $pre_expr:tt
         { [$($_array:tt)*] $($_rest:tt)*}
         { $array:tt        $($rest:tt )*}
         [$($append:tt)*]
     ) => {
         $($finish)* {
             $($prepend)*
-            { array!($($pre_expr)* $array) }
+            { array!($pre_expr {$array}) }
             { $($rest)* }
             $($append)*
         }
@@ -222,14 +222,14 @@ macro_rules! parse_one {
         // Output is:
         // paren!((..))
         {$($finish:tt)*} [$($prepend:tt)*]
-        ($($pre_expr:tt)*)
+        $pre_expr:tt
         { ($($_paren:tt)*) $($_rest:tt)*}
         { $paren:tt        $($rest:tt )*}
         [$($append:tt)*]
     ) => {
         $($finish)* {
             $($prepend)*
-            { paren!($($pre_expr)* $paren) }
+            { paren!($pre_expr {$paren}) }
             { $($rest)* }
             $($append)*
         }
@@ -240,14 +240,14 @@ macro_rules! parse_one {
         // Output is:
         // r#macro!($macro_name:ident ! $macro_body:tt as _)
         {$($finish:tt)*} [$($prepend:tt)*]
-        ($($pre_expr:tt)*)
+        $pre_expr:tt
         { $_macro_name:ident !        $_macro_body:tt as     _             $($_rest:tt)*}
         {  $macro_name:ident $bang:tt  $macro_body:tt $as:tt $underline:tt $( $rest:tt)*}
         [$($append:tt)*]
     ) => {
         $($finish)* {
             $($prepend)*
-            { r#macro!( $($pre_expr)* $macro_name $bang $macro_body $as $underline ) }
+            { r#macro!( $pre_expr {$macro_name $bang $macro_body $as $underline} ) }
             { $($rest)* }
             $($append)*
         }
@@ -258,14 +258,14 @@ macro_rules! parse_one {
         // Output is:
         // r#macro!($macro_name:ident ! $macro_body:tt as $ty:ty)
         {$($finish:tt)*} [$($prepend:tt)*]
-        ($($pre_expr:tt)*)
+        $pre_expr:tt
         { $_macro_name:ident !        $_macro_body:tt as     $_as_ty:ty $(, $($_rest:tt)*)?}
         {  $macro_name:ident $bang:tt  $macro_body:tt $as:tt  $as_ty:ty $(, $( $rest:tt)*)?}
         [$($append:tt)*]
     ) => {
         $($finish)* {
             $($prepend)*
-            { r#macro!( $($pre_expr)* $macro_name $bang $macro_body $as $as_ty ) }
+            { r#macro!( $pre_expr {$macro_name $bang $macro_body $as $as_ty} ) }
             { $(, $($rest)*)? }
             $($append)*
         }
@@ -276,14 +276,14 @@ macro_rules! parse_one {
         // Output is:
         // r#macro!($macro_name:ident ! $macro_body:tt)
         {$($finish:tt)*} [$($prepend:tt)*]
-        ($($pre_expr:tt)*)
+        $pre_expr:tt
         { $_macro_name:ident !        $_macro_body:tt $($_rest:tt)*}
         {  $macro_name:ident $bang:tt  $macro_body:tt $( $rest:tt)*}
         [$($append:tt)*]
     ) => {
         $($finish)* {
             $($prepend)*
-            { r#macro!( $($pre_expr)* $macro_name $bang $macro_body ) }
+            { r#macro!( $pre_expr {$macro_name $bang $macro_body} ) }
             { $($rest)* }
             $($append)*
         }
@@ -294,14 +294,14 @@ macro_rules! parse_one {
         // Output:
         // r#if!($($if_clause:tt)*)
         {$($finish:tt)*} [$($prepend:tt)*]
-        ($($pre_expr:tt)*)
+        $pre_expr:tt
         { if     ($_predicate:expr) {$($_if_block:tt)*} $($_after_if_block:tt)* }
         { $if:tt $predicate:tt      $if_block:tt        $( $after_if_block:tt)* }
         [$($append:tt)*]
     ) => {
         $crate::__syntax_parse_after_if_block! {
             {{$($finish)*} [$($prepend)*]}
-            ($($pre_expr)* $if $predicate $if_block)
+            ($pre_expr {$if $predicate $if_block})
             {$($after_if_block)*}
             {$($after_if_block)*}
             [$($append)*]
@@ -313,14 +313,14 @@ macro_rules! parse_one {
         // Output is:
         // r#match!(match ($($matched:tt)*) { $($match_body:tt)* })
         {$($finish:tt)*} [$($prepend:tt)*]
-        ($($pre_expr:tt)*)
+        $pre_expr:tt
         { match         ($($_matched:tt)*) { $($_match_body:tt)* } $($_rest:tt)*}
         { $match:ident  $matched:tt        $match_body:tt          $( $rest:tt)*}
         [$($append:tt)*]
     ) => {
         $($finish)* {
             $($prepend)*
-            { r#match!( $($pre_expr)* $match $matched $match_body ) }
+            { r#match!( $pre_expr {$match $matched $match_body} ) }
             { $($rest)* }
             $($append)*
         }
@@ -332,12 +332,21 @@ macro_rules! expand_parsed {
     (
         with {$($with:tt)*}
         $(attrs {$($attrs:tt)*})?
-        parsed {$kind:ident $bang:tt ($($parsed:tt)*)}
+        parsed {
+            $kind:ident $bang:tt (
+                {$($other_attr:tt)*}
+                $braced_parsed:tt
+            )
+        }
     ) => {
         $($with)* :: $kind $bang {
             @{$($with)*}
-            $($($attrs)*)?
-            $($parsed)*
+            #{
+                $($($attrs)*)?
+                $($other_attr)*
+            }
+            $braced_parsed
+            $braced_parsed
         }
     };
 }
@@ -348,14 +357,14 @@ macro_rules! __syntax_parse_after_if_block {
     // EOF or comma
     (
         {{$($finish:tt)*} [$($prepend:tt)*]}
-        $paren_style_if:tt
+        $paren_attrs_and_braced:tt
         { $(,$($_after_if_block:tt)*)? }
         $after_if_block:tt
         [$($append:tt)*]
     ) => {
         $($finish)* {
             $($prepend)*
-            { r#if! $paren_style_if }
+            { r#if! $paren_attrs_and_braced }
             { $(,$($_after_if_block)*)? }
             $($append)*
         }
@@ -363,7 +372,7 @@ macro_rules! __syntax_parse_after_if_block {
     // else if
     (
         $finish_and_prepend:tt
-        ($($style_if:tt)*)
+        ($attrs:tt {$($parsed:tt)*})
         { else        if        ($_predicate:expr) {$($_if_block:tt)*} $($_after_if_block:tt)* }
         { $else:ident $if:ident $predicate:tt      $if_block:tt        $( $after_if_block:tt)* }
         $append:tt
@@ -371,9 +380,12 @@ macro_rules! __syntax_parse_after_if_block {
         $crate::__syntax_parse_after_if_block! {
             $finish_and_prepend
             (
-                $($style_if)*
-                $else $if $predicate
-                $if_block
+                $attrs
+                {
+                    $($parsed)*
+                    $else $if $predicate
+                    $if_block
+                }
             )
             {$($after_if_block)*}
             {$($after_if_block)*}
@@ -383,14 +395,14 @@ macro_rules! __syntax_parse_after_if_block {
     // else
     (
         {{$($finish:tt)*} [$($prepend:tt)*]}
-        ($($paren_style_if:tt)*)
+        ($attrs:tt {$($parsed:tt)*})
         { else        {$($_else_block:tt)*} $($_rest:tt)* }
         { $else:ident $else_block:tt        $( $rest:tt)* }
         [$($append:tt)*]
     ) => {
         $($finish)* {
             $($prepend)*
-            { r#if!( $($paren_style_if)* $else $else_block ) }
+            { r#if!( $attrs {$($parsed)* $else $else_block} ) }
             { $($rest)* }
             $($append)*
         }
@@ -512,7 +524,7 @@ macro_rules! __resolve_match_body {
                 attrs $attrs
                 {$this_pat $(if $guard)?}
             }]
-                ()
+                {}
                 {$($after_pat)*}
                 {$($after_pat)*}
             []
@@ -582,10 +594,10 @@ macro_rules! __expect_match_branch_comma {
         }
     };
     // If rest doesn't start with comma, only allow the cases that doesn't require comma
-    // block or native block or const block
+    // block or const block
     (
         $match:tt
-        {$parsed_kind:ident $bang:tt ($(const)? {$($braced:tt)*})}
+        {$parsed_kind:ident $bang:tt ($attrs:tt {$(const)? {$($braced:tt)*}})}
         $parsed:tt
         $rest:tt
     ) => {
@@ -598,7 +610,7 @@ macro_rules! __expect_match_branch_comma {
     // if
     (
         $match:tt
-        {r#if $bang:tt ($(const)? {$($braced:tt)*})}
+        {r#if $bang:tt $paren_attrs_and_braced:tt}
         $parsed:tt
         $rest:tt
     ) => {
@@ -611,7 +623,7 @@ macro_rules! __expect_match_branch_comma {
     // match
     (
         $match:tt
-        {r#match $bang:tt ($(const)? {$($braced:tt)*})}
+        {r#match $bang:tt $paren_attrs_and_braced:tt}
         $parsed:tt
         $rest:tt
     ) => {
@@ -657,7 +669,7 @@ macro_rules! __expect_match_branch_continue {
                 attrs $attrs
                 {$pat $(if $guard)?}
             }]
-                ()
+                {}
                 {$($after_pat)*}
                 {$($after_pat)*}
             []
@@ -686,77 +698,91 @@ pub mod __private {
 }
 
 pub mod syntax {
-    pub use {None, Some};
+    pub mod parsed {
+        pub use {None, Some};
+    }
 
     #[doc(hidden)]
     #[macro_export]
     macro_rules! syntax_empty {
-        (@{$($with:tt)*}$(#$attr:tt)*) => {
-            $(#$attr)*
-            $($with)*::Empty
+        (@{$($with:tt)*} #{$($attr:tt)*} {()} {()}) => {
+            $($attr)*
+            $($with)*::parsed::Empty
         };
     }
 
     #[doc(hidden)]
     #[macro_export]
     macro_rules! syntax_literal {
-        (@{$($with:tt)*} $(#$attr:tt)+ $lit:literal $(as $($as_ty:tt)*)?) => {
-            $($with)*::r#const! { $(#$attr)+ const { $lit } $(as $($as_ty)*)? }
-        };
-        (@{$($with:tt)*} $lit:tt $(as $($as_ty:tt)*)?) => {
-            $($with)*::r#const! { const { $lit } $(as $($as_ty)*)? }
-        };
-    }
-
-    #[doc(hidden)]
-    #[macro_export]
-    macro_rules! syntax_const_block {
-        (@{$($with:tt)*} $($t:tt)*) => {
-            $($with)*::r#const! { $($t)* }
-        };
-    }
-
-    #[doc(hidden)]
-    #[macro_export]
-    macro_rules! syntax_block {
-        // empty
-        (@{$($with:tt)*} $(#$attr:tt)* {}) => {
-            $($with)*::empty! { @{$($with)*} $(#$attr)* }
-        };
-        // one
-        (@{$($with:tt)*} $(#$attr:tt)* {$($t:tt)*}) => {
-            $crate::parse_one! {
-                {$crate::__expect_one_and_expand_with!} [{$($with)*}]
-                    ($(#$attr)*)
-                    {$($t)*}
-                    {$($t)*}
-                []
+        (
+            @{$($with:tt)*} #$attrs:tt
+            {$_lit:literal $(as $($as_ty:tt)*)?}
+            {$ lit:literal $($rest:tt)*}
+        ) => {
+            $($with)*::const_block! {
+                @{$($with)*}
+                #$attrs
+                {const { $lit } $($rest)*}
+                {const { $lit } $($rest)*}
             }
         };
     }
 
     /// The default macro for `[..]` syntax.
     ///
-    /// `[..]` will be parsed as
+    /// `[..]` will be parsed as [`const_block!(const { [..] })`](const_block).
     #[doc(hidden)]
     #[macro_export]
     macro_rules! syntax_array {
-        (@{$($with:tt)*} $(#$attr:tt)+ [$($array:tt)*] $(as $($as_ty:tt)*)?) => {
-            $($with)*::r#const! {
-                $(#$attr)+
-                const { [$($array)*] } $(as $($as_ty)*)?
+        (
+            @{$($with:tt)*} #$attrs:tt
+            {[$($_array:tt)*] $(as $($as_ty:tt)*)?}
+            {$array:tt        $($rest:tt)*        }
+        ) => {
+            $($with)*::const_block! {
+                @{$($with)*}
+                #$attrs
+                {const { $array } $($rest)*}
+                {const { $array } $($rest)*}
             }
         };
-        (@{$($with:tt)*} $array:tt $(as $($as_ty:tt)*)?) => {
-            $($with)*::r#const! {
-                const { $array } $(as $($as_ty)*)?
+    }
+
+    #[doc(hidden)]
+    #[macro_export]
+    macro_rules! syntax_const_block {
+        (
+            @{$($with:tt)*} #{$($attr:tt)*}
+            {const {$($const_block:tt)*} $(as $($as_ty:tt)*)?}
+            {$($t:tt)*}
+        ) => {
+            $($with)*::parsed::r#const! {
+                $($attr)*
+                $($t)*
+            }
+        };
+    }
+
+    #[doc(hidden)]
+    #[macro_export]
+    macro_rules! syntax_block {
+        (
+            @{$($with:tt)*} #$attrs:tt
+            {{$($t:tt)+}}
+            {$braced:tt}
+        ) => {
+            $($with)*::one! {
+                @{$($with)*}
+                #$attrs
+                $braced
+                $braced
             }
         };
     }
 
     /// The default macro for `(..)` syntax.
     ///
-    /// - `()` will be parsed as `$with::empty! { @{$with} }`
+    /// - `()` will be parsed as `$with::empty! { @{$with} () }`
     ///
     /// - `($a $(,)?)` will be parsed as `$with::one!($a)`
     ///
@@ -777,19 +803,28 @@ pub mod syntax {
     #[macro_export]
     macro_rules! syntax_paren {
         // empty
-        (@{$($with:tt)*} $(#$attr:tt)* ()) => {
-            $($with)*::empty! { @{$($with)*} $(#$attr)* }
+        (
+            @{$($with:tt)*} #$attrs:tt
+            {()             }
+            {$paren_empty:tt}
+        ) => {
+            $($with)*::empty! { @{$($with)*} #$attrs {$paren_empty} {$paren_empty} }
         };
-        (@{$($with:tt)*} $(#$attr:tt)* ($($t:tt)*)) => {
+        // non empty
+        (
+            @{$($with:tt)*} #$attrs:tt
+            {($($t:tt)+)         }
+            {$_repeat:tt         }
+        ) => {
             $crate::parse_one! {
                 {$crate::__expect_comma_separated_and_chain_with!}
                 [
                     {$($with)*}
-                    attrs{$(#$attr)*}
+                    attrs $attrs
                 ]
-                    ()
-                    {$($t)*}
-                    {$($t)*}
+                    {}
+                    {$($t)+}
+                    {$($t)+}
                 []
             }
         };
@@ -800,35 +835,57 @@ pub mod syntax {
     macro_rules! syntax_chain {
         (
             with {$($with:tt)*}
-            attrs {$($attrs:tt)*}
+            attrs{$($attr:tt)*}
             parsed $parsed:tt
             rest {$($rest:tt)*}
         ) => {
+            $($attr)*
             $($with)*::Chain(
-                $crate::__expect_one_and_expand_with! {
-                    {$($with)*}
-                    attrs {$($attrs)*}
-                    $parsed
-                    {}
+                $crate::expand_parsed! {
+                    with {$($with)*}
+                    parsed $parsed
                 },
                 $($with)*::paren! {
                     @{$($with)*}
-                    $($attrs)*
-                    ($($rest)*)
+                    #{}
+                    {($($rest)*)}
+                    {($($rest)*)}
                 }
             )
         };
     }
 
-    /// The default macro for `some_macro!(..)` syntax doesn't allow attributes or `as Type`.
+    /// The default macro for `some_macro!(..)` syntax doesn't allow `as Type`.
     #[doc(hidden)]
     #[macro_export]
     macro_rules! syntax_macro {
-        (@{$($with:tt)*} $macro_name:ident $bang:tt $macro_content:tt) => {
+        (
+            @{$($with:tt)*} #{$($attr:tt)*}
+            {$_macro_name:ident !        ($($_macro_content:tt)*)}
+            {$ macro_name:ident $bang:tt $macro_content:tt       }
+        ) => {
+            $($attr)*
+            $($with)*::macros::$macro_name $bang $macro_content
+        };
+        (
+            @{$($with:tt)*} #{$($attr:tt)*}
+            {$_macro_name:ident !        [$($_macro_content:tt)*]}
+            {$ macro_name:ident $bang:tt $macro_content:tt       }
+        ) => {
+            $($attr)*
+            $($with)*::macros::$macro_name $bang $macro_content
+        };
+        (
+            @{$($with:tt)*} #{$($attr:tt)*}
+            {$_macro_name:ident !        {$($_macro_content:tt)*}}
+            {$ macro_name:ident $bang:tt $macro_content:tt       }
+        ) => {
+            $($attr)*
             $($with)*::macros::$macro_name $bang $macro_content
         };
     }
 
+    /// The default syntax for `if` expand attributes before `if` expression
     #[doc(hidden)]
     #[macro_export]
     macro_rules! syntax_if {
@@ -845,19 +902,22 @@ pub mod syntax {
             //  }
             //  ```
             @{$($with:tt)*}
-            $(#$attr:tt)*
-            $if:ident $paren_predicate:tt $if_block:tt
+            #{$($attr:tt)*}
+            {if        ($($predicate:tt)*) {$($if_block_content:tt)*}}
+            {$if:ident $paren_predicate:tt $if_block:tt              }
         ) => {
+            $($attr)*
             $if $crate::assert_expr!$paren_predicate {
-                $($with)*::Some(
+                $($with)*::parsed::Some(
                     $($with)*::block! {
                         @{$($with)*}
-                        $(#$attr)*
-                        $if_block
+                        #{}
+                        {$if_block}
+                        {$if_block}
                     }
                 )
             } else {
-                $($with)*::None
+                $($with)*::parsed::None
             }
         };
         (
@@ -873,24 +933,32 @@ pub mod syntax {
             //  }
             //  ```
             @{$($with:tt)*}
-            $(#$attr:tt)*
-            $if:ident $paren_predicate:tt $if_block:tt
-            $else:ident $($after_else:tt)*
+            #{$($attr:tt)*}
+            {
+                if        ($($predicate:tt)*) {$($if_block_content:tt)*}
+                else        $($_after_else:tt)*
+            }{
+                $if:ident $paren_predicate:tt $if_block:tt
+                $else:ident $($ after_else:tt)*
+            }
         ) => {
+            $($attr)*
             $if $crate::assert_expr!$paren_predicate {
-                $($with)*::Either::A(
+                $($with)*::parsed::Either::A(
                     $($with)*::block!(
                         @{$($with)*}
-                        $(#$attr)*
-                        $if_block
+                        #{}
+                        {$if_block}
+                        {$if_block}
                     )
                 )
             } $else {
-                $($with)*::Either::B(
+                $($with)*::parsed::Either::B(
                     $($with)*::one!(
                         @{$($with)*}
-                        $(#$attr)*
-                        $($after_else)*
+                        #{}
+                        {$($after_else)*}
+                        {$($after_else)*}
                     )
                 )
             }
@@ -900,10 +968,19 @@ pub mod syntax {
     #[doc(hidden)]
     #[macro_export]
     macro_rules! syntax_one {
-        (@{$($with:tt)*} $($t:tt)*) => {
-            $crate::syntax_block! {
-                @{$($with)*}
-                {$($t)*}
+        (@$with:tt #$attrs:tt {$($t:tt)+} $braced:tt) => {
+            $crate::parse_one! {
+                {$crate::__expect_one_and_expand_with!} [$with]
+                    $attrs
+                    $braced
+                    $braced
+                []
+            }
+        };
+        (@$with:tt $braced:tt) => {
+            $crate::syntax_one! {
+                @$with #{}
+                $braced $braced
             }
         };
     }
@@ -913,15 +990,15 @@ pub mod syntax {
     macro_rules! syntax_match {
         (
             @$with:tt
-            $(#$attr:tt)*
-            $match:ident
-            $($match_clause:tt)*
+            #$attrs:tt
+            { match ($($matched:tt)*) {$($match_body:tt)*} }
+            $braced:tt
         ) => {
             $crate::__resolve_match! {
                 $with
-                attrs {$(#$attr)*}
-                {$match $($match_clause)*}
-                {$match $($match_clause)*}
+                attrs $attrs
+                $braced
+                $braced
             }
         };
     }
@@ -929,13 +1006,14 @@ pub mod syntax {
     #[doc(hidden)]
     #[macro_export]
     macro_rules! syntax_never {
-        (@{$($with:tt)*} $e:expr) => {
+        (@{$($with:tt)*} #{$($attr:tt)*} {$e:expr} $_repeat:tt) => {
             // (|| -> $($with)*::Never { $e })()
             // the above cannot be used in const
 
             {
+                $($attr)*
                 #[allow(unreachable_code)]
-                $crate::__private::identity::<$($with)*::Never>($e)
+                $crate::__private::identity::<$($with)*::parsed::Never>($e)
             }
         };
     }
