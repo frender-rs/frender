@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 frender-attr-value = { version = "0.1.0", path = "../frender-attr-value" }
+frender-attrs = { version = "0.1.0", path = "../frender-attrs" }
 frender-dom = { version = "0.1.0", path = "../frender-dom" }
 frender-dom-tokens = { version = "0.1.0", path = "../frender-dom-tokens" }
 frender-form-control = { version = "0.1.0", path = "../frender-form-control" }
@@ -14,6 +15,7 @@ frender-events = { version = "0.1.0", path = "../frender-events" }
 [features]
 csr = [
     "frender-attr-value/csr",
+    "frender-attrs/csr",
     "frender-dom/csr",
     "frender-dom-tokens/csr",
     "frender-form-control/csr",
@@ -21,6 +23,7 @@ csr = [
 ]
 ssr = [
     "frender-attr-value/ssr",
+    "frender-attrs/ssr",
     "frender-dom/ssr",
     "frender-dom-tokens/ssr",
     "frender-form-control/ssr",

@@ -1091,6 +1091,7 @@ name = "frender-dom-values"
 version = "0.1.0"
 dependencies = [
  "frender-attr-value",
+ "frender-attrs",
  "frender-dom",
  "frender-dom-tokens",
  "frender-events",

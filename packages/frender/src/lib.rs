@@ -93,9 +93,12 @@ pub use frender_html_values::ScriptInnerTextCsrOnly;
 #[cfg(feature = "ssr")]
 pub use frender_html_values::ScriptInnerTextWronglyEncoded;
 
+#[doc(no_inline)]
+pub use self::macros::attr_value;
 pub mod attr_value {
     pub use frender_html_values::attr_value::{
-        //
+        impl_HasConstAttrValue_for,
+        one,
         Absent,
         // html
         AttrKindOfContentEditable,
@@ -105,6 +108,15 @@ pub mod attr_value {
         AttrValueKind,
         EitherAttrValue,
         IntoAttrValue,
+    };
+}
+
+#[doc(no_inline)]
+pub use self::macros::attrs;
+pub mod attrs {
+    pub use frender_html_values::attrs::{
+        comma_separated, impl_HasConstAttributes_for, one, r#const, Attributes, Chain,
+        ConstAttributes, EitherAttributes, HasConstAttributes, IntoAttributes, Never,
     };
 }
 
@@ -168,7 +180,7 @@ pub mod style {
 }
 
 pub mod macros {
-    pub use frender_html_values::macros::{dom_tokens, style};
+    pub use frender_html_values::macros::{attr_value, attrs, dom_tokens, style};
 }
 // endregion
 

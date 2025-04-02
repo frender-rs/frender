@@ -44,6 +44,8 @@ pub mod form_control {
     }
 }
 
+#[doc(no_inline)]
+pub use self::macros::attr_value;
 pub mod attr_value {
     pub use frender_attr_value::{
         values::{
@@ -56,6 +58,30 @@ pub mod attr_value {
 
     #[cfg(feature = "html")]
     pub use frender_attr_value::html::{AttrKindOfContentEditable, AttrKindOfSpellcheck};
+
+    pub use frender_attr_value::{
+        attr_value::{one, r#const},
+        impl_HasConstAttrValue_for,
+    };
+}
+
+#[doc(no_inline)]
+pub use self::macros::attrs;
+pub mod attrs {
+    pub use frender_attrs::values::{
+        //
+        r#const::{ConstAttributes, HasConstAttributes},
+        Chain,
+        EitherAttributes,
+        Never,
+    };
+
+    pub use frender_attrs::{Attributes, IntoAttributes};
+
+    pub use frender_attrs::{
+        attrs::{comma_separated, one, r#const},
+        impl_HasConstAttributes_for,
+    };
 }
 
 #[doc(no_inline)]
@@ -84,6 +110,8 @@ pub mod dom_tokens {
 }
 
 pub mod macros {
+    pub use frender_attr_value::attr_value::one as attr_value;
+    pub use frender_attrs::attrs::comma_separated as attrs;
     pub use frender_dom_tokens::dom_tokens::comma_separated as dom_tokens;
     pub use frender_style::style::comma_separated as style;
 }
