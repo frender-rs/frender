@@ -1029,6 +1029,91 @@ macro_rules! array_len {
     };
 }
 
+/// An inline expr of `ConstValue`.
+///
+/// Supported syntaxes:
+///
+/// - `$e:expr`
+/// - `const $const_block:block`
+/// - `const $const_block:block as _`
+/// - `const $const_block:block as $Ty:ty`
+/// - `$e:literal`
+/// - `$e:literal as _`
+/// - `$e:literal as $Ty:ty`
+#[macro_export]
+macro_rules! r#const {
+    (
+        #[const_impl_mod $const_impl_mod:tt]
+        const $($rest:tt)*
+    ) => {{
+        enum __FrenderConstValueMarker {}
+        $crate::r#const! {
+            #[const_impl_mod $const_impl_mod]
+            #[const_marker(__FrenderConstValueMarker)]
+            const $($rest)*
+        }
+    }};
+    (
+        #[const_impl_mod $const_impl_mod:tt]
+        #[$const_marker:ident $const_marker_body:tt]
+        const $s:tt
+    ) => {
+        $crate::r#const! {
+            #[const_impl_mod $const_impl_mod]
+            #[$const_marker $const_marker_body]
+            const $s as _
+        }
+    };
+    (
+        #[const_impl_mod($($const_impl_mod:tt)+)]
+        #[$const_marker:ident $const_marker_body:tt]
+        const $s:tt as $($const_ty:tt)*
+    ) => {{
+        const _: () = {
+            $($const_impl_mod)+::impl_marker_for! {
+                impl $crate::const_marker::$const_marker!$const_marker_body {
+                    const _: $($const_ty)* = $s;
+                }
+            }
+        };
+
+        const __FRENDER_CONST_EXPR: $($const_impl_mod)+::ConstValue::<
+            $crate::const_marker::$const_marker!$const_marker_body
+        > = $($const_impl_mod)+::ConstValue();
+
+        __FRENDER_CONST_EXPR
+    }};
+    (
+        $(#$attr:tt)+
+        $e:literal $($rest:tt)*
+    ) => {
+        $crate::r#const! {
+            $(#$attr)+
+            const { $e } $($rest)*
+        }
+    };
+    (
+        #[const_impl_mod $const_impl_mod:tt]
+        #[$const_marker:ident $const_marker_body:tt]
+        $e:expr
+    ) => {
+        $crate::r#const! {
+            #[const_impl_mod $const_impl_mod]
+            #[$const_marker $const_marker_body]
+            const { $e } as _
+        }
+    };
+    (
+        #[const_impl_mod $const_impl_mod:tt]
+        $e:expr
+    ) => {
+        $crate::r#const! {
+            #[const_impl_mod $const_impl_mod]
+            const { $e } as _
+        }
+    };
+}
+
 #[cfg(test)]
 mod tests {
     const _: () = {

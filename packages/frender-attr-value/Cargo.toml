@@ -10,6 +10,10 @@ frender-reactive-value = { version = "0.1.0", path = "../frender-reactive-value"
 chtml = { version = "0.1.0", path = "../chtml" }
 const-core = { version = "0.1.0", path = "../const-core" }
 frender-const-value = { version = "0.1.0", path = "../frender-const-value" }
+frender-const-expr = { version = "0.1.0", path = "../frender-const-expr" }
+frender-macro-rules = { version = "0.1.0", path = "../frender-macro-rules", features = [
+    "define_phantom_wrapper",
+] }
 
 # ssr
 async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-features = false, optional = true }

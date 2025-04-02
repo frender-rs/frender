@@ -8,7 +8,7 @@ macro_rules! declaration_value_const {
     (const $($rest:tt)*) => {{
         enum HasConstDeclarationValueStr {}
         $crate::declaration_value::r#const! {
-            #[const_marker(HasConstDeclarationNameStr)]
+            #[const_marker(HasConstDeclarationValueStr)]
             const $($rest)*
         }
     }};

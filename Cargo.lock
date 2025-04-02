@@ -946,7 +946,9 @@ dependencies = [
  "const-core",
  "either",
  "frender-common",
+ "frender-const-expr",
  "frender-const-value",
+ "frender-macro-rules",
  "frender-reactive-value",
  "frender-ssr-html",
 ]
