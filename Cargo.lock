@@ -961,6 +961,8 @@ dependencies = [
  "chtml",
  "either",
  "frender-common",
+ "frender-const-expr",
+ "frender-const-value",
  "frender-macro-rules",
  "frender-ssr-html",
 ]

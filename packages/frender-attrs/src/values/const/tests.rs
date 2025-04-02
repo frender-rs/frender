@@ -12,8 +12,8 @@ mod assoc_const {
     const _: () = {
         assert!(HasConstValue::ATTRS.is_empty());
 
-        assert!(HasConstValue::ATTRIBUTES.ssr_str().as_str().is_empty());
-        let [] = HasConstValue::ATTRIBUTES.attributes();
+        assert!(HasConstValue::ATTRIBUTES.0.ssr_str().as_str().is_empty());
+        let [] = HasConstValue::ATTRIBUTES.0.attributes();
     };
 }
 
@@ -29,7 +29,7 @@ mod empty {
     );
 
     const _: () = {
-        assert!(HasConstValue::ATTRIBUTES.ssr_str().as_str().is_empty());
-        let [] = HasConstValue::ATTRIBUTES.attributes();
+        assert!(HasConstValue::ATTRIBUTES.0.ssr_str().as_str().is_empty());
+        let [] = HasConstValue::ATTRIBUTES.0.attributes();
     };
 }

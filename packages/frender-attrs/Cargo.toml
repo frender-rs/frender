@@ -9,6 +9,8 @@ either = { version = "1.15.0", optional = true, default-features = false }
 frender-macro-rules = { version = "0.1.0", path = "../frender-macro-rules", features = [
     "define_phantom_wrapper",
 ] }
+frender-const-value = { version = "0.1.0", path = "../frender-const-value" }
+frender-const-expr = { version = "0.1.0", path = "../frender-const-expr" }
 chtml = { version = "0.1.0", path = "../chtml" }
 frender-ssr-html = { version = "0.1.0", path = "../frender-ssr-html", optional = true }
 async-str-iter = { version = "0.1.0", path = "../async-str-iter", optional = true }

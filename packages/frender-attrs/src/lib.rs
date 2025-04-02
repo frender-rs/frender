@@ -1,11 +1,11 @@
-use chtml as parser;
-
 pub mod values;
 
 #[cfg(feature = "csr")]
 pub mod csr;
 #[cfg(feature = "ssr")]
 pub mod ssr;
+
+pub mod attrs;
 
 /// Non reactive attributes with unpinned state.
 pub trait IntoAttributes {

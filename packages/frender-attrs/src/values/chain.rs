@@ -1,6 +1,6 @@
 use crate::Attributes;
 
-pub struct ChainAttributes<A, B>(A, B);
+pub struct ChainAttributes<A, B>(pub(super) A, pub(super) B);
 
 impl<A: Attributes, B: Attributes> crate::sealed::Attributes for ChainAttributes<A, B> {}
 impl<A: Attributes, B: Attributes> Attributes for ChainAttributes<A, B> {}
