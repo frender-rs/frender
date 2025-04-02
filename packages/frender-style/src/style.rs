@@ -1,7 +1,5 @@
 //! See [`style!`](crate::style!).
 
-pub use frender_const_expr::{array_len, const_marker};
-
 /// Styles separated by comma.
 ///
 /// The macro input will be parsed as [style syntaxes](one) separated by comma.
@@ -23,56 +21,11 @@ pub use style as comma_separated;
 #[doc(hidden)]
 #[macro_export]
 macro_rules! style_const {
-    (const $($rest:tt)*) => {{
-        enum HasConstDeclarationList {}
-        $crate::style::r#const! {
-            #[const_marker(HasConstDeclarationList)]
-            const $($rest)*
+    ($($t:tt)*) => {
+        $crate::style::__private::r#const! {
+            #[const_impl_mod($crate::style::__private::const_impl)]
+            $($t)*
         }
-    }};
-    (
-        #[$const_marker:ident $const_marker_body:tt]
-        const $s:tt
-    ) => {
-        $crate::style::r#const! {
-            #[$const_marker $const_marker_body]
-            const $s as _
-        }
-    };
-    (
-        #[$const_marker:ident $const_marker_body:tt]
-        const $s:tt as $($const_ty:tt)*
-    ) => {{
-        const CONST_EXPR: $crate::styles::constness::ConstDeclarationList::<
-            $crate::style::const_marker::$const_marker!$const_marker_body
-        > = {
-            $crate::impl_has_const_declaration_list_for! {
-                impl $crate::style::const_marker::$const_marker!$const_marker_body {
-                    const _: $crate::__style_infer_const_type![$s $($const_ty)*] = $s;
-                }
-            }
-
-            $crate::styles::constness::ConstDeclarationList()
-        };
-
-        CONST_EXPR
-    }};
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __style_infer_const_type {
-    ({ [$($array:tt)*] } _) => {
-        [$crate::styles::constness::StaticStr; $crate::style::array_len!([$($array)*])]
-    };
-    ({ [$($array:tt)*] } [$item_ty:ty; _]) => {
-        [$item_ty; $crate::__dom_tokens_array_len!([$($array)*])]
-    };
-    ($block:tt _) => {
-        $crate::styles::constness::StaticStr
-    };
-    ($block:tt $ty:ty) => {
-        $ty
     };
 }
 
@@ -147,6 +100,23 @@ pub mod syntax {
 
         #[doc(no_inline)]
         pub use style;
+    }
+}
+
+#[doc(hidden)]
+pub mod __private {
+    #[doc(hidden)]
+    pub use frender_const_expr::{const_marker, r#const};
+
+    #[doc(hidden)]
+    pub mod const_impl {
+        #[doc(hidden)]
+        pub use crate::{
+            impl_has_const_declaration_list_for as impl_marker_for,
+            styles::constness::{
+                ConstDeclarationList as ConstValue, HasConstDeclarationList as HasConstValue,
+            },
+        };
     }
 }
 

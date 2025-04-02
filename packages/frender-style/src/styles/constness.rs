@@ -270,6 +270,27 @@ impl DeclarationListInfo {
     }
 }
 
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __style_infer_const_type {
+    ($Ty:tt {$($braced:tt)*} ;) => {
+        // unbrace
+        $crate::__style_infer_const_type![$Ty $($braced)* ;]
+    };
+    ([_] [$($array:tt)*] ;) => {
+        [$crate::styles::constness::StaticStr; $crate::styles::constness::__private::array_len!([$($array)*])]
+    };
+    ([[$item_ty:ty; _]] [$($array:tt)*] ;) => {
+        [$item_ty; $crate::__dom_tokens_array_len!([$($array)*])]
+    };
+    ([_] $($unbraced_or_unrecognized_and_semi:tt)*) => {
+        $crate::styles::constness::StaticStr
+    };
+    ([$Ty:ty] $($unbraced_and_semi:tt)*) => {
+        $Ty
+    };
+}
+
 #[macro_export]
 macro_rules! impl_has_const_declaration_list_for {
     (impl <$(__)?> $($rest:tt)*) => {
@@ -279,12 +300,13 @@ macro_rules! impl_has_const_declaration_list_for {
     };
     (
         impl $for_ty:ty {
-            const $NAME:tt: _ = $const_expr:expr;
+            const $NAME:tt: $Ty:tt = $($const_expr_and_semi:tt)*
         }
     ) => {
         $crate::impl_has_const_declaration_list_for! {
             impl $for_ty {
-                const $NAME: $crate::styles::constness::StaticStr = $const_expr;
+                const $NAME: $crate::__style_infer_const_type![[$Ty] $($const_expr_and_semi)*]
+                    = $($const_expr_and_semi)*
             }
         }
     };
@@ -586,8 +608,13 @@ pub type StaticStr = &'static str;
 
 #[doc(hidden)]
 pub mod __private {
+    #[doc(hidden)]
     pub use str;
 
+    #[doc(hidden)]
+    pub use frender_const_expr::array_len;
+
+    #[doc(hidden)]
     pub const fn from_utf8(v: &[u8]) -> &str {
         match core::str::from_utf8(v) {
             Ok(v) => v,
