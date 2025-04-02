@@ -133,6 +133,8 @@ impl<const CAP: usize> SpaceAndAttributesLeadingString<CAP> {
 
         match attribute.eq_value {
             AttributeEqValueSsr::Eq { quote, ssr } => {
+                s.push_str("=");
+
                 let quote = match quote {
                     Some(Quote::Double) => "\"",
                     Some(Quote::Single) => "'",
