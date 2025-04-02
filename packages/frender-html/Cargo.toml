@@ -120,7 +120,6 @@ features = [
 ]
 
 [features]
-default = ["macros_not_expanded"] # TODO: remove
 macros_not_expanded = []
 components = []
 csr = [
