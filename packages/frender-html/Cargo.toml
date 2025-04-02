@@ -24,6 +24,9 @@ frender-attr-value = { version = "0.1.0", path = "../frender-attr-value", featur
     "html",
     "experimental",
 ] }
+frender-attrs = { version = "0.1.0", path = "../frender-attrs", features = [
+    "experimental",
+] }
 frender-form-control = { version = "0.1.0", path = "../frender-form-control", features = [
     "ssr",
 ] }
@@ -120,6 +123,7 @@ macros_not_expanded = []
 components = []
 csr = [
     "frender-attr-value/csr",
+    "frender-attrs/csr",
     "frender-dom/csr",
     "frender-form-control/csr",
     "frender-style/csr",
@@ -129,6 +133,7 @@ csr = [
 ssr = [
     "dep:frender-ssr",
     "frender-attr-value/ssr",
+    "frender-attrs/ssr",
     "frender-dom/ssr",
     "frender-form-control/ssr",
     "frender-style/ssr",
@@ -147,6 +152,8 @@ web = [
 # Also requires csr
 either = [
     "dep:either",
+    "frender-attr-value/either",
+    "frender-attrs/either",
     "frender-ssr/either",
     "frender-dom/either",
     "frender-form-control/either",

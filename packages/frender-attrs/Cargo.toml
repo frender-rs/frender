@@ -16,7 +16,7 @@ frender-ssr-html = { version = "0.1.0", path = "../frender-ssr-html", optional =
 async-str-iter = { version = "0.1.0", path = "../async-str-iter", optional = true }
 
 [features]
-default = ["csr", "ssr", "either"]                   # TODO: remove
 csr = []
 ssr = ["dep:frender-ssr-html", "dep:async-str-iter"]
 either = ["dep:either"]
+experimental = []

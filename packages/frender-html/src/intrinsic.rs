@@ -1,7 +1,10 @@
+use frender_attrs::IntoAttributes;
 use frender_common::Empty;
 
 #[cfg(feature = "csr")]
 pub(crate) use csr_attr_state::AttributeState;
+
+use crate::values::Attrs;
 
 #[cfg(feature = "csr")]
 mod csr_attr_state;
@@ -196,5 +199,15 @@ impl<M, C, A, P> Intrinsic<M, C, A, P> {
         M: AllowAttributeWithPinnedState<T::PropertyMarker>,
     {
         Self::with_any_attribute_with_pinned_state_appended(this, attr_with_pinned_state)
+    }
+
+    /// This method is prefixed with `frender_` so that it probably won't conflict with html attribute names.
+    pub fn frender_with_attrs<IntoAttrs: IntoAttributes>(self, attrs: IntoAttrs) -> Intrinsic<M, C, (A, Attrs<IntoAttrs>), P> {
+        Intrinsic {
+            type_marker: self.type_marker,
+            attributes: (self.attributes, Attrs(attrs)),
+            attributes_with_pinned_state: self.attributes_with_pinned_state,
+            children: self.children,
+        }
     }
 }

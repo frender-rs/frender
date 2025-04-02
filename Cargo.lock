@@ -1174,6 +1174,7 @@ dependencies = [
  "async-str-iter",
  "either",
  "frender-attr-value",
+ "frender-attrs",
  "frender-common",
  "frender-dom",
  "frender-dom-values",

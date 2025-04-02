@@ -38,6 +38,7 @@ pub mod __private {
 mod special;
 
 mod attr_value;
+mod attrs;
 mod dom_tokens;
 mod event_listener;
 mod style;
