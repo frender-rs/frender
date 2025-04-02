@@ -1,5 +1,9 @@
-// #![no_std]
-#![cfg_attr(not(test), no_std)]
+#![no_std]
+
+#[cfg(any(doc, test))]
+extern crate std;
+#[cfg(any(doc, test))]
+use std::prelude::rust_2021::*;
 
 use const_array_vec::ArrayVec;
 
