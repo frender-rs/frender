@@ -479,15 +479,14 @@ macro_rules! assert_expr {
 macro_rules! __resolve_match {
     (
         {$($with:tt)*}
-        attrs {$($attrs:tt)*}
+        attrs $attrs:tt
         {match        ($($matched:tt)*) {}            }
-        {$match:ident $paren_matched:tt $match_body:tt}
+        $braced:tt
     ) => {
         $($with)*::never! {
             @{$($with)*}
-            $($attrs)*
-            $match $crate::assert_expr!$paren_matched
-            $match_body
+            #$attrs
+            $braced $braced
         }
     };
     (
@@ -683,7 +682,7 @@ macro_rules! resolve_either_paths {
         $($e)*
     };
     (@{$($with:tt)*} {$variant:tt $($vars:tt)*} $e:tt) => {
-        $($with)*::Either::$variant(
+        $($with)*::parsed::Either::$variant(
             $crate::resolve_either_paths!(
                 @{$($with)*}
                 {$($vars)*} $e
@@ -789,9 +788,9 @@ pub mod syntax {
     /// - `($a, $b, $c)` are recursively [chained](chain!).
     ///
     ///   ```rust,no_compile
-    ///   $with::Chain(
+    ///   $with::parsed::Chain(
     ///       $with::one!($a),
-    ///       $with::Chain(
+    ///       $with::parsed::Chain(
     ///           $with::one!($b),
     ///           $with::one!($c)
     ///       )
@@ -828,6 +827,15 @@ pub mod syntax {
                 []
             }
         };
+        (
+            @$with:tt
+            $braced:tt
+        ) => {
+            $crate::syntax_paren! {
+                @$with #{}
+                $braced $braced
+            }
+        };
     }
 
     #[doc(hidden)]
@@ -840,7 +848,7 @@ pub mod syntax {
             rest {$($rest:tt)*}
         ) => {
             $($attr)*
-            $($with)*::Chain(
+            $($with)*::parsed::Chain(
                 $crate::expand_parsed! {
                     with {$($with)*}
                     parsed $parsed
@@ -1006,14 +1014,20 @@ pub mod syntax {
     #[doc(hidden)]
     #[macro_export]
     macro_rules! syntax_never {
-        (@{$($with:tt)*} #{$($attr:tt)*} {$e:expr} $_repeat:tt) => {
+        (
+            @{$($with:tt)*} #{$($attr:tt)*}
+            {match        ($($matched:tt)*) {}}
+            {$match:ident $paren_matched:tt $match_body:tt}
+        ) => {
             // (|| -> $($with)*::Never { $e })()
             // the above cannot be used in const
 
             {
                 $($attr)*
                 #[allow(unreachable_code)]
-                $crate::__private::identity::<$($with)*::parsed::Never>($e)
+                $crate::__private::identity::<$($with)*::parsed::Never>(
+                    $match $crate::assert_expr!$paren_matched $match_body
+                )
             }
         };
     }
@@ -1070,6 +1084,7 @@ pub mod syntax {
             ($($e:tt)*) => { $($e)* };
         }
 
+        #[doc(inline)]
         pub use syntax_macros_verbatim as verbatim;
     }
 }

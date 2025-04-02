@@ -11,7 +11,7 @@ macro_rules! style {
     ($($t:tt)*) => {
         $crate::style::syntax::paren!(
             @{$crate::style::syntax}
-            ($($t)*)
+            {($($t)*)}
         )
     };
 }
@@ -124,7 +124,7 @@ macro_rules! style_one {
     ($($t:tt)+) => {
         $crate::style::syntax::one!(
             @{$crate::style::syntax}
-            $($t)+
+            {$($t)+}
         )
     };
 }
@@ -135,11 +135,16 @@ pub use {style_const as r#const, style_one as one};
 pub mod syntax {
     pub use frender_const_expr::syntax::*;
 
-    pub use crate::styles::{Chain, EitherStyle as Either, Empty, Never};
+    pub mod parsed {
+        pub use crate::styles::{Chain, EitherStyle as Either, Empty, Never};
 
-    pub use super::r#const;
+        pub use super::super::r#const;
+    }
 
     pub mod macros {
+        #[doc(no_inline)]
+        pub use frender_const_expr::syntax::macros::verbatim;
+
         #[doc(no_inline)]
         pub use style;
     }
@@ -183,7 +188,7 @@ mod tests {
         let _ = f as fn() -> crate::styles::Never;
 
         let Empty = one!(match (()) {
-            _ => {}
+            _ => (),
         });
 
         let crate::styles::constness::ConstDeclarationList { .. } = one!(match (()) {
@@ -201,9 +206,14 @@ mod tests {
         }
 
         match one!(match (1) {
-            a if a > 0 => {}
-            b if b < 0 => {}
-            _ => {}
+            // empty (think unit tuple `()` as an empty list)
+            a if a > 0 => (),
+            b if b < 0 => {
+                // empty wrapped in a block
+                ()
+            }
+            // empty wrapped in parenthesis
+            _ => (()),
         }) {
             crate::styles::EitherStyle::A(Empty) => {}
             crate::styles::EitherStyle::B(other) => match other {

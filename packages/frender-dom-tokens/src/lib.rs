@@ -78,11 +78,12 @@ pub mod dom_tokens {
         ($($t:tt)*) => {
             $crate::dom_tokens::syntax::paren!(
                 @{$crate::dom_tokens::syntax}
-                ($($t)*)
+                {($($t)*)}
             )
         };
     }
 
+    #[doc(no_inline)]
     pub use dom_tokens as comma_separated;
 
     #[doc(hidden)]
@@ -91,11 +92,12 @@ pub mod dom_tokens {
         ($($t:tt)*) => {
             $crate::dom_tokens::syntax::one!(
                 @{$crate::dom_tokens::syntax}
-                $($t)*
+                {$($t)*}
             )
         };
     }
 
+    // TODO: refactor with frender-const-value
     /// An inline expr of [`ConstDomTokens<impl HasConstDomTokens>`](crate::constness::ConstDomTokens).
     #[doc(hidden)]
     #[macro_export]
@@ -156,12 +158,22 @@ pub mod dom_tokens {
         };
     }
 
+    #[doc(hidden)]
     pub mod syntax {
+        #[doc(no_inline)]
         pub use frender_const_expr::syntax::*;
 
-        pub use crate::values::{Chain, EitherDomTokens as Either, Empty};
+        pub mod parsed {
+            #[doc(no_inline)]
+            pub use frender_const_expr::syntax::parsed::*;
 
-        pub use super::r#const;
+            #[doc(no_inline)]
+            pub use crate::values::{Chain, EitherDomTokens as Either, Empty};
+            // TODO: Never
+
+            #[doc(no_inline)]
+            pub use super::super::r#const;
+        }
 
         pub mod macros {
             #[doc(no_inline)]
@@ -172,10 +184,16 @@ pub mod dom_tokens {
         }
     }
 
+    #[doc(hidden)]
     pub mod typed {
-        pub use frender_const_expr::{
-            assert_expr, expand_parsed, resolve_either_paths, syntax as default_syntax,
-        };
+        #[doc(hidden)]
+        pub mod __private {
+            #[doc(no_inline)]
+            pub use frender_const_expr::{
+                assert_expr, expand_parsed, resolve_either_paths,
+                syntax::never as default_syntax_never,
+            };
+        }
 
         pub mod const_markers {
             #[doc(hidden)]
@@ -184,7 +202,7 @@ pub mod dom_tokens {
                 ($($t:tt)*) => {
                     $crate::dom_tokens::typed::const_markers::syntax::one! (
                         @{$crate::dom_tokens::typed::const_markers::syntax}
-                        $($t)*
+                        {$($t)*}
                     );
                 };
             }
@@ -195,12 +213,31 @@ pub mod dom_tokens {
             pub mod syntax {
                 pub use frender_const_expr::syntax::*;
 
+                pub mod parsed {
+                    #[doc(hidden)]
+                    #[macro_export]
+                    macro_rules! dom_tokens_typed_const_markers_syntax_parsed_const {
+                        (
+                            #[const_marker($($const_marker_ty:tt)*)]
+                            const $($rest:tt)*
+                        ) => {};
+                        (
+                            const $($rest:tt)*
+                        ) => {
+                            pub enum DomTokensAnonymousHasConstDomTokens {}
+                        };
+                    }
+
+                    #[doc(inline)]
+                    pub use dom_tokens_typed_const_markers_syntax_parsed_const as r#const;
+                }
+
                 pub use super::super::common_syntax::{chain, r#macro};
 
                 #[doc(hidden)]
                 #[macro_export]
                 macro_rules! dom_tokens_typed_const_markers_syntax_empty {
-                    (@$with:tt) => {};
+                    (@$with:tt #$attrs:tt {()} {()}) => {};
                 }
 
                 #[doc(hidden)]
@@ -221,53 +258,46 @@ pub mod dom_tokens {
 
                 #[doc(hidden)]
                 #[macro_export]
-                macro_rules! dom_tokens_typed_const_markers_syntax_const {
-                    (
-                        #[const_marker($($const_marker_ty:tt)*)]
-                        const $($rest:tt)*
-                    ) => {};
-                    (
-                        const $($rest:tt)*
-                    ) => {
-                        pub enum DomTokensAnonymousHasConstDomTokens {}
-                    };
-                }
-
-                #[doc(hidden)]
-                #[macro_export]
                 macro_rules! dom_tokens_typed_const_markers_syntax_if {
                     (
                         @{$($with:tt)*}
-                        $(#$attr:tt)*
-                        if ($($predicate:tt)*) $if_block:tt
+                        #$attrs:tt
+                        {if ($($predicate:tt)*) $if_block:tt}
+                        $_repeat:tt
                     ) => {
                         pub(crate) mod r#if {
                             $($with)*::block! {
                                 @{$($with)*}
-                                $(#$attr)*
-                                $if_block
+                                #$attrs
+                                {$if_block}
+                                {$if_block}
                             }
                         }
                     };
                     (
                         @{$($with:tt)*}
-                        $(#$attr:tt)*
-                        if ($($predicate:tt)*) $if_block:tt
-                        else $($after_else:tt)*
+                        #$attrs:tt
+                        {
+                            if ($($predicate:tt)*) $if_block:tt
+                            else $($after_else:tt)*
+                        }
+                        $_repeat:tt
                     ) => {
                         pub(crate) mod r#if {
                             $($with)*::block! {
                                 @{$($with)*}
-                                $(#$attr)*
-                                $if_block
+                                #$attrs
+                                {$if_block}
+                                {$if_block}
                             }
                         }
 
                         pub(crate) mod r#else {
                             $($with)*::one! {
                                 @{$($with)*}
-                                $(#$attr)*
-                                $($after_else)*
+                                #$attrs
+                                {$($after_else)*}
+                                {$($after_else)*}
                             }
                         }
                     };
@@ -287,7 +317,7 @@ pub mod dom_tokens {
                             }
                         }
                     ) => {
-                        $crate::dom_tokens::typed::expand_parsed! {
+                        $crate::dom_tokens::typed::__private::expand_parsed! {
                             with $with
                             attrs $attrs
                             parsed $parsed
@@ -343,7 +373,6 @@ pub mod dom_tokens {
                 #[doc(inline)]
                 pub use {
                     dom_tokens_typed_const_markers_syntax_chain_impl as chain_impl,
-                    dom_tokens_typed_const_markers_syntax_const as r#const,
                     dom_tokens_typed_const_markers_syntax_empty as empty,
                     dom_tokens_typed_const_markers_syntax_if as r#if,
                     dom_tokens_typed_const_markers_syntax_match_non_empty as match_non_empty,
@@ -365,7 +394,8 @@ pub mod dom_tokens {
             macro_rules! dom_tokens_typed_type_one {
                 ($($t:tt)*) => {
                     $crate::dom_tokens::typed::r#type::syntax::one! {
-                        @{$crate::dom_tokens::typed::r#type::syntax} $($t)*
+                        @{$crate::dom_tokens::typed::r#type::syntax}
+                        {$($t)*}
                     }
                 };
             }
@@ -374,10 +404,36 @@ pub mod dom_tokens {
             pub use dom_tokens_typed_type_one as one;
 
             pub mod syntax {
-                pub use crate::values::{EitherDomTokens as Either, Empty};
-                pub use Option;
-
                 pub use frender_const_expr::syntax::*;
+
+                pub mod parsed {
+                    pub use Option;
+
+                    pub use crate::values::{EitherDomTokens as Either, Empty};
+
+                    #[doc(hidden)]
+                    #[macro_export]
+                    macro_rules! dom_tokens_typed_type_syntax_parsed_const {
+                        (
+                            #[__dom_tokens_typed_path($($p:tt)*)]
+                            #[$const_marker:ident ($($const_marker_ty:tt)*)]
+                            const $($rest:tt)*
+                        ) => {
+                            $crate::constness::ConstDomTokens::<
+                                $crate::dom_tokens::const_marker::$const_marker![$($const_marker_ty)*]
+                            >
+                        };
+                        (
+                            #[__dom_tokens_typed_path($($p:tt)*)]
+                            const $($rest:tt)*
+                        ) => {
+                            $crate::constness::ConstDomTokens::<$($p)*::DomTokensAnonymousHasConstDomTokens>
+                        };
+                    }
+
+                    #[doc(inline)]
+                    pub use dom_tokens_typed_type_syntax_parsed_const as r#const;
+                }
 
                 pub use super::super::common_syntax::{chain, empty, r#macro};
 
@@ -391,61 +447,57 @@ pub mod dom_tokens {
 
                 #[doc(hidden)]
                 #[macro_export]
-                macro_rules! dom_tokens_typed_type_syntax_const {
-                    (
-                        #[__dom_tokens_typed_path($($p:tt)*)]
-                        #[$const_marker:ident ($($const_marker_ty:tt)*)]
-                        const $($rest:tt)*
-                    ) => {
-                        $crate::constness::ConstDomTokens::<
-                            $crate::dom_tokens::const_marker::$const_marker![$($const_marker_ty)*]
-                        >
-                    };
-                    (
-                        #[__dom_tokens_typed_path($($p:tt)*)]
-                        const $($rest:tt)*
-                    ) => {
-                        $crate::constness::ConstDomTokens::<$($p)*::DomTokensAnonymousHasConstDomTokens>
-                    };
-                }
-
-                #[doc(hidden)]
-                #[macro_export]
                 macro_rules! dom_tokens_typed_type_syntax_if {
                     (
                         @{$($with:tt)*}
-                        #[__dom_tokens_typed_path($($p:tt)*)]
-                        $(#$attr:tt)*
-                        if ($($predicate:tt)*) $if_block:tt
+                        #{
+                            #[__dom_tokens_typed_path($($p:tt)*)]
+                            $($attr:tt)*
+                        }
+                        {if ($($predicate:tt)*) $if_block:tt}
+                        $_repeat:tt
                     ) => {
-                        $($with)*::Option::<
+                        $($attr)*
+                        $($with)*::parsed::Option::<
                             $($with)*::block! {
                                 @{$($with)*}
-                                #[__dom_tokens_typed_path($($p)*::r#if)]
-                                $(#$attr)*
-                                $if_block
+                                #{
+                                    #[__dom_tokens_typed_path($($p)*::r#if)]
+                                }
+                                {$if_block}
+                                {$if_block}
                             }
                         >
                     };
                     (
                         @{$($with:tt)*}
-                        #[__dom_tokens_typed_path($($p:tt)*)]
-                        $(#$attr:tt)*
-                        if ($($predicate:tt)*) $if_block:tt
-                        else $($after_else:tt)*
+                        #{
+                            #[__dom_tokens_typed_path($($p:tt)*)]
+                            $($attr:tt)*
+                        }
+                        {
+                            if ($($predicate:tt)*) $if_block:tt
+                            else $($after_else:tt)*
+                        }
+                        $_repeat:tt
                     ) => {
-                        $($with)*::Either::<
+                        $($attr)*
+                        $($with)*::parsed::Either::<
                             $($with)*::block! {
                                 @{$($with)*}
-                                #[__dom_tokens_typed_path($($p)*::r#if)]
-                                $(#$attr)*
-                                $if_block
+                                #{
+                                    #[__dom_tokens_typed_path($($p)*::r#if)]
+                                }
+                                {$if_block}
+                                {$if_block}
                             },
                             $($with)*::one!(
                                 @{$($with)*}
-                                #[__dom_tokens_typed_path($($p)*::r#else)]
-                                $(#$attr)*
-                                $($after_else)*
+                                #{
+                                    #[__dom_tokens_typed_path($($p)*::r#else)]
+                                }
+                                {$($after_else)*}
+                                {$($after_else)*}
                             )
                         >
                     };
@@ -468,7 +520,7 @@ pub mod dom_tokens {
                             }
                         }
                     ) => {
-                        $crate::dom_tokens::typed::expand_parsed! {
+                        $crate::dom_tokens::typed::__private::expand_parsed! {
                             with $with
                             attrs {
                                 #[__dom_tokens_typed_path($($p)* $(:: $either_paths)*)]
@@ -525,7 +577,6 @@ pub mod dom_tokens {
                 #[doc(inline)]
                 pub use {
                     dom_tokens_typed_type_syntax_chain_impl as chain_impl,
-                    dom_tokens_typed_type_syntax_const as r#const,
                     dom_tokens_typed_type_syntax_if as r#if,
                     dom_tokens_typed_type_syntax_match_non_empty as match_non_empty,
                     dom_tokens_typed_type_syntax_never as never,
@@ -553,7 +604,8 @@ pub mod dom_tokens {
             macro_rules! dom_tokens_typed_expr_one {
                 ($($t:tt)*) => {
                     $crate::dom_tokens::typed::expr::syntax::one! {
-                        @{$crate::dom_tokens::typed::expr::syntax} $($t)*
+                        @{$crate::dom_tokens::typed::expr::syntax}
+                        {$($t)*}
                     }
                 };
             }
@@ -564,9 +616,40 @@ pub mod dom_tokens {
             pub mod syntax {
                 pub use frender_const_expr::syntax::*;
 
-                pub use crate::values::{EitherDomTokens as Either, Empty};
-
                 pub use super::super::common_syntax::{chain, empty, r#macro};
+
+                pub mod parsed {
+                    pub use frender_const_expr::syntax::parsed::*;
+
+                    pub use crate::values::{EitherDomTokens as Either, Empty};
+
+                    #[doc(hidden)]
+                    #[macro_export]
+                    macro_rules! dom_tokens_typed_expr_syntax_parsed_const {
+                        (
+                            #[__dom_tokens_typed_path($($p:tt)*)]
+                            #[const_marker($($const_marker_ty:tt)*)]
+                            const $($rest:tt)*
+                        ) => {
+                            $crate::dom_tokens::r#const! {
+                                #[const_marker($($const_marker_ty)*)]
+                                const $($rest)*
+                            }
+                        };
+                        (
+                            #[__dom_tokens_typed_path($($p:tt)*)]
+                            const $($rest:tt)*
+                        ) => {
+                            $crate::dom_tokens::r#const!(
+                                #[const_marker($($p)*::DomTokensAnonymousHasConstDomTokens)]
+                                const $($rest)*
+                            )
+                        };
+                    }
+
+                    #[doc(inline)]
+                    pub use dom_tokens_typed_expr_syntax_parsed_const as r#const;
+                }
 
                 #[doc(hidden)]
                 #[macro_export]
@@ -578,73 +661,65 @@ pub mod dom_tokens {
 
                 #[doc(hidden)]
                 #[macro_export]
-                macro_rules! dom_tokens_typed_expr_syntax_const {
-                    (
-                        #[__dom_tokens_typed_path($($p:tt)*)]
-                        #[const_marker($($const_marker_ty:tt)*)]
-                        const $($rest:tt)*
-                    ) => {
-                        $crate::dom_tokens::r#const! {
-                            #[const_marker($($const_marker_ty)*)]
-                            const $($rest)*
-                        }
-                    };
-                    (
-                        #[__dom_tokens_typed_path($($p:tt)*)]
-                        const $($rest:tt)*
-                    ) => {
-                        $crate::dom_tokens::r#const!(
-                            #[const_marker($($p)*::DomTokensAnonymousHasConstDomTokens)]
-                            const $($rest)*
-                        )
-                    };
-                }
-
-                #[doc(hidden)]
-                #[macro_export]
                 macro_rules! dom_tokens_typed_expr_syntax_if {
                     (
                         @{$($with:tt)*}
-                        #[__dom_tokens_typed_path($($p:tt)*)]
-                        $(#$attr:tt)*
-                        $if:ident $paren_predicate:tt $if_block:tt
+                        #{
+                            #[__dom_tokens_typed_path($($p:tt)*)]
+                            $($attr:tt)*
+                        }
+                        {$if:ident $paren_predicate:tt $if_block:tt}
+                        $_repeat:tt
                     ) => {
-                        $if $crate::dom_tokens::typed::assert_expr!$paren_predicate {
-                            $($with)*::Some(
+                        $($attr)*
+                        $if $crate::dom_tokens::typed::__private::assert_expr!$paren_predicate {
+                            $($with)*::parsed::Some(
                                 $($with)*::block! {
                                     @{$($with)*}
-                                    #[__dom_tokens_typed_path($($p)*::r#if)]
-                                    $(#$attr)*
-                                    $if_block
+                                    #{
+                                        #[__dom_tokens_typed_path($($p)*::r#if)]
+                                    }
+                                    {$if_block}
+                                    {$if_block}
                                 }
                             )
                         } else {
-                            $($with)*::None
+                            $($with)*::parsed::None
                         }
                     };
                     (
                         @{$($with:tt)*}
-                        #[__dom_tokens_typed_path($($p:tt)*)]
-                        $(#$attr:tt)*
-                        $if:ident $paren_predicate:tt $if_block:tt
-                        $else:ident $($after_else:tt)*
+                        #{
+                            #[__dom_tokens_typed_path($($p:tt)*)]
+                            $($attr:tt)*
+                        }
+                        {
+                            $if:ident $paren_predicate:tt $if_block:tt
+                            $else:ident $($after_else:tt)*
+                        }
+                        $_repeat:tt
                     ) => {
-                        $if $crate::dom_tokens::typed::assert_expr!$paren_predicate {
-                            $($with)*::Either::A(
+                        $($attr)*
+                        $if $crate::dom_tokens::typed::__private::assert_expr!$paren_predicate {
+                            $($with)*::parsed::Either::A(
                                 $($with)*::block!(
                                     @{$($with)*}
-                                    #[__dom_tokens_typed_path($($p)*::r#if)]
-                                    $(#$attr)*
-                                    $if_block
+                                    #{
+                                        #[__dom_tokens_typed_path($($p)*::r#if)]
+                                    }
+                                    {$if_block}
+                                    {$if_block}
                                 )
                             )
                         } $else {
-                            $($with)*::Either::B(
+                            $($with)*::parsed::Either::B(
                                 $($with)*::one!(
                                     @{$($with)*}
-                                    #[__dom_tokens_typed_path($($p)*::r#else)]
-                                    $(#$attr)*
-                                    $($after_else)*
+                                    #{
+                                        #[__dom_tokens_typed_path($($p)*::r#else)]
+                                    }
+                                    {$($after_else)*}
+                                    {$($after_else)*}
                                 )
                             )
                         }
@@ -663,7 +738,7 @@ pub mod dom_tokens {
                         either_paths {$($either_paths:tt)*}
                         parsed $parsed:tt
                     ) => {
-                        $crate::dom_tokens::typed::expand_parsed! {
+                        $crate::dom_tokens::typed::__private::expand_parsed! {
                             with $with
                             attrs {
                                 #[__dom_tokens_typed_path($($p)* $(::$either_paths)*)]
@@ -679,12 +754,18 @@ pub mod dom_tokens {
                 macro_rules! dom_tokens_typed_expr_syntax_never {
                     (
                         @{$($with:tt)*}
-                        #[__dom_tokens_typed_path($($p:tt)*)]
-                        $e:expr
+                        #{
+                            #[__dom_tokens_typed_path($($p:tt)*)]
+                            $($attr:tt)*
+                        }
+                        $braced:tt
+                        $repeat:tt
                     ) => {
-                        $crate::dom_tokens::typed::default_syntax::never! {
+                        $crate::dom_tokens::typed::__private::default_syntax_never! {
                             @{$($with)*}
-                            $e
+                            #{$($attr)*}
+                            $braced
+                            $repeat
                         }
                     };
                 }
@@ -707,9 +788,9 @@ pub mod dom_tokens {
                             )*
                         }
                     ) => {
-                        $match $crate::dom_tokens::typed::assert_expr!$paren_matched {
+                        $match $crate::dom_tokens::typed::__private::assert_expr!$paren_matched {
                             $(
-                                $($pat)* => $crate::dom_tokens::typed::resolve_either_paths!(
+                                $($pat)* => $crate::dom_tokens::typed::__private::resolve_either_paths!(
                                     @$with
                                     $either_paths
                                     {
@@ -729,7 +810,6 @@ pub mod dom_tokens {
                 #[doc(inline)]
                 pub use {
                     dom_tokens_typed_expr_syntax_chain_impl as chain_impl,
-                    dom_tokens_typed_expr_syntax_const as r#const,
                     dom_tokens_typed_expr_syntax_if as r#if,
                     dom_tokens_typed_expr_syntax_match_non_empty as match_non_empty,
                     dom_tokens_typed_expr_syntax_never as never,
@@ -757,9 +837,15 @@ pub mod dom_tokens {
             macro_rules! dom_tokens_typed_common_syntax_empty {
                 (
                     @{$($with:tt)*}
-                    #[__dom_tokens_typed_path($($p:tt)*)]
+                    #{
+                        #[__dom_tokens_typed_path($($p:tt)*)]
+                        $($attr:tt)*
+                    }
+                    {()}
+                    {()}
                 ) => {
-                    $($with)*::Empty
+                    $($attr)*
+                    $($with)*::parsed::Empty
                 };
             }
 
@@ -772,21 +858,25 @@ pub mod dom_tokens {
                         #[__dom_tokens_typed_path($($p:tt)*)]
                         $($attrs:tt)*
                     }
-                    parsed {$kind:ident $bang:tt ($($parsed:tt)*)}
+                    parsed $parsed:tt
                     rest {$($rest:tt)*}
                 ) => {
+                    $($attrs)*
                     $($with)*::chain_impl! {
-                        $($with)* :: $kind $bang {
-                            @{$($with)*}
-                            #[__dom_tokens_typed_path($($p)*::chain0)]
-                            $($($attrs)*)?
-                            $($parsed)*
+                        $crate::dom_tokens::typed::__private::expand_parsed! {
+                            with {$($with)*}
+                            attrs {
+                                #[__dom_tokens_typed_path($($p)*::chain0)]
+                            }
+                            parsed $parsed
                         },
                         $($with)* :: paren! {
                             @{$($with)*}
-                            #[__dom_tokens_typed_path($($p)*::chain1)]
-                            $($($attrs)*)?
-                            ($($rest)*)
+                            #{
+                                #[__dom_tokens_typed_path($($p)*::chain1)]
+                            }
+                            {($($rest)*)}
+                            {($($rest)*)}
                         }
                     }
                 };
@@ -795,19 +885,21 @@ pub mod dom_tokens {
                     attrs {
                         $($attrs:tt)*
                     }
-                    parsed {$kind:ident $bang:tt ($($parsed:tt)*)}
+                    parsed $parsed:tt
                     rest {$($rest:tt)*}
                 ) => {
+                    $($attrs)*
                     $($with)*::chain_impl! {
-                        $($with)* :: $kind $bang {
-                            @{$($with)*}
-                            $($($attrs)*)?
-                            $($parsed)*
+                        $crate::dom_tokens::typed::__private::expand_parsed! {
+                            with {$($with)*}
+                            attrs {}
+                            parsed $parsed
                         },
                         $($with)* :: paren! {
                             @{$($with)*}
-                            $($($attrs)*)?
-                            ($($rest)*)
+                            #{}
+                            {($($rest)*)}
+                            {($($rest)*)}
                         }
                     }
                 };
@@ -816,12 +908,15 @@ pub mod dom_tokens {
             #[doc(hidden)]
             #[macro_export]
             macro_rules! dom_tokens_typed_common_syntax_macro {
-                (@{$($with:tt)*} $(#$attr:tt)* $macro_name:ident $bang:tt $macro_content:tt $($as:tt $($as_ty:tt)*)?) => {
+                (
+                    @{$($with:tt)*} #$attrs:tt
+                    {$macro_name:ident $bang:tt $($rest:tt)*}
+                    $_repeat:tt
+                ) => {
                     $($with)*::macro_imps::$macro_name $bang {
                         @{$($with)*}
-                        #{$(#$attr)*}
-                        $macro_content
-                        $($as $($as_ty)*)?
+                        #$attrs
+                        $($rest)*
                     }
                 };
             }
@@ -848,15 +943,17 @@ pub mod dom_tokens {
                         @$with #$attrs ($($macro_content)*)
                     }
                 };
-                (@{$($with:tt)*} #{$(#$attr:tt)*} $paren_macro_content:tt) => {
+                (@{$($with:tt)*} #$attrs:tt $paren_macro_content:tt) => {
                     $($with)*::paren! {
                         @{$($with)*}
-                        $(#$attr)*
-                        $paren_macro_content
+                        #$attrs
+                        {$paren_macro_content}
+                        {$paren_macro_content}
                     }
                 };
             }
 
+            #[doc(inline)]
             pub use dom_tokens_typed_macro_imps_dom_tokens as dom_tokens;
         }
     }
