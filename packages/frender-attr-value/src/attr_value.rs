@@ -16,8 +16,8 @@ pub use attr_value as one;
 #[macro_export]
 macro_rules! attr_value_const {
     ($($t:tt)*) => {
-        $crate::r#attr_value::__private::r#const! {
-            #[const_impl_mod($crate::r#attr_value::__private::const_impl)]
+        $crate::attr_value::__private::r#const! {
+            #[const_impl_mod($crate::attr_value::__private::const_impl)]
             $($t)*
         }
     };
