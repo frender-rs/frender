@@ -42,4 +42,13 @@ impl Info {
         this.0[0] = info_0;
         this
     }
+
+    pub const fn new_4(
+        //
+        info_array: [usize; 4],
+    ) -> Self {
+        let mut this = Self::new();
+        this.0 = info_array;
+        this
+    }
 }
