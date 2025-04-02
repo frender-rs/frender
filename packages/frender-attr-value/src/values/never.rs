@@ -14,7 +14,7 @@ mod csr {
 
     use super::NeverAttrValue;
 
-    enum State {}
+    pub enum State {}
 
     impl CsrAttrValueState for State {
         fn attribute_is_known_as_absent(&self) -> bool {
